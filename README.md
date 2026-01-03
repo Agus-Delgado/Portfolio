@@ -1,6 +1,26 @@
 # Portfolio - Agustín Delgado
 
-Portfolio web profesional desarrollado con React + Vite.
+Portfolio web profesional de Agustín Delgado, Machine Learning Engineer, Data Analyst y Full Stack Developer. 
+
+Este sitio web showcasea mi experiencia profesional en el sector de la salud, proyectos de machine learning y data science, certificaciones técnicas y habilidades en desarrollo de software. Con más de 7 años de experiencia en healthcare y 4+ proyectos en producción, este portfolio refleja mi trayectoria en tecnología aplicada a soluciones reales.
+
+## 🎯 Características del Portfolio
+
+- **Información profesional completa**: Experiencia laboral, educación y certificaciones
+- **Proyectos destacados**: Análisis de datos, machine learning y desarrollo web
+- **Stack tecnológico**: Python, JavaScript, React, SQL, Azure, y más
+- **Diseño moderno**: UI responsiva con animaciones y transiciones suaves
+- **Navegación fluida**: Scroll suave entre secciones
+- **Contacto directo**: Links a email, teléfono y LinkedIn
+
+## 💼 Sobre Mí
+
+Machine Learning Engineer con experiencia en análisis de datos y desarrollo full stack. Especializado en:
+- Modelos de Machine Learning y análisis predictivo
+- Análisis de datos y visualización con Power BI y Python
+- Desarrollo web con React, Node.js y bases de datos SQL
+- Automatización de procesos con Python y Azure Functions
+- 62 certificaciones técnicas en diversas tecnologías
 
 ## 🚀 Inicio Rápido
 
