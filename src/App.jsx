@@ -80,7 +80,7 @@ const PROJECT_DETAILS = {
   },
 };
 
-const SECTIONS = ["about", "projects", "skills", "education", "experience"];
+const SECTIONS = ["about", "projects", "skills", "education", "experience", "languages"];
 
 const ARROW = "\u2192";
 const HEART = "\u2665";
@@ -466,6 +466,20 @@ export default function Portfolio() {
         </div>
       </section>
 
+      {/* LANGUAGES */}
+      <section id="languages" style={{ ...styles.section, ...styles.sectionAlt }}>
+        <div style={styles.sectionContent}>
+          <h2 style={styles.sectionTitle} className="section-title">
+            <span style={styles.sectionNumber}>06</span>Idiomas
+          </h2>
+
+          <div style={styles.languagesGrid}>
+            <LanguageCard language="Español" level="Nativo" icon={<SpanishFlagIcon />} />
+            <LanguageCard language="Inglés" level="B2 (Avanzado)" icon={<EnglishFlagIcon />} />
+          </div>
+        </div>
+      </section>
+
       {/* FOOTER */}
       <footer style={styles.footer}>
         <div style={styles.footerContent}>
@@ -485,7 +499,7 @@ export default function Portfolio() {
 
           <div style={styles.footerLinks}>
             <a href="mailto:augusto.delgado00@hotmail.com" style={styles.footerLink} className="footer-link">
-              Email
+              <EmailIcon /> Email
             </a>
             <a
               href="https://linkedin.com/in/agustin-delgado-data98615190"
@@ -494,7 +508,7 @@ export default function Portfolio() {
               style={styles.footerLink}
               className="footer-link"
             >
-              LinkedIn
+              <LinkedInIcon /> LinkedIn
             </a>
             <a
               href="https://github.com/agustindelgado"
@@ -503,16 +517,12 @@ export default function Portfolio() {
               style={styles.footerLink}
               className="footer-link"
             >
-              GitHub
+              <GitHubIcon /> GitHub
             </a>
           </div>
 
           <div style={styles.footerBottom}>
-            <p style={styles.footerCopy}>© 2025 Agustín Delgado. Diseñado & desarrollado con {HEART}</p>
-            <div style={styles.footerLang}>
-              <span style={styles.langBadge}>ES — Nativo</span>
-              <span style={styles.langBadge}>EN — B2 (Avanzado)</span>
-            </div>
+            <p style={styles.footerCopy}>© 2026 Agustín Delgado. Diseñado & desarrollado con {HEART}</p>
           </div>
         </div>
       </footer>
@@ -687,10 +697,13 @@ function ProjectCard(props) {
 
 function SkillCategory(props) {
   const { title, icon, skills } = props;
+  const IconComponent = getSkillIcon(icon);
   return (
     <div className="skill-card">
       <div style={styles.skillHeader}>
-        <span style={styles.skillIcon}>{icon}</span>
+        <span style={styles.skillIcon}>
+          <IconComponent />
+        </span>
         <h4 style={styles.skillTitle}>{title}</h4>
       </div>
       <div style={styles.skillList}>
@@ -702,6 +715,20 @@ function SkillCategory(props) {
       </div>
     </div>
   );
+}
+
+function getSkillIcon(iconType) {
+  const icons = {
+    DEV: DevIcon,
+    ML: MLIcon,
+    API: APIIcon,
+    UI: UIIcon,
+    DB: DBIcon,
+    BI: BIIcon,
+    OPS: DevOpsIcon,
+    CORE: CoreIcon,
+  };
+  return icons[iconType] || DevIcon;
 }
 
 function EducationCard(props) {
@@ -741,6 +768,19 @@ function ExperienceCard(props) {
         <p style={styles.experienceCompany}>{company}</p>
         <p style={styles.experiencePeriod}>{period}</p>
         <p style={styles.experienceDescription}>{description}</p>
+      </div>
+    </div>
+  );
+}
+
+function LanguageCard(props) {
+  const { language, level, icon } = props;
+  return (
+    <div style={styles.languageCard} className="lang-card">
+      <div style={styles.languageIcon}>{icon}</div>
+      <div style={styles.languageContent}>
+        <h4 style={styles.languageName}>{language}</h4>
+        <p style={styles.languageLevel}>{level}</p>
       </div>
     </div>
   );
@@ -822,6 +862,113 @@ function LinkedInIcon() {
   return (
     <svg style={styles.icon} viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
       <path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433a2.062 2.062 0 01-2.063-2.065 2.064 2.064 0 112.063 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z" />
+    </svg>
+  );
+}
+
+function GitHubIcon() {
+  return (
+    <svg style={styles.icon} viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+      <path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z" />
+    </svg>
+  );
+}
+
+function DevIcon() {
+  return (
+    <svg style={styles.skillSvgIcon} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" aria-hidden="true">
+      <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5" />
+    </svg>
+  );
+}
+
+function MLIcon() {
+  return (
+    <svg style={styles.skillSvgIcon} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" aria-hidden="true">
+      <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5" />
+      <circle cx="12" cy="12" r="3" />
+    </svg>
+  );
+}
+
+function APIIcon() {
+  return (
+    <svg style={styles.skillSvgIcon} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" aria-hidden="true">
+      <rect x="2" y="7" width="20" height="10" rx="2" />
+      <path d="M6 7V5a2 2 0 012-2h8a2 2 0 012 2v2M6 17v2a2 2 0 002 2h8a2 2 0 002-2v-2" />
+    </svg>
+  );
+}
+
+function UIIcon() {
+  return (
+    <svg style={styles.skillSvgIcon} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" aria-hidden="true">
+      <rect x="2" y="3" width="20" height="14" rx="2" />
+      <line x1="8" y1="21" x2="16" y2="21" />
+      <line x1="12" y1="17" x2="12" y2="21" />
+    </svg>
+  );
+}
+
+function DBIcon() {
+  return (
+    <svg style={styles.skillSvgIcon} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" aria-hidden="true">
+      <ellipse cx="12" cy="5" rx="9" ry="3" />
+      <path d="M21 12c0 1.66-4 3-9 3s-9-1.34-9-3" />
+      <path d="M3 5v14c0 1.66 4 3 9 3s9-1.34 9-3V5" />
+    </svg>
+  );
+}
+
+function BIIcon() {
+  return (
+    <svg style={styles.skillSvgIcon} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" aria-hidden="true">
+      <path d="M3 3v18h18" />
+      <path d="M18 17l-5-5-4 4-4-4" />
+      <line x1="8" y1="17" x2="18" y2="7" />
+    </svg>
+  );
+}
+
+function DevOpsIcon() {
+  return (
+    <svg style={styles.skillSvgIcon} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" aria-hidden="true">
+      <circle cx="12" cy="12" r="10" />
+      <path d="M12 2a15.3 15.3 0 014 10 15.3 15.3 0 01-4 10 15.3 15.3 0 01-4-10 15.3 15.3 0 014-10z" />
+    </svg>
+  );
+}
+
+function CoreIcon() {
+  return (
+    <svg style={styles.skillSvgIcon} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" aria-hidden="true">
+      <path d="M12 2L2 7l10 5 10-5-10-5z" />
+      <path d="M2 17l10 5 10-5M2 12l10 5 10-5" />
+      <circle cx="12" cy="12" r="2" />
+    </svg>
+  );
+}
+
+function SpanishFlagIcon() {
+  return (
+    <svg style={styles.flagIcon} viewBox="0 0 640 480" fill="none" aria-hidden="true">
+      <rect width="640" height="480" fill="#AA151B" />
+      <rect y="120" width="640" height="80" fill="#F1BF00" />
+      <rect y="280" width="640" height="80" fill="#F1BF00" />
+    </svg>
+  );
+}
+
+function EnglishFlagIcon() {
+  return (
+    <svg style={styles.flagIcon} viewBox="0 0 640 480" fill="none" aria-hidden="true">
+      <rect width="640" height="480" fill="#012169" />
+      <path d="M0 0l320 240L0 480zm640 0L320 240l320 240zM0 0l320 240L0 480zm640 0L320 240l320 240z" fill="#FFF" />
+      <path d="M0 0l320 240L0 480zm640 0L320 240l320 240z" fill="#C8102E" />
+      <rect x="0" y="200" width="640" height="80" fill="#FFF" />
+      <rect x="260" y="0" width="120" height="480" fill="#FFF" />
+      <rect x="0" y="220" width="640" height="40" fill="#C8102E" />
+      <rect x="280" y="0" width="80" height="480" fill="#C8102E" />
     </svg>
   );
 }
@@ -983,6 +1130,9 @@ strong{color:#fff;font-weight:600}
 
 .edu-card{transition:all .3s ease}
 .edu-card:hover{transform:translateY(-4px);border-color:rgba(99,102,241,0.3)}
+
+.lang-card{transition:all .3s ease}
+.lang-card:hover{transform:translateY(-4px);border-color:rgba(99,102,241,0.3);background:rgba(99,102,241,0.05)}
 
 .cert-box{position:relative;overflow:hidden}
 .cert-number{
@@ -1241,13 +1391,19 @@ const styles = {
   skillsGrid: { display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(240px, 1fr))", gap: 16 },
   skillHeader: { display: "flex", alignItems: "center", gap: 12, marginBottom: 16 },
   skillIcon: {
-    fontSize: 12,
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "center",
     padding: "6px 10px",
     borderRadius: 999,
     border: "1px solid rgba(99,102,241,0.25)",
     color: "#c7d2fe",
     background: "rgba(99,102,241,0.12)",
-    fontFamily: "'JetBrains Mono', monospace",
+  },
+  skillSvgIcon: {
+    width: 16,
+    height: 16,
+    stroke: "#c7d2fe",
   },
   skillTitle: { fontSize: 15, fontWeight: 600, color: "#ffffff" },
   skillList: { display: "flex", flexWrap: "wrap", gap: 8 },
@@ -1270,9 +1426,9 @@ const styles = {
     overflow: "hidden",
   },
   certTitle: { fontSize: 22, fontWeight: 700, color: "#ffffff", marginBottom: 8 },
-  certSubtitle: { fontSize: 14, color: "#a3a3a3", marginBottom: 16 },
-  certCategories: { display: "flex", flexWrap: "wrap", gap: 8 },
-  certBadge: { fontSize: 12, color: "#c7d2fe", padding: "6px 10px", backgroundColor: "rgba(99, 102, 241, 0.12)", borderRadius: 8, border: "1px solid rgba(99, 102, 241, 0.2)" },
+  certSubtitle: { fontSize: 14, color: "#a3a3a3", marginBottom: 24 },
+  certCategories: { display: "flex", flexWrap: "wrap", gap: 16, justifyContent: "flex-start", rowGap: 16 },
+  certBadge: { fontSize: 13, color: "#c7d2fe", padding: "8px 14px", backgroundColor: "rgba(99, 102, 241, 0.12)", borderRadius: 8, border: "1px solid rgba(99, 102, 241, 0.2)", transition: "all 0.3s ease" },
 
   experienceTimeline: { display: "flex", flexDirection: "column", gap: 16, position: "relative", paddingLeft: 8 },
   experienceCard: { position: "relative", padding: "24px 24px 24px 32px", backgroundColor: "rgba(20, 20, 22, 0.8)", borderRadius: 16, border: "1px solid rgba(255,255,255,0.05)" },
@@ -1285,16 +1441,39 @@ const styles = {
   experiencePeriod: { fontSize: 13, color: "#737373" },
   experienceDescription: { fontSize: 14, color: "#d4d4d4", lineHeight: 1.6 },
 
+  languagesGrid: { display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(280px, 1fr))", gap: 24 },
+  languageCard: {
+    display: "flex",
+    alignItems: "center",
+    gap: 20,
+    padding: 28,
+    backgroundColor: "rgba(20, 20, 22, 0.8)",
+    borderRadius: 16,
+    border: "1px solid rgba(255,255,255,0.05)",
+    transition: "all 0.3s ease",
+  },
+  languageIcon: { flexShrink: 0, width: 48, height: 36, borderRadius: 4, overflow: "hidden" },
+  flagIcon: { width: "100%", height: "100%", objectFit: "cover" },
+  languageContent: { display: "flex", flexDirection: "column", gap: 4 },
+  languageName: { fontSize: 18, fontWeight: 600, color: "#ffffff" },
+  languageLevel: { fontSize: 14, color: "#a3a3a3" },
+
   footer: { padding: "80px 32px", backgroundColor: "rgba(12, 12, 14, 0.9)", borderTop: "1px solid rgba(255,255,255,0.05)" },
   footerContent: { maxWidth: 1200, margin: "0 auto", display: "grid", gridTemplateColumns: "2fr 1fr", gap: 40, alignItems: "center" },
   footerMain: { display: "flex", flexDirection: "column", gap: 12 },
   footerTitle: { fontSize: 26, fontWeight: 700, color: "#ffffff" },
   footerText: { fontSize: 15, color: "#a3a3a3", lineHeight: 1.6 },
   footerCta: { display: "inline-block", marginTop: 8, padding: "12px 20px", background: "linear-gradient(135deg, #6366f1, #ec4899)", borderRadius: 12, color: "#fff", textDecoration: "none", fontWeight: 600, boxShadow: "0 10px 30px -12px rgba(99, 102, 241, 0.5)" },
-  footerLinks: { display: "flex", gap: 16, justifyContent: "flex-end" },
-  footerLink: { color: "#a3a3a3", textDecoration: "none", fontSize: 14 },
-  footerBottom: { gridColumn: "1 / -1", display: "flex", flexWrap: "wrap", justifyContent: "space-between", alignItems: "center", gap: 12, borderTop: "1px solid rgba(255,255,255,0.05)", paddingTop: 20 },
+  footerLinks: { display: "flex", gap: 16, justifyContent: "flex-end", flexWrap: "wrap" },
+  footerLink: { 
+    display: "inline-flex", 
+    alignItems: "center", 
+    gap: 8, 
+    color: "#a3a3a3", 
+    textDecoration: "none", 
+    fontSize: 14,
+    transition: "all 0.2s ease",
+  },
+  footerBottom: { gridColumn: "1 / -1", display: "flex", flexWrap: "wrap", justifyContent: "center", alignItems: "center", gap: 12, borderTop: "1px solid rgba(255,255,255,0.05)", paddingTop: 20 },
   footerCopy: { fontSize: 13, color: "#737373" },
-  footerLang: { display: "flex", gap: 10, flexWrap: "wrap" },
-  langBadge: { fontSize: 12, color: "#d4d4d4", padding: "6px 10px", backgroundColor: "rgba(255,255,255,0.05)", borderRadius: 10, border: "1px solid rgba(255,255,255,0.08)" },
 };
