@@ -1,4 +1,4 @@
-﻿import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 
 const PROJECT_DETAILS = {
   'SmartClinic No-Show Predictor': {
@@ -26,6 +26,20 @@ const PROJECT_DETAILS = {
     ],
     stack: 'React, TypeScript, Vite, Zustand, Zod, Vitest/RTL, GitHub Actions, Vercel.'
   },
+
+  'DecisionOps AI Toolkit': {
+    resumen: 'Toolkit end-to-end para DecisionOps: entrenás un baseline de churn, hacés predicciones y obtenés explicabilidad, con UI lista para demo incluso sin backend.',
+    caracteristicas: [
+      'API FastAPI con endpoints /train, /predict, /explain y /health.',
+      'Persistencia de artifacts (modelo + schema + métricas) y autocarga al iniciar (lifespan).',
+      'Validación de inputs y manejo de errores consistente en predict.',
+      'Modo Demo en el frontend: funciona sin API y permite presentar el flujo completo.',
+      'Docker Compose para levantar web + api en 1 comando.',
+      'Pytest + CI para asegurar reproducibilidad.'
+    ],
+    stack: 'FastAPI, scikit-learn, pandas, React, Vite, Pytest, Docker, GitHub Actions, Vercel'
+  },
+
   'Plataforma Geriátricos': {
     resumen: 'Sistema de gestión para hogares geriátricos con backend API REST y frontend PWA mobile-first.',
     destinatarios: ['Propietarios/Administradores', 'Profesionales de la salud', 'Personal administrativo'],
@@ -284,6 +298,18 @@ export default function Portfolio() {
             <span style={styles.sectionNumber}>02</span>Proyectos Destacados
           </h2>
           <div style={styles.projectsGrid} className="projects-grid">
+
+            <ProjectCard
+              title="DecisionOps AI Toolkit"
+              category="DecisionOps + ML"
+              tags={['FastAPI', 'scikit-learn', 'React', 'Docker', 'Pytest']}
+              context="Toolkit end-to-end para entrenar, predecir churn y explicar decisiones con un flujo guiado."
+              impact="Demo deployable en Vercel (modo sin backend) + artifacts persistidos + CI para calidad."
+              color="#06b6d4"
+              setCursorVariant={setCursorVariant}
+              onOpenDetails={openProjectDetails}
+            />
+
             <ProjectCard
               title="AI Delivery Copilot"
               category="GenAI + Product"
