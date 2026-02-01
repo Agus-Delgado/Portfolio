@@ -1,6 +1,17 @@
 import React, { useEffect, useState } from 'react';
 
 const PROJECT_DETAILS = {
+  'AtlasOps': {
+    resumen: 'Módulo del ecosistema Paradise orientado a Decision Intelligence para operaciones (e-commerce/retail/logística). Plataforma serverless con métricas ejecutivas y alertas operativas, diseñada para deploy sin infraestructura siempre encendida en Cloudflare (Pages/Workers/D1).',
+    caracteristicas: [
+      'Overview con KPIs ejecutivos (GMV, Net Revenue, Orders, Refund Rate, Delivery SLA) y comparativas (DoD / 7d avg).',
+      'Alertas operativas con filtros por severidad y estado para reducir ruido y priorizar incidentes.',
+      'Mock-first: datos seed para demo instantánea y desarrollo local sin dependencias externas.',
+      'Monorepo con tipos/esquemas compartidos entre frontend y backend.',
+      'Stack Cloudflare-only para costos cero en MVP (sin servidores siempre encendidos).'
+    ],
+    stack: 'Cloudflare Pages, Workers, D1 (SQLite), Hono, TypeScript, React (Vite).'
+  },
   'SmartClinic No-Show Predictor': {
     resumen: 'Proyecto de Machine Learning + BI para predecir probabilidad de no-show (inasistencia) en turnos médicos con datos sintéticos y visualización en Power BI.',
     objetivo: [
@@ -297,7 +308,29 @@ export default function Portfolio() {
           <h2 style={styles.sectionTitle} className="section-title">
             <span style={styles.sectionNumber}>02</span>Proyectos Destacados
           </h2>
+
+          <div style={styles.paradiseBox} className="paradise-box">
+            <div style={styles.paradiseHeader}>
+              <span style={styles.paradiseTitle}>Paradise</span>
+              <span style={styles.paradiseBadge}>AI-first ecosystem</span>
+            </div>
+            <p style={styles.paradiseText}>
+              Ecosistema modular de herramientas con IA (GenAI/ML) orientadas a <strong>decisiones</strong>, <strong>automatización</strong> y <strong>productividad</strong>. AtlasOps y AI Delivery Copilot son módulos independientes dentro de Paradise.
+            </p>
+          </div>
+
           <div style={styles.projectsGrid} className="projects-grid">
+
+            <ProjectCard
+              title="AtlasOps"
+              category="Ops + Decision Intelligence · Paradise"
+              tags={['Cloudflare', 'Workers', 'D1', 'Hono', 'React']}
+              context="Decision Intelligence Hub serverless para operaciones: KPIs ejecutivos + alertas accionables."
+              impact="Deploy sin infraestructura siempre encendida (Cloudflare edge) + demo mock-first para portfolio."
+              color="#6366f1"
+              setCursorVariant={setCursorVariant}
+              onOpenDetails={openProjectDetails}
+            />
 
             <ProjectCard
               title="DecisionOps AI Toolkit"
@@ -312,7 +345,7 @@ export default function Portfolio() {
 
             <ProjectCard
               title="AI Delivery Copilot"
-              category="GenAI + Product"
+              category="GenAI + Product · Paradise"
               tags={['React', 'TypeScript', 'Zod', 'Vitest']}
               context="Copiloto para transformar un brief en PRDs, backlogs y QA packs listos para uso."
               impact="Modo demo sin costos + validación automática + links compartibles para colaboración."
@@ -960,6 +993,11 @@ const styles = {
   statNumber: { display: 'block', fontFamily: "'Space Grotesk', sans-serif", fontSize: '42px', fontWeight: '800', marginBottom: '4px' },
   statLabel: { fontSize: '13px', color: '#737373', textTransform: 'uppercase', letterSpacing: '1px' },
   projectsGrid: { display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: '24px' },
+  paradiseBox: { padding: '24px', backgroundColor: 'rgba(20, 20, 22, 0.55)', borderRadius: '18px', border: '1px solid rgba(255,255,255,0.06)', marginBottom: '28px', backdropFilter: 'blur(12px)' },
+  paradiseHeader: { display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '12px', marginBottom: '10px' },
+  paradiseTitle: { fontFamily: "'Space Grotesk', sans-serif", fontSize: '18px', fontWeight: '800', letterSpacing: '-0.5px', color: '#ffffff' },
+  paradiseBadge: { fontSize: '11px', fontWeight: '700', color: '#c7d2fe', padding: '6px 10px', backgroundColor: 'rgba(99, 102, 241, 0.12)', borderRadius: '999px', border: '1px solid rgba(99, 102, 241, 0.2)', whiteSpace: 'nowrap' },
+  paradiseText: { fontSize: '14px', color: '#a3a3a3', lineHeight: '1.7', margin: 0 },
   icon: { width: '16px', height: '16px' },
   section: { padding: '120px 32px', position: 'relative', zIndex: 2 },
   sectionAlt: { backgroundColor: 'rgba(255,255,255,0.01)' },
