@@ -12,6 +12,28 @@ const PROJECT_DETAILS = {
     ],
     stack: 'Cloudflare Pages, Workers, D1 (SQLite), Hono, TypeScript, React (Vite).'
   },
+'Paradise Pulse': {
+  resumen: 'Módulo de Paradise para monitoreo local-first de series temporales: detecta anomalías sobre CSV (local o demo), prioriza alertas y exporta reportes accionables en Markdown.',
+  caracteristicas: [
+    'Signals: carga CSV (local/demo), selección de columnas, normalización, baseline y anomalías marcadas.',
+    'Alerts: lista de anomalías con severidad, detalle con contexto antes/después y playbooks por severidad.',
+    'Export: genera un informe Markdown (resumen + tabla de alerts + playbooks) con copy-to-clipboard.',
+    'Docs: documentación del flujo y dataset demo para onboarding.',
+    'Sin backend obligatorio: pensado para portfolio/demos y extensión futura.'
+  ],
+  stack: 'React, TypeScript, Vite, SVG charts, local CSV ingest.'
+},
+'Paradise Nexus': {
+  resumen: 'Sistema local-first de gestión de documentos con búsqueda full-text e IA generativa (modo mock). Biblioteca personal de conocimiento con $0 de infraestructura, indexación automática y respuestas basadas en tu propio contexto.',
+  caracteristicas: [
+    'Library: CRUD de Sources/Documents + upload .md/.txt con auto-fill de título.',
+    'Persistencia local con IndexedDB (idb) y eliminación en cascada (Source → Documents → Chunks).',
+    'Ingest + Index: chunking automático por párrafos (máx. 500 chars) y store de chunks por doc/source.',
+    'Search: full-text keyword sobre chunks con ranking simple y highlights XSS-safe.',
+    'Answer API: Cloudflare Worker con endpoint POST /answer; modo mock determinístico + citations; placeholder BYOK.'
+  ],
+  stack: 'React 18, Vite, TypeScript, IndexedDB (idb), Cloudflare Workers, npm workspaces.'
+},
   'SmartClinic No-Show Predictor': {
     resumen: 'Proyecto de Machine Learning + BI para predecir probabilidad de no-show (inasistencia) en turnos médicos con datos sintéticos y visualización en Power BI.',
     objetivo: [
@@ -315,7 +337,7 @@ export default function Portfolio() {
               <span style={styles.paradiseBadge}>AI-first ecosystem</span>
             </div>
             <p style={styles.paradiseText}>
-              Ecosistema modular de herramientas con IA (GenAI/ML) orientadas a <strong>decisiones</strong>, <strong>automatización</strong> y <strong>productividad</strong>. AtlasOps y AI Delivery Copilot son módulos independientes dentro de Paradise.
+              Ecosistema modular de herramientas con IA (GenAI/ML) orientadas a <strong>decisiones</strong>, <strong>automatización</strong> y <strong>productividad</strong>. <strong>AtlasOps</strong>, <strong>Paradise Pulse</strong>, <strong>Paradise Nexus</strong> y <strong>AI Delivery Copilot</strong> son módulos independientes dentro de Paradise.
             </p>
           </div>
 
@@ -328,6 +350,28 @@ export default function Portfolio() {
               context="Decision Intelligence Hub serverless para operaciones: KPIs ejecutivos + alertas accionables."
               impact="Deploy sin infraestructura siempre encendida (Cloudflare edge) + demo mock-first para portfolio."
               color="#6366f1"
+              setCursorVariant={setCursorVariant}
+              onOpenDetails={openProjectDetails}
+            />
+
+            <ProjectCard
+              title="Paradise Pulse"
+              category="Monitoring + Anomaly Detection · Paradise"
+              tags={['CSV', 'Local-first', 'Anomalies', 'Markdown Export']}
+              context="Monitor local para series temporales: baseline, anomalías y contexto operativo por evento."
+              impact="Alertas priorizadas + playbooks + export a Markdown para comunicación rápida."
+              color="#22c55e"
+              setCursorVariant={setCursorVariant}
+              onOpenDetails={openProjectDetails}
+            />
+
+            <ProjectCard
+              title="Paradise Nexus"
+              category="Knowledge Base + Search · Paradise"
+              tags={['IndexedDB', 'Full-text', 'Workers', 'Mock GenAI']}
+              context="Biblioteca personal de documentos con ingest/chunking, búsqueda keyword y respuestas con citations."
+              impact="$0 infra: persistencia en cliente + API en Cloudflare Worker (mock/BYOK-ready)."
+              color="#ec4899"
               setCursorVariant={setCursorVariant}
               onOpenDetails={openProjectDetails}
             />
