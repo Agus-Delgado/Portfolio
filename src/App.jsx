@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+﻿import React, { useEffect, useState } from 'react';
 
 const PROJECT_DETAILS = {
   'AtlasOps': {
@@ -35,9 +35,9 @@ const PROJECT_DETAILS = {
   stack: 'React 18, Vite, TypeScript, IndexedDB (idb), Cloudflare Workers, npm workspaces.'
 },
   'SmartClinic No-Show Predictor': {
-    resumen: 'Proyecto de Machine Learning + BI para predecir probabilidad de no-show (inasistencia) en turnos médicos con datos sintéticos y visualización en Power BI.',
+    resumen: 'Proyecto de Machine Learning + BI para predecir probabilidad de no-show (inasistencia) en turnos con datos sintéticos y visualización en Power BI.',
     objetivo: [
-      'Simular comportamiento de consultorio.',
+      'Simular comportamiento operativo de agendas y turnos.',
       'Entrenar Regresión Logística para estimar probabilidad de no-show por turno.',
       'Dashboard en Power BI para factores de riesgo y ranking de turnos.'
     ],
@@ -75,7 +75,7 @@ const PROJECT_DETAILS = {
 
   'Plataforma Geriátricos': {
     resumen: 'Sistema de gestión para hogares geriátricos con backend API REST y frontend PWA mobile-first.',
-    destinatarios: ['Propietarios/Administradores', 'Profesionales de la salud', 'Personal administrativo'],
+    destinatarios: ['Propietarios/Administradores', 'Profesionales especializados', 'Personal administrativo'],
     caracteristicas: [
       'Gestión de residentes (info personal/médica, admisiones/estadías, contactos de emergencia).',
       'Gestión clínica (resúmenes, diagnósticos, notas clínicas, alergias, medicaciones actuales).',
@@ -86,19 +86,19 @@ const PROJECT_DETAILS = {
       'PWA: instalable, offline, optimizada para móviles.',
       'Web Push (noticias diarias): configuración desde "Mi cuenta".'
     ],
-    roles: ['OWNER: acceso completo + finanzas + usuarios.', 'DOCTOR: gestión clínica/medicación; sin finanzas.'],
+    roles: ['OWNER: acceso completo + finanzas + usuarios.', 'PROFESSIONAL: gestión clínica/medicación; sin finanzas.'],
     stack: 'Backend: FastAPI, SQLAlchemy 2.0, PostgreSQL, Alembic, JWT, bcrypt, slowapi. Frontend: React, TypeScript, Vite, Tailwind, React Router, vite-plugin-pwa.'
   },
   'Mi Consultorio': {
-    resumen: 'Sistema integral en Python/Django para gestión de consultorios médicos.',
+    resumen: 'Sistema integral en Python/Django para gestión de consultorios y agendas profesionales.',
     highlights: 'Interfaz moderna (gradientes, glassmorphism), responsive, dashboard analítico, centro de ayuda.',
     modulos: [
       'Historias clínicas digitales con CKEditor (texto enriquecido).',
       'Turnos y agenda: estados (Pendiente/Asistió/Cancelado), validación anti-duplicados, control de asistencia.',
-      'Notificaciones por email: confirmación y recordatorios (48h) + resumen de agenda a médicos.',
+      'Notificaciones por email: confirmación y recordatorios (48h) + resumen de agenda a profesionales.',
       'Recetas digitales: integración con MisRX, repetir receta, PDFs listos para imprimir.',
       'Gestión financiera: caja diaria automatizada, ingresos/egresos, reportes.',
-      'Seguridad: PIN 4 dígitos para acciones sensibles, roles diferenciados (médicos vs administrativos).'
+      'Seguridad: PIN 4 dígitos para acciones sensibles, roles diferenciados (profesionales vs administrativos).'
     ],
     stack: 'Django, Python, Bootstrap/Jazzmin, CKEditor'
   },
@@ -228,7 +228,7 @@ export default function Portfolio() {
             <span className="role-tag">Full Stack Developer</span>
           </div>
           <p style={styles.heroDescription}>
-            Transformo datos en decisiones estratégicas y construyo soluciones de IA para el sector healthcare.
+            Transformo datos en decisiones y construyo productos de analítica, machine learning e IA generativa para mejorar operaciones y performance.
           </p>
           <div style={styles.heroContact}>
             <a
@@ -274,8 +274,8 @@ export default function Portfolio() {
               <span style={styles.statLabel}>Proyectos en Prod</span>
             </div>
             <div style={styles.stat} className="stat-card">
-              <span style={styles.statNumber} className="stat-number">7+</span>
-              <span style={styles.statLabel}>Años Healthcare</span>
+              <span style={styles.statNumber} className="stat-number">9+</span>
+              <span style={styles.statLabel}>Proyectos end-to-end</span>
             </div>
           </div>
         </div>
@@ -289,7 +289,7 @@ export default function Portfolio() {
           <div style={styles.aboutGrid}>
             <div style={styles.aboutText}>
               <p style={styles.paragraph} className="fade-in-up">
-                Especialista en <strong>Inteligencia Artificial y Análisis de Datos</strong> con 62 certificaciones profesionales y experiencia práctica desarrollando soluciones tecnológicas para el sector healthcare.
+                Trabajo en la intersección entre análisis de datos, BI, machine learning e IA generativa. Diseño soluciones end-to-end: desde datos y métricas hasta interfaces y flujos de decisión, priorizando demos claras, documentación sólida y despliegues económicos.
               </p>
               <p style={styles.paragraph} className="fade-in-up">
                 Combino sólidos fundamentos en Machine Learning, desarrollo Full Stack y Business Intelligence para transformar datos en decisiones estratégicas de negocio.
@@ -302,8 +302,8 @@ export default function Portfolio() {
               <div style={styles.highlight} className="highlight-card">
                 <div style={styles.highlightIcon}>🎯</div>
                 <div>
-                  <h4 style={styles.highlightTitle}>Especialización Healthcare</h4>
-                  <p style={styles.highlightText}>Proyectos reales implementados en el sector salud</p>
+                  <h4 style={styles.highlightTitle}>Enfoque en impacto operativo</h4>
+                  <p style={styles.highlightText}>Soluciones aplicadas a performance, decisiones y automatización en distintos dominios</p>
                 </div>
               </div>
               <div style={styles.highlight} className="highlight-card">
@@ -492,7 +492,7 @@ export default function Portfolio() {
           <div style={styles.experienceTimeline}>
             <ExperienceCard
               title="Administrativo & ML Engineer"
-              company="Consultorio Médico Privado"
+              company="Operaciones en consultorio privado"
               period="2018 - Presente"
               description="Desarrollo e implementación de soluciones ML para optimización de turnos. Digitalización completa de procesos administrativos con sistemas propios."
               current={true}
