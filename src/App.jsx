@@ -1,9 +1,8 @@
 ﻿import React, { useEffect, useState } from 'react';
 
-const PROJECT_DETAILS: Record<string, any> = {
-  AtlasOps: {
-    resumen:
-      'Módulo del ecosistema Paradise orientado a Decision Intelligence para operaciones (e-commerce/retail/logística). Plataforma serverless con métricas ejecutivas y alertas operativas, diseñada para deploy sin infraestructura siempre encendida en Cloudflare (Pages/Workers/D1).',
+const PROJECT_DETAILS = {
+  'AtlasOps': {
+    resumen: 'Módulo del ecosistema Paradise orientado a Decision Intelligence para operaciones (e-commerce/retail/logística). Plataforma serverless con métricas ejecutivas y alertas operativas, diseñada para deploy sin infraestructura siempre encendida en Cloudflare (Pages/Workers/D1).',
     caracteristicas: [
       'Overview con KPIs ejecutivos (GMV, Net Revenue, Orders, Refund Rate, Delivery SLA) y comparativas (DoD / 7d avg).',
       'Alertas operativas con filtros por severidad y estado para reducir ruido y priorizar incidentes.',
@@ -13,49 +12,30 @@ const PROJECT_DETAILS: Record<string, any> = {
     ],
     stack: 'Cloudflare Pages, Workers, D1 (SQLite), Hono, TypeScript, React (Vite).'
   },
-
-  'Paradise Pulse': {
-    resumen:
-      'Módulo de Paradise para monitoreo local-first de series temporales: detecta anomalías sobre CSV (local o demo), prioriza alertas y exporta reportes accionables en Markdown.',
-    caracteristicas: [
-      'Signals: carga CSV (local/demo), selección de columnas, normalización, baseline y anomalías marcadas.',
-      'Alerts: lista de anomalías con severidad, detalle con contexto antes/después y playbooks por severidad.',
-      'Export: genera un informe Markdown (resumen + tabla de alerts + playbooks) con copy-to-clipboard.',
-      'Docs: documentación del flujo y dataset demo para onboarding.',
-      'Sin backend obligatorio: pensado para portfolio/demos y extensión futura.'
-    ],
-    stack: 'React, TypeScript, Vite, SVG charts, local CSV ingest.'
-  },
-
-  'Paradise Nexus': {
-    resumen:
-      'Sistema local-first de gestión de documentos con búsqueda full-text e IA generativa (modo mock). Biblioteca personal de conocimiento con $0 de infraestructura, indexación automática y respuestas basadas en tu propio contexto.',
-    caracteristicas: [
-      'Library: CRUD de Sources/Documents + upload .md/.txt con auto-fill de título.',
-      'Persistencia local con IndexedDB (idb) y eliminación en cascada (Source → Documents → Chunks).',
-      'Ingest + Index: chunking automático por párrafos (máx. 500 chars) y store de chunks por doc/source.',
-      'Search: full-text keyword sobre chunks con ranking simple y highlights XSS-safe.',
-      'Answer API: Cloudflare Worker con endpoint POST /answer; modo mock determinístico + citations; placeholder BYOK.'
-    ],
-    stack: 'React 18, Vite, TypeScript, IndexedDB (idb), Cloudflare Workers, npm workspaces.'
-  },
-
-  ModelArc: {
-    resumen:
-      'Módulo de Paradise orientado a Power BI: modelado semántico (star schema), DAX avanzado y dashboards interactivos con foco en gobernanza y performance. Demo 100% local con datos CSV sintéticos (sin cloud).',
-    caracteristicas: [
-      'Star schema: 4 dimensiones + 1 fact con relaciones 1-* y atributos de calidad (tipos, formatos, ocultamiento de columnas).',
-      'Medidas DAX (15+): base + time intelligence (MTD/QTD/YTD) + variaciones YoY/MoM + share por categoría/región.',
-      'Dashboard en 3 páginas: Executive Overview, Deep Dive y Advanced con Key Influencers (AI visual).',
-      'Advanced: drivers de RevenueBand=High (Low/Mid/High por percentiles 33/66) con interpretabilidad.',
-      'Repo portfolio-ready: documentación técnica + setup reproducible con plantilla .pbit y datos locales.'
-    ],
-    stack: 'Power BI Desktop, DAX, Star Schema, CSV local-first, documentación Markdown.'
-  },
-
+'Paradise Pulse': {
+  resumen: 'Módulo de Paradise para monitoreo local-first de series temporales: detecta anomalías sobre CSV (local o demo), prioriza alertas y exporta reportes accionables en Markdown.',
+  caracteristicas: [
+    'Signals: carga CSV (local/demo), selección de columnas, normalización, baseline y anomalías marcadas.',
+    'Alerts: lista de anomalías con severidad, detalle con contexto antes/después y playbooks por severidad.',
+    'Export: genera un informe Markdown (resumen + tabla de alerts + playbooks) con copy-to-clipboard.',
+    'Docs: documentación del flujo y dataset demo para onboarding.',
+    'Sin backend obligatorio: pensado para portfolio/demos y extensión futura.'
+  ],
+  stack: 'React, TypeScript, Vite, SVG charts, local CSV ingest.'
+},
+'Paradise Nexus': {
+  resumen: 'Sistema local-first de gestión de documentos con búsqueda full-text e IA generativa (modo mock). Biblioteca personal de conocimiento con $0 de infraestructura, indexación automática y respuestas basadas en tu propio contexto.',
+  caracteristicas: [
+    'Library: CRUD de Sources/Documents + upload .md/.txt con auto-fill de título.',
+    'Persistencia local con IndexedDB (idb) y eliminación en cascada (Source → Documents → Chunks).',
+    'Ingest + Index: chunking automático por párrafos (máx. 500 chars) y store de chunks por doc/source.',
+    'Search: full-text keyword sobre chunks con ranking simple y highlights XSS-safe.',
+    'Answer API: Cloudflare Worker con endpoint POST /answer; modo mock determinístico + citations; placeholder BYOK.'
+  ],
+  stack: 'React 18, Vite, TypeScript, IndexedDB (idb), Cloudflare Workers, npm workspaces.'
+},
   'SmartClinic No-Show Predictor': {
-    resumen:
-      'Proyecto de Machine Learning + BI para predecir probabilidad de no-show (inasistencia) en turnos con datos sintéticos y visualización en Power BI.',
+    resumen: 'Proyecto de Machine Learning + BI para predecir probabilidad de no-show (inasistencia) en turnos con datos sintéticos y visualización en Power BI.',
     objetivo: [
       'Simular comportamiento operativo de agendas y turnos.',
       'Entrenar Regresión Logística para estimar probabilidad de no-show por turno.',
@@ -67,10 +47,8 @@ const PROJECT_DETAILS: Record<string, any> = {
     dashboard: ['Resumen general', 'Factores de riesgo (distancia, franja horaria, día)', 'Riesgo de no-show (ranking por no_show_proba)'],
     stack: 'Python (numpy, pandas, scikit-learn), Power BI'
   },
-
   'AI Delivery Copilot': {
-    resumen:
-      'Copiloto GenAI para generar PRDs, backlogs y QA packs a partir de un brief, orientado a acelerar documentación y delivery en equipos de producto.',
+    resumen: 'Copiloto GenAI para generar PRDs, backlogs y QA packs a partir de un brief, orientado a acelerar documentación y delivery en equipos de producto.',
     caracteristicas: [
       'Modo demo 100% client-side (sin API keys) con artefactos determinísticos para portfolio.',
       'Validación por esquema (Zod) + bucle de reparación automática ante salidas inválidas.',
@@ -83,8 +61,7 @@ const PROJECT_DETAILS: Record<string, any> = {
   },
 
   'DecisionOps AI Toolkit': {
-    resumen:
-      'Toolkit end-to-end para DecisionOps: entrenás un baseline de churn, hacés predicciones y obtenés explicabilidad, con UI lista para demo incluso sin backend.',
+    resumen: 'Toolkit end-to-end para DecisionOps: entrenás un baseline de churn, hacés predicciones y obtenés explicabilidad, con UI lista para demo incluso sin backend.',
     caracteristicas: [
       'API FastAPI con endpoints /train, /predict, /explain y /health.',
       'Persistencia de artifacts (modelo + schema + métricas) y autocarga al iniciar (lifespan).',
@@ -110,10 +87,8 @@ const PROJECT_DETAILS: Record<string, any> = {
       'Web Push (noticias diarias): configuración desde "Mi cuenta".'
     ],
     roles: ['OWNER: acceso completo + finanzas + usuarios.', 'PROFESSIONAL: gestión clínica/medicación; sin finanzas.'],
-    stack:
-      'Backend: FastAPI, SQLAlchemy 2.0, PostgreSQL, Alembic, JWT, bcrypt, slowapi. Frontend: React, TypeScript, Vite, Tailwind, React Router, vite-plugin-pwa.'
+    stack: 'Backend: FastAPI, SQLAlchemy 2.0, PostgreSQL, Alembic, JWT, bcrypt, slowapi. Frontend: React, TypeScript, Vite, Tailwind, React Router, vite-plugin-pwa.'
   },
-
   'Mi Consultorio': {
     resumen: 'Sistema integral en Python/Django para gestión de consultorios y agendas profesionales.',
     highlights: 'Interfaz moderna (gradientes, glassmorphism), responsive, dashboard analítico, centro de ayuda.',
@@ -127,7 +102,6 @@ const PROJECT_DETAILS: Record<string, any> = {
     ],
     stack: 'Django, Python, Bootstrap/Jazzmin, CKEditor'
   },
-
   'Consultorio Barcala': {
     resumen: 'Sitio web del Consultorio Barcala desarrollado con React + TypeScript + Vite.',
     estructura: 'components/, pages/, design-system/, services/, types/, utils/.',
@@ -136,16 +110,15 @@ const PROJECT_DETAILS: Record<string, any> = {
 };
 
 export default function Portfolio() {
-  const [activeSection, setActiveSection] = useState<string>('');
-  const [isLoaded, setIsLoaded] = useState<boolean>(false);
-  const [mousePos, setMousePos] = useState<{ x: number; y: number }>({ x: 0, y: 0 });
-  const [cursorVariant, setCursorVariant] = useState<'default' | 'hover'>('default');
-  const [isProjectModalOpen, setIsProjectModalOpen] = useState<boolean>(false);
-  const [selectedProjectTitle, setSelectedProjectTitle] = useState<string | null>(null);
+  const [activeSection, setActiveSection] = useState('');
+  const [isLoaded, setIsLoaded] = useState(false);
+  const [mousePos, setMousePos] = useState({ x: 0, y: 0 });
+  const [cursorVariant, setCursorVariant] = useState('default');
+  const [isProjectModalOpen, setIsProjectModalOpen] = useState(false);
+  const [selectedProjectTitle, setSelectedProjectTitle] = useState(null);
 
   useEffect(() => {
     setTimeout(() => setIsLoaded(true), 100);
-
     const handleScroll = () => {
       const sections = ['about', 'projects', 'skills', 'education', 'experience'];
       for (const section of sections) {
@@ -159,9 +132,7 @@ export default function Portfolio() {
         }
       }
     };
-
-    const handleMouseMove = (e: MouseEvent) => setMousePos({ x: e.clientX, y: e.clientY });
-
+    const handleMouseMove = (e) => setMousePos({ x: e.clientX, y: e.clientY });
     window.addEventListener('scroll', handleScroll);
     window.addEventListener('mousemove', handleMouseMove);
     return () => {
@@ -173,7 +144,7 @@ export default function Portfolio() {
   useEffect(() => {
     if (isProjectModalOpen) {
       document.body.style.overflow = 'hidden';
-      const handleEsc = (e: KeyboardEvent) => {
+      const handleEsc = (e) => {
         if (e.key === 'Escape') closeProjectDetails();
       };
       window.addEventListener('keydown', handleEsc);
@@ -184,9 +155,9 @@ export default function Portfolio() {
     }
   }, [isProjectModalOpen]);
 
-  const scrollTo = (id: string) => document.getElementById(id)?.scrollIntoView({ behavior: 'smooth' });
+  const scrollTo = (id) => document.getElementById(id)?.scrollIntoView({ behavior: 'smooth' });
 
-  const openProjectDetails = (title: string) => {
+  const openProjectDetails = (title) => {
     setSelectedProjectTitle(title);
     setIsProjectModalOpen(true);
   };
@@ -199,7 +170,6 @@ export default function Portfolio() {
   return (
     <div style={styles.container}>
       <style>{globalStyles}</style>
-
       <div
         className="custom-cursor"
         style={{
@@ -209,7 +179,6 @@ export default function Portfolio() {
           backgroundColor: cursorVariant === 'hover' ? 'rgba(99, 102, 241, 0.3)' : 'rgba(99, 102, 241, 0.8)'
         }}
       />
-
       <div className="bg-gradient-1" />
       <div className="bg-gradient-2" />
       <div className="noise-overlay" />
@@ -220,7 +189,6 @@ export default function Portfolio() {
             <span style={{ fontWeight: '700', color: '#ffffff' }}>Agustín</span>
             <span style={{ fontWeight: '300', color: '#6366f1', marginLeft: '8px' }}>Delgado</span>
           </span>
-
           <div style={styles.navLinks}>
             {['about', 'projects', 'skills', 'education', 'experience'].map((item, i) => (
               <button
@@ -246,15 +214,12 @@ export default function Portfolio() {
       <header style={styles.hero}>
         <div className={`hero-content ${isLoaded ? 'hero-loaded' : ''}`}>
           <div style={styles.heroBadge} className="hero-badge">
-            <span className="badge-dot" />
-            Disponible para nuevos proyectos
+            <span className="badge-dot" />Disponible para nuevos proyectos
           </div>
-
           <h1 style={styles.heroTitle}>
             <span className="title-line">Agustín</span>
             <span className="title-line title-accent">Delgado</span>
           </h1>
-
           <div style={styles.heroRoles}>
             <span className="role-tag">Machine Learning Engineer</span>
             <span className="role-divider">◆</span>
@@ -262,11 +227,9 @@ export default function Portfolio() {
             <span className="role-divider">◆</span>
             <span className="role-tag">Full Stack Developer</span>
           </div>
-
           <p style={styles.heroDescription}>
             Transformo datos en decisiones y construyo productos de analítica, machine learning e IA generativa para mejorar operaciones y performance.
           </p>
-
           <div style={styles.heroContact}>
             <a
               href="mailto:augusto.delgado00@hotmail.com"
@@ -277,7 +240,6 @@ export default function Portfolio() {
             >
               <EmailIcon /> augusto.delgado00@hotmail.com
             </a>
-
             <a
               href="tel:+541150521473"
               style={styles.contactLink}
@@ -287,11 +249,9 @@ export default function Portfolio() {
             >
               <PhoneIcon /> +54 11 5052-1473
             </a>
-
             <span style={styles.contactLink} className="contact-pill">
               <LocationIcon /> Buenos Aires, Argentina
             </span>
-
             <a
               href="https://linkedin.com/in/agustin-delgado-data98615190"
               target="_blank"
@@ -304,37 +264,28 @@ export default function Portfolio() {
               <LinkedInIcon /> LinkedIn
             </a>
           </div>
-
           <div style={styles.heroStats}>
             <div style={styles.stat} className="stat-card">
-              <span style={styles.statNumber} className="stat-number">
-                4
-              </span>
+              <span style={styles.statNumber} className="stat-number">4</span>
               <span style={styles.statLabel}>Plataformas de formación</span>
             </div>
             <div style={styles.stat} className="stat-card">
-              <span style={styles.statNumber} className="stat-number">
-                5+
-              </span>
+              <span style={styles.statNumber} className="stat-number">5+</span>
               <span style={styles.statLabel}>Proyectos en Prod</span>
             </div>
             <div style={styles.stat} className="stat-card">
-              <span style={styles.statNumber} className="stat-number">
-                9+
-              </span>
+              <span style={styles.statNumber} className="stat-number">9+</span>
               <span style={styles.statLabel}>Proyectos end-to-end</span>
             </div>
           </div>
         </div>
       </header>
 
-      {/* ABOUT */}
       <section id="about" style={styles.section}>
         <div style={styles.sectionContent}>
           <h2 style={styles.sectionTitle} className="section-title">
             <span style={styles.sectionNumber}>01</span>Perfil Profesional
           </h2>
-
           <div style={styles.aboutGrid}>
             <div style={styles.aboutText}>
               <p style={styles.paragraph} className="fade-in-up">
@@ -347,7 +298,6 @@ export default function Portfolio() {
                 Mi enfoque se centra en aplicar IA de forma práctica para resolver problemas reales: desde la predicción de inasistencias médicas hasta la automatización de procesos administrativos complejos.
               </p>
             </div>
-
             <div style={styles.aboutHighlights}>
               <div style={styles.highlight} className="highlight-card">
                 <div style={styles.highlightIcon}>🎯</div>
@@ -375,7 +325,6 @@ export default function Portfolio() {
         </div>
       </section>
 
-      {/* PROJECTS */}
       <section id="projects" style={{ ...styles.section, ...styles.sectionAlt }}>
         <div style={styles.sectionContent}>
           <h2 style={styles.sectionTitle} className="section-title">
@@ -388,95 +337,45 @@ export default function Portfolio() {
               <span style={styles.paradiseBadge}>AI-first ecosystem</span>
             </div>
             <p style={styles.paradiseText}>
-              Ecosistema modular de herramientas con IA (GenAI/ML) y BI orientadas a <strong>decisiones</strong>, <strong>automatización</strong> y <strong>productividad</strong>. <strong>AtlasOps</strong>, <strong>Paradise Pulse</strong>, <strong>Paradise Nexus</strong>, <strong>ModelArc</strong> y <strong>AI Delivery Copilot</strong> son módulos independientes dentro de Paradise.
+              Ecosistema modular de herramientas con IA (GenAI/ML) orientadas a <strong>decisiones</strong>, <strong>automatización</strong> y <strong>productividad</strong>. <strong>AtlasOps</strong>, <strong>Paradise Pulse</strong>, <strong>Paradise Nexus</strong> y <strong>AI Delivery Copilot</strong> son módulos independientes dentro de Paradise.
             </p>
-          </div>
-
-          <div style={styles.paradiseCollection} className="paradise-collection">
-            <div style={styles.paradiseCollectionHeader}>
-              <h3 style={styles.paradiseCollectionTitle}>Paradise Modules</h3>
-              <span style={styles.paradiseCollectionPill}>Collection</span>
-            </div>
-
-            <p style={styles.paradiseCollectionText}>
-              Módulos del ecosistema <strong>Paradise</strong>. Demo disponible a pedido (sin acceso público al código) para proteger IP y permitir evaluación guiada.
-            </p>
-
-            {/* ✅ FIX: style={{ ... }} y spread dentro de {{ }} */}
-            <div style={{ display: 'flex', gap: '10px', flexWrap: 'wrap', marginBottom: '14px' }}>
-              <a
-                href="mailto:augusto.delgado00@hotmail.com?subject=Request%20Paradise%20demo&body=Hola%20Agust%C3%ADn%2C%0A%0AVi%20tu%20portfolio%20y%20me%20interesa%20ver%20una%20demo%20privada%20de%20Paradise%20%28AtlasOps%20/%20Pulse%20/%20Nexus%20/%20ModelArc%29.%20%C2%BFPodemos%20coordinar%20un%20horario%3F%0A%0AGracias%2C%0A%5BNombre%5D%0A%5BEmpresa%5D%0A"
-                style={{ ...styles.ctaButton, textDecoration: 'none' }}
-              >
-                Request demo
-              </a>
-              <span style={styles.ctaHint}>Video privado o demo guiada en vivo · Repos privados</span>
-            </div>
-
-            <div style={styles.paradiseModulesGrid} className="paradise-modules-grid">
-              <ProjectCard
-                title="AtlasOps"
-                category="Ops + Decision Intelligence · Paradise"
-                tags={['Cloudflare', 'Workers', 'D1', 'Hono', 'React']}
-                context="Decision Intelligence Hub serverless para operaciones: KPIs ejecutivos + alertas accionables."
-                impact="Deploy sin infraestructura siempre encendida (Cloudflare edge) + demo mock-first para portfolio."
-                color="#6366f1"
-                setCursorVariant={setCursorVariant}
-                onOpenDetails={openProjectDetails}
-              />
-
-              <ProjectCard
-                title="Paradise Pulse"
-                category="Monitoring + Anomaly Detection · Paradise"
-                tags={['CSV', 'Local-first', 'Anomalies', 'Markdown Export']}
-                context="Monitor local para series temporales: baseline, anomalías y contexto operativo por evento."
-                impact="Alertas priorizadas + playbooks + export a Markdown para comunicación rápida."
-                color="#22c55e"
-                setCursorVariant={setCursorVariant}
-                onOpenDetails={openProjectDetails}
-              />
-
-              <ProjectCard
-                title="Paradise Nexus"
-                category="Knowledge Base + Search · Paradise"
-                tags={['IndexedDB', 'Full-text', 'Workers', 'Mock GenAI']}
-                context="Biblioteca personal de documentos con ingest/chunking, búsqueda keyword y respuestas con citations."
-                impact="$0 infra: persistencia en cliente + API en Cloudflare Worker (mock/BYOK-ready)."
-                color="#ec4899"
-                setCursorVariant={setCursorVariant}
-                onOpenDetails={openProjectDetails}
-              />
-
-              <ProjectCard
-                title="ModelArc"
-                category="Power BI + Semantic Modeling · Paradise"
-                tags={['Power BI', 'DAX', 'Star Schema', 'Governance']}
-                context="Demo local-first de modelado semántico en Power BI: star schema + medidas DAX + dashboards."
-                impact="Portfolio-ready: 3 páginas (Executive/Deep Dive/Advanced) + Key Influencers para drivers de High Revenue."
-                color="#64748b"
-                setCursorVariant={setCursorVariant}
-                onOpenDetails={openProjectDetails}
-              />
-
-              <ProjectCard
-                title="AI Delivery Copilot"
-                category="GenAI + Product · Paradise"
-                tags={['React', 'TypeScript', 'Zod', 'Vitest']}
-                context="Copiloto para transformar un brief en PRDs, backlogs y QA packs listos para uso."
-                impact="Modo demo sin costos + validación automática + links compartibles para colaboración."
-                color="#ef4444"
-                setCursorVariant={setCursorVariant}
-                onOpenDetails={openProjectDetails}
-              />
-            </div>
-          </div>
-
-          <div style={styles.otherProjectsHeader}>
-            <h3 style={styles.otherProjectsTitle}>Otros proyectos</h3>
-            <p style={styles.otherProjectsText}>Aplicaciones y productos fuera del ecosistema Paradise.</p>
           </div>
 
           <div style={styles.projectsGrid} className="projects-grid">
+
+            <ProjectCard
+              title="AtlasOps"
+              category="Ops + Decision Intelligence · Paradise"
+              tags={['Cloudflare', 'Workers', 'D1', 'Hono', 'React']}
+              context="Decision Intelligence Hub serverless para operaciones: KPIs ejecutivos + alertas accionables."
+              impact="Deploy sin infraestructura siempre encendida (Cloudflare edge) + demo mock-first para portfolio."
+              color="#6366f1"
+              setCursorVariant={setCursorVariant}
+              onOpenDetails={openProjectDetails}
+            />
+
+            <ProjectCard
+              title="Paradise Pulse"
+              category="Monitoring + Anomaly Detection · Paradise"
+              tags={['CSV', 'Local-first', 'Anomalies', 'Markdown Export']}
+              context="Monitor local para series temporales: baseline, anomalías y contexto operativo por evento."
+              impact="Alertas priorizadas + playbooks + export a Markdown para comunicación rápida."
+              color="#22c55e"
+              setCursorVariant={setCursorVariant}
+              onOpenDetails={openProjectDetails}
+            />
+
+            <ProjectCard
+              title="Paradise Nexus"
+              category="Knowledge Base + Search · Paradise"
+              tags={['IndexedDB', 'Full-text', 'Workers', 'Mock GenAI']}
+              context="Biblioteca personal de documentos con ingest/chunking, búsqueda keyword y respuestas con citations."
+              impact="$0 infra: persistencia en cliente + API en Cloudflare Worker (mock/BYOK-ready)."
+              color="#ec4899"
+              setCursorVariant={setCursorVariant}
+              onOpenDetails={openProjectDetails}
+            />
+
             <ProjectCard
               title="DecisionOps AI Toolkit"
               category="DecisionOps + ML"
@@ -489,16 +388,25 @@ export default function Portfolio() {
             />
 
             <ProjectCard
+              title="AI Delivery Copilot"
+              category="GenAI + Product · Paradise"
+              tags={['React', 'TypeScript', 'Zod', 'Vitest']}
+              context="Copiloto para transformar un brief en PRDs, backlogs y QA packs listos para uso."
+              impact="Modo demo sin costos + validación automática + links compartibles para colaboración."
+              color="#ef4444"
+              setCursorVariant={setCursorVariant}
+              onOpenDetails={openProjectDetails}
+            />
+            <ProjectCard
               title="SmartClinic No-Show Predictor"
               category="Machine Learning + BI"
               tags={['Python', 'Scikit-learn', 'Power BI', 'SQL']}
               context="Sistema predictivo que analiza 10,000+ turnos para identificar patrones de inasistencias."
               impact="Dashboard interactivo con 3 vistas analíticas para decisiones data-driven."
-              color="#14b8a6"
+              color="#10b981"
               setCursorVariant={setCursorVariant}
               onOpenDetails={openProjectDetails}
             />
-
             <ProjectCard
               title="Plataforma Geriátricos"
               category="Full Stack + PWA"
@@ -509,7 +417,6 @@ export default function Portfolio() {
               setCursorVariant={setCursorVariant}
               onOpenDetails={openProjectDetails}
             />
-
             <ProjectCard
               title="Mi Consultorio"
               category="Healthcare SaaS"
@@ -520,7 +427,6 @@ export default function Portfolio() {
               setCursorVariant={setCursorVariant}
               onOpenDetails={openProjectDetails}
             />
-
             <ProjectCard
               title="Consultorio Barcala"
               category="Modern Web"
@@ -535,7 +441,6 @@ export default function Portfolio() {
         </div>
       </section>
 
-      {/* SKILLS */}
       <section id="skills" style={styles.section}>
         <div style={styles.sectionContent}>
           <h2 style={styles.sectionTitle} className="section-title">
@@ -551,41 +456,23 @@ export default function Portfolio() {
             <SkillCategory title="DevOps" icon="🚀" skills={['Git', 'Vercel', 'Docker', 'CI/CD']} />
             <SkillCategory title="Core Skills" icon="✨" skills={['Problem Solving', 'Agile', 'APIs', 'Testing']} />
           </div>
-        
-          <div style={styles.languagesPanel} className="skill-card">
-            <div style={styles.languagesHeader}>
-              <span style={styles.languagesIcon}>🌍</span>
-              <span style={styles.languagesTitle}>Idiomas</span>
-            </div>
-            <div style={styles.languagesBadges}>
-              <span style={styles.languagePill}>Español — Nativo</span>
-              <span style={styles.languagePill}>Inglés — B2 (Upper-Intermediate)</span>
-            </div>
-          </div>
-
         </div>
       </section>
 
-      {/* EDUCATION */}
       <section id="education" style={{ ...styles.section, ...styles.sectionAlt }}>
         <div style={styles.sectionContent}>
           <h2 style={styles.sectionTitle} className="section-title">
             <span style={styles.sectionNumber}>04</span>Formación
           </h2>
-
           <div style={styles.educationGrid}>
             <EducationCard title="Tecnicatura en IA y Ciencia de Datos" institution="Instituto Superior Santo Domingo" period="2024 - Actualidad" status="En curso" />
             <EducationCard title="Analista de Datos" institution="Coderhouse" period="2024 - 2025" status="Finalizado" />
             <EducationCard title="Educación Secundaria (Bachiller) – Humanidades" institution="Colegio del Parque" period="2013 - 2018" status="Finalizado" />
           </div>
-
           <div style={styles.certificationsBox} className="cert-box">
             <div className="cert-number">LEARN</div>
             <h3 style={styles.certTitle}>Aprendizaje & Certificaciones</h3>
-            <p style={styles.certSubtitle}>
-              Aprendizaje continuo con foco en excelencia técnica: Data &amp; BI, ML/GenAI y prácticas modernas de ingeniería de software.
-            </p>
-
+            <p style={styles.certSubtitle}>Aprendizaje continuo con foco en excelencia técnica: Data &amp; BI, ML/GenAI y prácticas modernas de ingeniería de software.</p>
             <div style={styles.certProviders}>
               {['Coursera (Google)', 'Coderhouse', 'Udemy', 'LinkedIn Learning'].map((p) => (
                 <span key={p} style={styles.certProviderBadge} className="cert-tag">
@@ -605,7 +492,6 @@ export default function Portfolio() {
         </div>
       </section>
 
-      {/* EXPERIENCE */}
       <section id="experience" style={styles.section}>
         <div style={styles.sectionContent}>
           <h2 style={styles.sectionTitle} className="section-title">
@@ -630,12 +516,13 @@ export default function Portfolio() {
         </div>
       </section>
 
-      {/* FOOTER */}
       <footer style={styles.footer}>
         <div style={styles.footerContent}>
           <div style={styles.footerMain}>
             <h3 style={styles.footerTitle}>¿Trabajamos juntos?</h3>
-            <p style={styles.footerText}>Estoy buscando nuevas oportunidades en ML Engineering, Data Analytics o Full Stack Development.</p>
+            <p style={styles.footerText}>
+              Estoy buscando nuevas oportunidades en ML Engineering, Data Analytics o Full Stack Development.
+            </p>
             <a
               href="mailto:augusto.delgado00@hotmail.com"
               style={styles.footerCta}
@@ -646,7 +533,6 @@ export default function Portfolio() {
               Contactame →
             </a>
           </div>
-
           <div style={styles.footerLinks}>
             <a href="mailto:augusto.delgado00@hotmail.com" style={styles.footerLink} className="footer-link">
               Email
@@ -664,14 +550,16 @@ export default function Portfolio() {
               GitHub
             </a>
           </div>
-
           <div style={styles.footerBottom}>
             <p style={styles.footerCopy}>© 2025 Agustín Delgado. Diseñado & desarrollado con ♥</p>
+            <div style={styles.footerLang}>
+              <span style={styles.langBadge}>🇦🇷 Español — Nativo</span>
+              <span style={styles.langBadge}>🇺🇸 Inglés — B2 (Avanzado)</span>
+            </div>
           </div>
         </div>
       </footer>
 
-      {/* MODAL */}
       {isProjectModalOpen && selectedProjectTitle && (
         <div
           onClick={closeProjectDetails}
@@ -717,54 +605,21 @@ export default function Portfolio() {
                 transition: 'all 0.2s ease'
               }}
               onMouseEnter={(e) => {
-                (e.target as HTMLButtonElement).style.background = 'rgba(99, 102, 241, 0.2)';
-                (e.target as HTMLButtonElement).style.color = '#fff';
+                e.target.style.background = 'rgba(99, 102, 241, 0.2)';
+                e.target.style.color = '#fff';
               }}
               onMouseLeave={(e) => {
-                (e.target as HTMLButtonElement).style.background = 'rgba(99, 102, 241, 0.1)';
-                (e.target as HTMLButtonElement).style.color = '#a3a3a3';
+                e.target.style.background = 'rgba(99, 102, 241, 0.1)';
+                e.target.style.color = '#a3a3a3';
               }}
             >
               {'\u00D7'}
             </button>
-
             <h2 style={{ fontSize: '28px', fontWeight: '700', color: '#fff', marginBottom: '24px', fontFamily: "'Space Grotesk', sans-serif" }}>
               {selectedProjectTitle}
             </h2>
-
             {PROJECT_DETAILS[selectedProjectTitle] && (
               <div style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
-                {['AtlasOps', 'Paradise Pulse', 'Paradise Nexus', 'ModelArc', 'AI Delivery Copilot'].includes(selectedProjectTitle) && (
-                  <div
-                    className="modal-section"
-                    style={{
-                      padding: '14px 14px',
-                      borderRadius: '14px',
-                      border: '1px solid rgba(255,255,255,0.08)',
-                      background: 'rgba(255,255,255,0.03)'
-                    }}
-                  >
-                    <div style={{ fontSize: '12px', fontWeight: 800, letterSpacing: '0.6px', textTransform: 'uppercase', color: '#86efac', marginBottom: '6px' }}>
-                      Demo privada / a pedido
-                    </div>
-
-                    <p style={{ margin: 0, fontSize: '13px', color: '#a3a3a3', lineHeight: 1.6 }}>
-                      Para proteger la IP del ecosistema Paradise, el código y repositorios se mantienen privados. Puedo compartir un video demo y/o realizar una demo guiada en vivo.
-                    </p>
-
-                    {/* ✅ FIX: style={{ ... }} */}
-                    <div style={{ marginTop: '10px', display: 'flex', gap: '10px', flexWrap: 'wrap' }}>
-                      <a
-                        href="mailto:augusto.delgado00@hotmail.com?subject=Request%20Paradise%20demo&body=Hola%20Agust%C3%ADn%2C%0A%0AVi%20tu%20portfolio%20y%20me%20interesa%20ver%20una%20demo%20privada%20de%20Paradise%20%28AtlasOps%20/%20Pulse%20/%20Nexus%20/%20ModelArc%29.%20%C2%BFPodemos%20coordinar%20un%20horario%3F%0A%0AGracias%2C%0A%5BNombre%5D%0A%5BEmpresa%5D%0A"
-                        style={{ ...styles.ctaButton, textDecoration: 'none' }}
-                      >
-                        Request demo
-                      </a>
-                      <span style={styles.ctaHint}>Respuesta en 24–48h</span>
-                    </div>
-                  </div>
-                )}
-
                 {PROJECT_DETAILS[selectedProjectTitle].resumen && (
                   <div className="modal-section">
                     <h3
@@ -773,18 +628,21 @@ export default function Portfolio() {
                     >
                       Resumen
                     </h3>
-                    <p style={{ fontSize: '15px', color: '#d4d4d4', lineHeight: '1.7' }}>{PROJECT_DETAILS[selectedProjectTitle].resumen}</p>
+                    <p style={{ fontSize: '15px', color: '#d4d4d4', lineHeight: '1.7' }}>
+                      {PROJECT_DETAILS[selectedProjectTitle].resumen}
+                    </p>
                   </div>
                 )}
-
-                {/* resto de secciones (objetivo/datos/modelo/etc) igual que tu archivo */}
                 {PROJECT_DETAILS[selectedProjectTitle].objetivo && (
                   <div className="modal-section">
-                    <h3 className="modal-section-title" style={{ fontSize: '16px', fontWeight: '600', color: '#6366f1', marginBottom: '8px', textTransform: 'uppercase', letterSpacing: '1px' }}>
+                    <h3
+                      className="modal-section-title"
+                      style={{ fontSize: '16px', fontWeight: '600', color: '#6366f1', marginBottom: '8px', textTransform: 'uppercase', letterSpacing: '1px' }}
+                    >
                       Objetivo
                     </h3>
                     <ul className="modal-list" style={{ listStyle: 'none', padding: 0, display: 'flex', flexDirection: 'column', gap: '8px' }}>
-                      {PROJECT_DETAILS[selectedProjectTitle].objetivo.map((item: string, i: number) => (
+                      {PROJECT_DETAILS[selectedProjectTitle].objetivo.map((item, i) => (
                         <li key={i} style={{ fontSize: '14px', color: '#a3a3a3', paddingLeft: '20px', position: 'relative' }}>
                           <span style={{ position: 'absolute', left: 0, color: '#6366f1' }}>•</span> {item}
                         </li>
@@ -792,12 +650,170 @@ export default function Portfolio() {
                     </ul>
                   </div>
                 )}
-
-                {/* ... mantené el resto de tus bloques tal cual ... */}
-
+                {PROJECT_DETAILS[selectedProjectTitle].datos && (
+                  <div className="modal-section">
+                    <h3
+                      className="modal-section-title"
+                      style={{ fontSize: '16px', fontWeight: '600', color: '#6366f1', marginBottom: '8px', textTransform: 'uppercase', letterSpacing: '1px' }}
+                    >
+                      Datos
+                    </h3>
+                    <ul className="modal-list" style={{ listStyle: 'none', padding: 0, display: 'flex', flexDirection: 'column', gap: '8px' }}>
+                      {PROJECT_DETAILS[selectedProjectTitle].datos.map((item, i) => (
+                        <li key={i} style={{ fontSize: '14px', color: '#a3a3a3', paddingLeft: '20px', position: 'relative' }}>
+                          <span style={{ position: 'absolute', left: 0, color: '#6366f1' }}>•</span> {item}
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+                )}
+                {PROJECT_DETAILS[selectedProjectTitle].modelo && (
+                  <div className="modal-section">
+                    <h3
+                      className="modal-section-title"
+                      style={{ fontSize: '16px', fontWeight: '600', color: '#6366f1', marginBottom: '8px', textTransform: 'uppercase', letterSpacing: '1px' }}
+                    >
+                      Modelo
+                    </h3>
+                    <ul className="modal-list" style={{ listStyle: 'none', padding: 0, display: 'flex', flexDirection: 'column', gap: '8px' }}>
+                      {PROJECT_DETAILS[selectedProjectTitle].modelo.map((item, i) => (
+                        <li key={i} style={{ fontSize: '14px', color: '#a3a3a3', paddingLeft: '20px', position: 'relative' }}>
+                          <span style={{ position: 'absolute', left: 0, color: '#6366f1' }}>•</span> {item}
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+                )}
+                {PROJECT_DETAILS[selectedProjectTitle].metricas && (
+                  <div className="modal-section">
+                    <h3
+                      className="modal-section-title"
+                      style={{ fontSize: '16px', fontWeight: '600', color: '#6366f1', marginBottom: '8px', textTransform: 'uppercase', letterSpacing: '1px' }}
+                    >
+                      Métricas
+                    </h3>
+                    <ul className="modal-list" style={{ listStyle: 'none', padding: 0, display: 'flex', flexDirection: 'column', gap: '8px' }}>
+                      {PROJECT_DETAILS[selectedProjectTitle].metricas.map((item, i) => (
+                        <li key={i} style={{ fontSize: '14px', color: '#a3a3a3', paddingLeft: '20px', position: 'relative' }}>
+                          <span style={{ position: 'absolute', left: 0, color: '#6366f1' }}>•</span> {item}
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+                )}
+                {PROJECT_DETAILS[selectedProjectTitle].dashboard && (
+                  <div className="modal-section">
+                    <h3
+                      className="modal-section-title"
+                      style={{ fontSize: '16px', fontWeight: '600', color: '#6366f1', marginBottom: '8px', textTransform: 'uppercase', letterSpacing: '1px' }}
+                    >
+                      Dashboard
+                    </h3>
+                    <ul className="modal-list" style={{ listStyle: 'none', padding: 0, display: 'flex', flexDirection: 'column', gap: '8px' }}>
+                      {PROJECT_DETAILS[selectedProjectTitle].dashboard.map((item, i) => (
+                        <li key={i} style={{ fontSize: '14px', color: '#a3a3a3', paddingLeft: '20px', position: 'relative' }}>
+                          <span style={{ position: 'absolute', left: 0, color: '#6366f1' }}>•</span> {item}
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+                )}
+                {PROJECT_DETAILS[selectedProjectTitle].destinatarios && (
+                  <div className="modal-section">
+                    <h3
+                      className="modal-section-title"
+                      style={{ fontSize: '16px', fontWeight: '600', color: '#6366f1', marginBottom: '8px', textTransform: 'uppercase', letterSpacing: '1px' }}
+                    >
+                      Destinatarios
+                    </h3>
+                    <ul className="modal-list" style={{ listStyle: 'none', padding: 0, display: 'flex', flexDirection: 'column', gap: '8px' }}>
+                      {PROJECT_DETAILS[selectedProjectTitle].destinatarios.map((item, i) => (
+                        <li key={i} style={{ fontSize: '14px', color: '#a3a3a3', paddingLeft: '20px', position: 'relative' }}>
+                          <span style={{ position: 'absolute', left: 0, color: '#6366f1' }}>•</span> {item}
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+                )}
+                {PROJECT_DETAILS[selectedProjectTitle].caracteristicas && (
+                  <div className="modal-section">
+                    <h3
+                      className="modal-section-title"
+                      style={{ fontSize: '16px', fontWeight: '600', color: '#6366f1', marginBottom: '8px', textTransform: 'uppercase', letterSpacing: '1px' }}
+                    >
+                      Características
+                    </h3>
+                    <ul className="modal-list" style={{ listStyle: 'none', padding: 0, display: 'flex', flexDirection: 'column', gap: '8px' }}>
+                      {PROJECT_DETAILS[selectedProjectTitle].caracteristicas.map((item, i) => (
+                        <li key={i} style={{ fontSize: '14px', color: '#a3a3a3', paddingLeft: '20px', position: 'relative' }}>
+                          <span style={{ position: 'absolute', left: 0, color: '#6366f1' }}>•</span> {item}
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+                )}
+                {PROJECT_DETAILS[selectedProjectTitle].roles && (
+                  <div className="modal-section">
+                    <h3
+                      className="modal-section-title"
+                      style={{ fontSize: '16px', fontWeight: '600', color: '#6366f1', marginBottom: '8px', textTransform: 'uppercase', letterSpacing: '1px' }}
+                    >
+                      Roles
+                    </h3>
+                    <ul className="modal-list" style={{ listStyle: 'none', padding: 0, display: 'flex', flexDirection: 'column', gap: '8px' }}>
+                      {PROJECT_DETAILS[selectedProjectTitle].roles.map((item, i) => (
+                        <li key={i} style={{ fontSize: '14px', color: '#a3a3a3', paddingLeft: '20px', position: 'relative' }}>
+                          <span style={{ position: 'absolute', left: 0, color: '#6366f1' }}>•</span> {item}
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+                )}
+                {PROJECT_DETAILS[selectedProjectTitle].highlights && (
+                  <div className="modal-section">
+                    <h3
+                      className="modal-section-title"
+                      style={{ fontSize: '16px', fontWeight: '600', color: '#6366f1', marginBottom: '8px', textTransform: 'uppercase', letterSpacing: '1px' }}
+                    >
+                      Highlights
+                    </h3>
+                    <p style={{ fontSize: '14px', color: '#a3a3a3' }}>{PROJECT_DETAILS[selectedProjectTitle].highlights}</p>
+                  </div>
+                )}
+                {PROJECT_DETAILS[selectedProjectTitle].modulos && (
+                  <div className="modal-section">
+                    <h3
+                      className="modal-section-title"
+                      style={{ fontSize: '16px', fontWeight: '600', color: '#6366f1', marginBottom: '8px', textTransform: 'uppercase', letterSpacing: '1px' }}
+                    >
+                      Módulos
+                    </h3>
+                    <ul className="modal-list" style={{ listStyle: 'none', padding: 0, display: 'flex', flexDirection: 'column', gap: '8px' }}>
+                      {PROJECT_DETAILS[selectedProjectTitle].modulos.map((item, i) => (
+                        <li key={i} style={{ fontSize: '14px', color: '#a3a3a3', paddingLeft: '20px', position: 'relative' }}>
+                          <span style={{ position: 'absolute', left: 0, color: '#6366f1' }}>•</span> {item}
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+                )}
+                {PROJECT_DETAILS[selectedProjectTitle].estructura && (
+                  <div className="modal-section">
+                    <h3
+                      className="modal-section-title"
+                      style={{ fontSize: '16px', fontWeight: '600', color: '#6366f1', marginBottom: '8px', textTransform: 'uppercase', letterSpacing: '1px' }}
+                    >
+                      Estructura
+                    </h3>
+                    <p style={{ fontSize: '14px', color: '#a3a3a3' }}>{PROJECT_DETAILS[selectedProjectTitle].estructura}</p>
+                  </div>
+                )}
                 {PROJECT_DETAILS[selectedProjectTitle].stack && (
                   <div className="modal-section">
-                    <h3 className="modal-section-title" style={{ fontSize: '16px', fontWeight: '600', color: '#6366f1', marginBottom: '8px', textTransform: 'uppercase', letterSpacing: '1px' }}>
+                    <h3
+                      className="modal-section-title"
+                      style={{ fontSize: '16px', fontWeight: '600', color: '#6366f1', marginBottom: '8px', textTransform: 'uppercase', letterSpacing: '1px' }}
+                    >
                       Stack
                     </h3>
                     <p style={{ fontSize: '14px', color: '#a3a3a3' }}>{PROJECT_DETAILS[selectedProjectTitle].stack}</p>
@@ -812,27 +828,9 @@ export default function Portfolio() {
   );
 }
 
-function ProjectCard({
-  title,
-  category,
-  tags,
-  context,
-  impact,
-  color,
-  setCursorVariant,
-  onOpenDetails
-}: {
-  title: string;
-  category: string;
-  tags: string[];
-  context: string;
-  impact: string;
-  color: string;
-  setCursorVariant: (v: 'default' | 'hover') => void;
-  onOpenDetails: (title: string) => void;
-}) {
+function ProjectCard({ title, category, tags, context, impact, color, setCursorVariant, onOpenDetails }) {
   return (
-    <div className="project-card" style={{ ['--accent-color' as any]: color }} onMouseEnter={() => setCursorVariant('hover')} onMouseLeave={() => setCursorVariant('default')}>
+    <div className="project-card" style={{ '--accent-color': color }} onMouseEnter={() => setCursorVariant('hover')} onMouseLeave={() => setCursorVariant('default')}>
       <div className="project-glow" style={{ background: color }} />
       <button className="project-more" onClick={(e) => { e.stopPropagation(); onOpenDetails(title); }} style={{ background: color }} title="Ver detalles">
         →
@@ -853,7 +851,7 @@ function ProjectCard({
   );
 }
 
-function SkillCategory({ title, icon, skills }: { title: string; icon: string; skills: string[] }) {
+function SkillCategory({ title, icon, skills }) {
   return (
     <div className="skill-card">
       <div style={styles.skillHeader}>
@@ -865,7 +863,7 @@ function SkillCategory({ title, icon, skills }: { title: string; icon: string; s
   );
 }
 
-function EducationCard({ title, institution, period, status }: { title: string; institution: string; period: string; status: string }) {
+function EducationCard({ title, institution, period, status }) {
   return (
     <div style={styles.educationCard} className="edu-card">
       <div style={styles.educationHeader}>
@@ -878,7 +876,7 @@ function EducationCard({ title, institution, period, status }: { title: string; 
   );
 }
 
-function ExperienceCard({ title, company, period, description, current }: { title: string; company: string; period: string; description: string; current: boolean }) {
+function ExperienceCard({ title, company, period, description, current }) {
   return (
     <div style={styles.experienceCard} className="exp-card">
       <div style={styles.experienceDot} className={current ? 'dot-pulse' : ''} />
@@ -1027,7 +1025,7 @@ strong{color:#fff;font-weight:600}
 @media(max-width:768px){.projects-grid{grid-template-columns:1fr!important}.project-more{top:12px;right:12px;width:32px;height:32px;font-size:16px}}
 `;
 
-const styles: Record<string, any> = {
+const styles = {
   container: { minHeight: '100vh', backgroundColor: '#050505', position: 'relative' },
   nav: { position: 'fixed', top: 0, left: 0, right: 0, zIndex: 1000, backgroundColor: 'rgba(5, 5, 5, 0.7)', borderBottom: '1px solid rgba(255,255,255,0.05)' },
   navContent: { maxWidth: '1400px', margin: '0 auto', padding: '16px 32px', display: 'flex', justifyContent: 'space-between', alignItems: 'center' },
@@ -1035,7 +1033,6 @@ const styles: Record<string, any> = {
   navLinks: { display: 'flex', gap: '8px' },
   navLink: { background: 'none', border: 'none', color: '#a3a3a3', fontSize: '14px', fontWeight: '500', padding: '10px 18px', borderRadius: '10px', cursor: 'none', transition: 'all 0.2s ease', fontFamily: 'inherit' },
   navLinkActive: { color: '#ffffff', backgroundColor: 'rgba(99, 102, 241, 0.1)' },
-
   hero: { minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center', position: 'relative', padding: '120px 32px 80px' },
   heroBadge: { display: 'inline-flex', alignItems: 'center', padding: '10px 20px', backgroundColor: 'rgba(16, 185, 129, 0.1)', border: '1px solid rgba(16, 185, 129, 0.2)', borderRadius: '100px', fontSize: '14px', fontWeight: '500', color: '#10b981', marginBottom: '32px' },
   heroTitle: { fontFamily: "'Space Grotesk', sans-serif", fontSize: 'clamp(48px, 10vw, 100px)', fontWeight: '800', lineHeight: '1', letterSpacing: '-3px', marginBottom: '24px', color: '#ffffff' },
@@ -1043,57 +1040,22 @@ const styles: Record<string, any> = {
   heroDescription: { fontSize: '18px', color: '#a3a3a3', maxWidth: '500px', margin: '0 auto 32px', textAlign: 'center', lineHeight: '1.7' },
   heroContact: { display: 'flex', flexWrap: 'wrap', justifyContent: 'center', gap: '12px', marginBottom: '48px' },
   contactLink: { display: 'inline-flex', alignItems: 'center', gap: '8px', padding: '10px 18px', backgroundColor: 'rgba(255,255,255,0.03)', borderRadius: '10px', color: '#a3a3a3', textDecoration: 'none', fontSize: '14px', transition: 'all 0.2s ease' },
-
   heroStats: { display: 'flex', justifyContent: 'center', gap: '24px', flexWrap: 'wrap' },
   stat: { textAlign: 'center', padding: '24px 32px', backgroundColor: 'rgba(255,255,255,0.02)', borderRadius: '16px', minWidth: '140px' },
   statNumber: { display: 'block', fontFamily: "'Space Grotesk', sans-serif", fontSize: '42px', fontWeight: '800', marginBottom: '4px' },
   statLabel: { fontSize: '13px', color: '#737373', textTransform: 'uppercase', letterSpacing: '1px' },
-
-  section: { padding: '120px 32px', position: 'relative', zIndex: 2 },
-  sectionAlt: { backgroundColor: 'rgba(255,255,255,0.01)' },
-  sectionContent: { maxWidth: '1200px', margin: '0 auto' },
-  sectionTitle: { fontFamily: "'Space Grotesk', sans-serif", fontSize: '36px', fontWeight: '700', color: '#ffffff', marginBottom: '48px', display: 'flex', alignItems: 'center', gap: '16px' },
-  sectionNumber: { fontFamily: "'JetBrains Mono', monospace", fontSize: '14px', fontWeight: '500', color: '#6366f1', padding: '6px 12px', backgroundColor: 'rgba(99, 102, 241, 0.1)', borderRadius: '6px' },
-
   projectsGrid: { display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: '24px' },
-
   paradiseBox: { padding: '24px', backgroundColor: 'rgba(20, 20, 22, 0.55)', borderRadius: '18px', border: '1px solid rgba(255,255,255,0.06)', marginBottom: '28px', backdropFilter: 'blur(12px)' },
   paradiseHeader: { display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '12px', marginBottom: '10px' },
   paradiseTitle: { fontFamily: "'Space Grotesk', sans-serif", fontSize: '18px', fontWeight: '800', letterSpacing: '-0.5px', color: '#ffffff' },
   paradiseBadge: { fontSize: '11px', fontWeight: '700', color: '#c7d2fe', padding: '6px 10px', backgroundColor: 'rgba(99, 102, 241, 0.12)', borderRadius: '999px', border: '1px solid rgba(99, 102, 241, 0.2)', whiteSpace: 'nowrap' },
   paradiseText: { fontSize: '14px', color: '#a3a3a3', lineHeight: '1.7', margin: 0 },
-
-  paradiseCollection: { padding: '22px', backgroundColor: 'rgba(20, 20, 22, 0.35)', borderRadius: '18px', border: '1px solid rgba(255,255,255,0.06)', marginBottom: '22px', backdropFilter: 'blur(10px)' },
-  paradiseCollectionHeader: { display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '12px', marginBottom: '10px' },
-  paradiseCollectionTitle: { fontFamily: "'Space Grotesk', sans-serif", fontSize: '16px', fontWeight: '800', letterSpacing: '-0.3px', color: '#ffffff', margin: 0 },
-  paradiseCollectionPill: { fontSize: '11px', fontWeight: '700', color: '#bbf7d0', padding: '6px 10px', backgroundColor: 'rgba(34, 197, 94, 0.10)', borderRadius: '999px', border: '1px solid rgba(34, 197, 94, 0.18)', whiteSpace: 'nowrap' },
-  paradiseCollectionText: { fontSize: '13px', color: '#a3a3a3', lineHeight: '1.7', margin: '0 0 14px 0' },
-  paradiseModulesGrid: { display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: '22px' },
-
-  otherProjectsHeader: { marginTop: '18px', marginBottom: '14px' },
-  otherProjectsTitle: { fontFamily: "'Space Grotesk', sans-serif", fontSize: '16px', fontWeight: '800', letterSpacing: '-0.3px', color: '#ffffff', margin: 0 },
-  otherProjectsText: { fontSize: '13px', color: '#9ca3af', lineHeight: '1.6', margin: '6px 0 0 0' },
-
-  // ✅ FIX: ESTO VA ADENTRO DE styles (no afuera)
-  ctaButton: {
-    padding: '10px 14px',
-    borderRadius: '12px',
-    fontSize: '13px',
-    fontWeight: '800',
-    color: '#ffffff',
-    backgroundColor: 'rgba(255,255,255,0.08)',
-    border: '1px solid rgba(255,255,255,0.14)',
-    cursor: 'pointer',
-    display: 'inline-flex',
-    alignItems: 'center',
-    justifyContent: 'center',
-    transition: 'transform 0.15s ease, background 0.15s ease, border-color 0.15s ease'
-  },
-  ctaHint: { fontSize: '12px', color: '#9ca3af', display: 'inline-flex', alignItems: 'center' },
-
   icon: { width: '16px', height: '16px' },
-
-  // ... (el resto de tus estilos tal cual)
+  section: { padding: '120px 32px', position: 'relative', zIndex: 2 },
+  sectionAlt: { backgroundColor: 'rgba(255,255,255,0.01)' },
+  sectionContent: { maxWidth: '1200px', margin: '0 auto' },
+  sectionTitle: { fontFamily: "'Space Grotesk', sans-serif", fontSize: '36px', fontWeight: '700', color: '#ffffff', marginBottom: '48px', display: 'flex', alignItems: 'center', gap: '16px' },
+  sectionNumber: { fontFamily: "'JetBrains Mono', monospace", fontSize: '14px', fontWeight: '500', color: '#6366f1', padding: '6px 12px', backgroundColor: 'rgba(99, 102, 241, 0.1)', borderRadius: '6px' },
   aboutGrid: { display: 'grid', gridTemplateColumns: '1.5fr 1fr', gap: '60px', alignItems: 'start' },
   aboutText: { display: 'flex', flexDirection: 'column', gap: '20px' },
   paragraph: { fontSize: '17px', color: '#d4d4d4', lineHeight: '1.8' },
@@ -1102,21 +1064,12 @@ const styles: Record<string, any> = {
   highlightIcon: { fontSize: '28px', flexShrink: 0 },
   highlightTitle: { fontSize: '16px', fontWeight: '600', color: '#ffffff', marginBottom: '4px' },
   highlightText: { fontSize: '14px', color: '#a3a3a3' },
-
   skillsGrid: { display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))', gap: '16px' },
-
-  languagesPanel: { marginTop: '22px', padding: '20px', backgroundColor: 'rgba(255,255,255,0.02)', borderRadius: '16px', border: '1px solid rgba(255,255,255,0.05)' },
-  languagesHeader: { display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '10px' },
-  languagesIcon: { fontSize: '18px' },
-  languagesTitle: { fontSize: '15px', fontWeight: '700', color: '#ffffff' },
-  languagesBadges: { display: 'flex', flexWrap: 'wrap', gap: '10px' },
-  languagePill: { fontSize: '13px', color: '#e5e5e5', padding: '8px 12px', backgroundColor: 'rgba(255,255,255,0.05)', borderRadius: '12px', border: '1px solid rgba(255,255,255,0.10)' },
   skillHeader: { display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '16px' },
   skillIcon: { fontSize: '24px' },
   skillTitle: { fontSize: '15px', fontWeight: '600', color: '#ffffff' },
   skillList: { display: 'flex', flexWrap: 'wrap', gap: '8px' },
   skillBadge: { fontSize: '13px', color: '#a3a3a3', padding: '6px 12px', backgroundColor: 'rgba(255,255,255,0.05)', borderRadius: '6px' },
-
   educationGrid: { display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(320px, 1fr))', gap: '20px', marginBottom: '48px' },
   educationCard: { padding: '28px', backgroundColor: 'rgba(20, 20, 22, 0.8)', borderRadius: '16px', border: '1px solid rgba(255,255,255,0.05)' },
   educationHeader: { display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', gap: '12px', marginBottom: '12px' },
@@ -1124,16 +1077,11 @@ const styles: Record<string, any> = {
   educationStatus: { fontSize: '11px', fontWeight: '600', padding: '4px 12px', borderRadius: '100px', whiteSpace: 'nowrap' },
   educationInstitution: { fontSize: '14px', color: '#a3a3a3', marginBottom: '4px' },
   educationPeriod: { fontSize: '13px', color: '#737373' },
-
   certificationsBox: { padding: '40px', background: 'linear-gradient(135deg, rgba(99, 102, 241, 0.08), rgba(236, 72, 153, 0.08))', borderRadius: '24px', border: '1px solid rgba(255,255,255,0.05)', position: 'relative', overflow: 'hidden' },
   certTitle: { fontSize: '22px', fontWeight: '700', color: '#ffffff', marginBottom: '8px' },
   certSubtitle: { fontSize: '14px', color: '#a3a3a3', marginBottom: '16px' },
   certCategories: { display: 'flex', flexWrap: 'wrap', gap: '8px' },
   certBadge: { fontSize: '12px', color: '#c7d2fe', padding: '6px 10px', backgroundColor: 'rgba(99, 102, 241, 0.12)', borderRadius: '8px', border: '1px solid rgba(99, 102, 241, 0.2)' },
-
-  certProviders: { display: 'flex', flexWrap: 'wrap', gap: '10px', marginBottom: '14px' },
-  certProviderBadge: { fontSize: '12px', color: '#d4d4d4', padding: '7px 12px', backgroundColor: 'rgba(255,255,255,0.05)', borderRadius: '10px', border: '1px solid rgba(255,255,255,0.08)' },
-
   experienceTimeline: { display: 'flex', flexDirection: 'column', gap: '16px', position: 'relative', paddingLeft: '8px' },
   experienceCard: { position: 'relative', padding: '24px 24px 24px 32px', backgroundColor: 'rgba(20, 20, 22, 0.8)', borderRadius: '16px', border: '1px solid rgba(255,255,255,0.05)' },
   experienceDot: { position: 'absolute', left: '12px', top: '28px', width: '10px', height: '10px', borderRadius: '50%', backgroundColor: '#3b82f6', boxShadow: '0 0 0 3px rgba(59, 130, 246, 0.2)' },
@@ -1144,7 +1092,6 @@ const styles: Record<string, any> = {
   experienceCompany: { fontSize: '14px', color: '#a3a3a3' },
   experiencePeriod: { fontSize: '13px', color: '#737373' },
   experienceDescription: { fontSize: '14px', color: '#d4d4d4', lineHeight: '1.6' },
-
   footer: { padding: '80px 32px', backgroundColor: 'rgba(12, 12, 14, 0.9)', borderTop: '1px solid rgba(255,255,255,0.05)' },
   footerContent: { maxWidth: '1200px', margin: '0 auto', display: 'grid', gridTemplateColumns: '2fr 1fr', gap: '40px', alignItems: 'center' },
   footerMain: { display: 'flex', flexDirection: 'column', gap: '12px' },
@@ -1155,5 +1102,6 @@ const styles: Record<string, any> = {
   footerLink: { color: '#a3a3a3', textDecoration: 'none', fontSize: '14px' },
   footerBottom: { gridColumn: '1 / -1', display: 'flex', flexWrap: 'wrap', justifyContent: 'space-between', alignItems: 'center', gap: '12px', borderTop: '1px solid rgba(255,255,255,0.05)', paddingTop: '20px' },
   footerCopy: { fontSize: '13px', color: '#737373' },
-  // Languages moved to the main "Stack Tecnológico" section for better visibility.
+  footerLang: { display: 'flex', gap: '10px', flexWrap: 'wrap' },
+  langBadge: { fontSize: '12px', color: '#d4d4d4', padding: '6px 10px', backgroundColor: 'rgba(255,255,255,0.05)', borderRadius: '10px', border: '1px solid rgba(255,255,255,0.08)' }
 };
