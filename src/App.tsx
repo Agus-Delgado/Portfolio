@@ -14,6 +14,71 @@ const PROJECT_DETAILS: Record<string, any> = {
     stack: 'Cloudflare Pages, Workers, D1 (SQLite), Hono, TypeScript, React (Vite).'
   },
 
+  'Paradise ClubNet': {
+    resumen:
+      'Producto del ecosistema Paradise para clubes y comunidades deportivas: centraliza salud, entrenamientos, asistencia y comunicación en un solo panel, con contexto por deporte y rama.',
+    caracteristicas: [
+      'Inicio tipo catálogo: elegís deporte, rama y club para entrar al portal del club.',
+      'Salud: estado general, riesgos y seguimiento de plantel.',
+      'Entrenamientos: planificación semanal y foco por tipo de sesión.',
+      'Asistencia: ranking, alertas y semáforo por umbrales.',
+      'Export/Docs mock-first listo para demos y portfolio.'
+    ],
+    stack: 'React, TypeScript, Vite (mock-first).'
+  },
+
+  'Paradise Aulora': {
+    resumen:
+      'Campus Console para educación: seguimiento de estudiantes, comunicaciones tipo inbox/outbox, recursos y panel de estado por escuela/rol/curso.',
+    caracteristicas: [
+      'Launcher: selección de escuela, rol y curso antes de entrar al campus.',
+      'Campus Pulse: KPIs y alertas del curso con agenda integrada.',
+      'Seguimiento: tablero de riesgo con semáforo, señales y ficha exportable.',
+      'Comunicaciones: inbox/outbox con composer y estado de lectura (mock).',
+      'Recursos: biblioteca simple para compartir materiales (mock).'
+    ],
+    stack: 'React, TypeScript, Vite (mock-first).'
+  },
+
+  'Paradise RouteOps': {
+    resumen:
+      'Ops Console para logística: cola de alertas y despacho con triage, detalle por incidente y acciones de seguimiento, orientado a operación diaria.',
+    caracteristicas: [
+      'Queue de alertas con severidad y estado (open/ack/closed).',
+      'KPIs rápidos para triage y foco en lo urgente.',
+      'Drawer de detalle con timeline y contexto operativo.',
+      'Inputs y filtros consistentes para priorizar incidentes.',
+      'Mock-first para demo sin backend.'
+    ],
+    stack: 'React, TypeScript, Vite (mock-first).'
+  },
+
+  'Paradise QC Sentinel': {
+    resumen:
+      'Workbench de Quality Control para laboratorios (pharma/QC): intake de muestras, checks, auditoría, export y gestión de desviaciones/CAPA (mock).',
+    caracteristicas: [
+      'Stepper claro: Intake → QC Checks → Audit Log.',
+      'Estado de lote (Batch Status Bar) con métricas de calidad.',
+      'Chain of custody: trazabilidad de eventos por muestra.',
+      'Decisión del lote: Release/Hold/Reject con comentario.',
+      'Deviation & CAPA: raíz, acción correctiva, owner y due date.'
+    ],
+    stack: 'React, TypeScript, Vite (mock-first).'
+  },
+
+  'Paradise Nimbus': {
+    resumen:
+      'Control plane cloud-first (en planificación) para conectar módulos sin acoplarlos: registry, artifacts, eventos, jobs y health/observability.',
+    caracteristicas: [
+      'Module Registry: catálogo del ecosistema y descubrimiento de módulos.',
+      'Artifacts: outputs versionados (Markdown/JSON/CSV) con metadata.',
+      'Event log: eventos para integraciones futuras (notificaciones/webhooks).',
+      'Jobs programados: snapshots y digests automáticos.',
+      'Health unificado: estado y build info del ecosistema.'
+    ],
+    stack: 'Serverless API + storage (MVP v0 planificado).'
+  },
+
   'Paradise Pulse': {
     resumen:
       'Módulo de Paradise para monitoreo local-first de series temporales: detecta anomalías sobre CSV (local o demo), prioriza alertas y exporta reportes accionables en Markdown.',
@@ -388,7 +453,7 @@ export default function Portfolio() {
               <span style={styles.paradiseBadge}>AI-first ecosystem</span>
             </div>
             <p style={styles.paradiseText}>
-              Ecosistema modular de herramientas con IA (GenAI/ML) y BI orientadas a <strong>decisiones</strong>, <strong>automatización</strong> y <strong>productividad</strong>. <strong>AtlasOps</strong>, <strong>Paradise Pulse</strong>, <strong>Paradise Nexus</strong>, <strong>ModelArc</strong> y <strong>AI Delivery Copilot</strong> son módulos independientes dentro de Paradise.
+              Paradise es un ecosistema de <strong>productos modulares</strong> pensado para resolver problemas reales en distintos dominios (operaciones, educación, logística, laboratorios y deporte). Cada módulo tiene vida propia, pero comparte una visión: <strong>decisiones más rápidas</strong>, <strong>procesos más claros</strong> y <strong>reportes accionables</strong>. En el roadmap, <strong>Paradise Nimbus</strong> actuará como “control plane” para conectar módulos sin acoplarlos.
             </p>
           </div>
 
@@ -399,18 +464,17 @@ export default function Portfolio() {
             </div>
 
             <p style={styles.paradiseCollectionText}>
-              Módulos del ecosistema <strong>Paradise</strong>. Demo disponible a pedido (sin acceso público al código) para proteger IP y permitir evaluación guiada.
+              Módulos del ecosistema <strong>Paradise</strong>. Cada uno se presenta como producto: objetivo claro, flujo simple y paneles listos para demo.
             </p>
 
-            {/* ✅ FIX: style={{ ... }} y spread dentro de {{ }} */}
             <div style={{ display: 'flex', gap: '10px', flexWrap: 'wrap', marginBottom: '14px' }}>
               <a
-                href="mailto:augusto.delgado00@hotmail.com?subject=Request%20Paradise%20demo&body=Hola%20Agust%C3%ADn%2C%0A%0AVi%20tu%20portfolio%20y%20me%20interesa%20ver%20una%20demo%20privada%20de%20Paradise%20%28AtlasOps%20/%20Pulse%20/%20Nexus%20/%20ModelArc%29.%20%C2%BFPodemos%20coordinar%20un%20horario%3F%0A%0AGracias%2C%0A%5BNombre%5D%0A%5BEmpresa%5D%0A"
+                href="mailto:augusto.delgado00@hotmail.com?subject=Paradise%20demo%20request&body=Hola%20Agust%C3%ADn%2C%0A%0AVi%20tu%20portfolio%20y%20me%20interesa%20ver%20una%20demo%20de%20Paradise%20%28m%C3%B3dulos%20y%20casos%20de%20uso%29.%20%C2%BFPodemos%20coordinar%20un%20horario%3F%0A%0AGracias%2C%0A%5BNombre%5D%0A%5BEmpresa%5D%0A"
                 style={{ ...styles.ctaButton, textDecoration: 'none' }}
               >
-                Request demo
+                Coordinar demo
               </a>
-              <span style={styles.ctaHint}>Video privado o demo guiada en vivo · Repos privados</span>
+              <span style={styles.ctaHint}>Demo guiada · Enfoque negocio + producto</span>
             </div>
 
             <div style={styles.paradiseModulesGrid} className="paradise-modules-grid">
@@ -426,23 +490,78 @@ export default function Portfolio() {
               />
 
               <ProjectCard
-                title="Paradise Pulse"
-                category="Monitoring + Anomaly Detection · Paradise"
-                tags={['CSV', 'Local-first', 'Anomalies', 'Markdown Export']}
-                context="Monitor local para series temporales: baseline, anomalías y contexto operativo por evento."
-                impact="Alertas priorizadas + playbooks + export a Markdown para comunicación rápida."
+                title="Paradise ClubNet"
+                category="Deporte & Clubes · Paradise"
+                tags={['Club Dashboard', 'Salud', 'Entrenamientos', 'Asistencia']}
+                context="Portal para clubes y deporte de base: salud, entrenamientos, asistencia y comunidad, con contexto por deporte y rama."
+                impact="Experiencia tipo producto: launcher por deporte/club + paneles listos para demo."
+                color="#14b8a6"
+                setCursorVariant={setCursorVariant}
+                onOpenDetails={openProjectDetails}
+              />
+
+              <ProjectCard
+                title="Paradise Aulora"
+                category="Educación · Paradise"
+                tags={['Campus Console', 'Seguimiento', 'Inbox', 'Recursos']}
+                context="Consola educativa por escuela/rol/curso con panel, seguimiento de estudiantes y comunicaciones tipo inbox/outbox."
+                impact="Enfoque claro para no técnicos: prioridades, alertas y seguimiento con export de ficha."
                 color="#22c55e"
                 setCursorVariant={setCursorVariant}
                 onOpenDetails={openProjectDetails}
               />
 
               <ProjectCard
+                title="Paradise RouteOps"
+                category="Logística · Paradise"
+                tags={['Triage', 'Alerts Queue', 'Drawer', 'Ops Console']}
+                context="Consola para logística: cola de alertas, priorización por severidad y detalle con timeline de incidentes."
+                impact="UX orientada a operación: filtros rápidos, estados claros y contexto para decidir."
+                color="#f59e0b"
+                setCursorVariant={setCursorVariant}
+                onOpenDetails={openProjectDetails}
+              />
+
+              <ProjectCard
+                title="Paradise QC Sentinel"
+                category="Laboratorios (QC) · Paradise"
+                tags={['Quality Control', 'Audit', 'CAPA', 'Export']}
+                context="Workbench de control de calidad: intake, checks, auditoría, trazabilidad y desviaciones/CAPA."
+                impact="Modelo ‘pharma-ready’ en versión demo: decisiones de lote y reportes exportables."
+                color="#3b82f6"
+                setCursorVariant={setCursorVariant}
+                onOpenDetails={openProjectDetails}
+              />
+
+              <ProjectCard
+                title="Paradise Pulse"
+                category="Monitoreo & Alertas · Paradise"
+                tags={['CSV', 'Anomalías', 'Playbooks', 'Export']}
+                context="Monitor local para series temporales: baseline, anomalías y contexto operativo por evento."
+                impact="Alertas priorizadas + playbooks + export a Markdown para comunicación rápida."
+                color="#a855f7"
+                setCursorVariant={setCursorVariant}
+                onOpenDetails={openProjectDetails}
+              />
+
+              <ProjectCard
                 title="Paradise Nexus"
-                category="Knowledge Base + Search · Paradise"
-                tags={['IndexedDB', 'Full-text', 'Workers', 'Mock GenAI']}
-                context="Biblioteca personal de documentos con ingest/chunking, búsqueda keyword y respuestas con citations."
-                impact="$0 infra: persistencia en cliente + API en Cloudflare Worker (mock/BYOK-ready)."
+                category="Knowledge Base · Paradise"
+                tags={['Búsqueda', 'Biblioteca', 'Citations', 'Local-first']}
+                context="Biblioteca personal de documentos con ingest/chunking, búsqueda y respuestas con citations."
+                impact="Flujo simple para no técnicos: subir, buscar, responder y exportar."
                 color="#ec4899"
+                setCursorVariant={setCursorVariant}
+                onOpenDetails={openProjectDetails}
+              />
+
+              <ProjectCard
+                title="Paradise Nimbus"
+                category="Cloud Control Plane · Paradise (Roadmap)"
+                tags={['Registry', 'Artifacts', 'Events', 'Jobs']}
+                context="Control plane para integrar módulos sin acoplarlos: catálogo, eventos, artifacts y snapshots."
+                impact="Capas compartidas para escalar el ecosistema (mock-first, zero-cost, evolutivo)."
+                color="#64748b"
                 setCursorVariant={setCursorVariant}
                 onOpenDetails={openProjectDetails}
               />
@@ -666,7 +785,7 @@ export default function Portfolio() {
           </div>
 
           <div style={styles.footerBottom}>
-            <p style={styles.footerCopy}>© 2025 Agustín Delgado. Diseñado & desarrollado con ♥</p>
+            <p style={styles.footerCopy}>© {new Date().getFullYear()} Agustín Delgado. Diseñado & desarrollado con ♥</p>
           </div>
         </div>
       </footer>
