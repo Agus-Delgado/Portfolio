@@ -1,4 +1,4 @@
-﻿import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 
 const PROJECT_DETAILS: Record<string, any> = {
   AtlasOps: {
@@ -104,6 +104,54 @@ const PROJECT_DETAILS: Record<string, any> = {
     ],
     stack: 'React 18, Vite, TypeScript, IndexedDB (idb), Cloudflare Workers, npm workspaces.'
   },
+
+  'Paradise Vault': {
+    resumen:
+      'Módulo “Data Room” del ecosistema Paradise: repositorio de schemas/contratos, lineage-lite y artefactos versionados para estandarizar integraciones entre módulos (mock-first, evolutivo).',
+    caracteristicas: [
+      'Catalogación de entidades y contratos (schemas) con versionado.',
+      'Artifacts & Exports: generación y publicación de salidas versionadas.',
+      'Event log y snapshots para auditoría ligera y trazabilidad.',
+      'Diseñado para multi-tenant y acoplamiento mínimo vía contratos.'
+    ],
+    stack: 'TypeScript, React, Vite (UI) · contratos JSON/TS (mock-first).'
+  },
+
+  'Paradise AI': {
+    resumen:
+      'Interfaz conversacional central del ecosistema Paradise: “mente/voz” que orquesta módulos internos y produce artefactos. Enfoque 100% local/mock-first hoy, evolutivo a futuro.',
+    caracteristicas: [
+      'Router de intents hacia módulos internos (sin búsquedas externas).',
+      'Contexto por tenant/cliente + aprendizaje por artefactos/eventos.',
+      'Export de respuestas (docs/artefactos) y trazabilidad de cambios.',
+      'Diseñado para integrarse con Nimbus como capa transversal.'
+    ],
+    stack: 'TypeScript, React · arquitectura modular (core/router/context/export).'
+  },
+
+  'The Velvet': {
+    resumen:
+      'Módulo vertical (roadmap) para gestión de boliches / vida nocturna: operaciones, eventos, staff, listas y analítica. Diseño con identidad nocturna.',
+    caracteristicas: [
+      'Backlog: panel de eventos, control de acceso/listas, staff y métricas.',
+      'UI adaptable + editor tipo Canva para maquetación por venue.',
+      'Pensado como producto: flujos simples y vistas listas para demo.'
+    ],
+    stack: 'React, TypeScript, Vite (mock-first).'
+  },
+
+  'Paradise Halo': {
+    resumen:
+      'Módulo vertical (roadmap) para emprendedores: tienda online no-code con catálogo, carrito, checkout y canal WhatsApp, con identidad Paradise.',
+    caracteristicas: [
+      'Catálogo y carrito listos para usar, sin desarrollo.',
+      'Checkout + automatización hacia WhatsApp para cerrar ventas.',
+      'Plantillas visuales + editor tipo Canva para personalización.'
+    ],
+    stack: 'React, TypeScript, Vite (mock-first).'
+  },
+
+
 
   ModelArc: {
     resumen:
@@ -566,7 +614,52 @@ export default function Portfolio() {
                 onOpenDetails={openProjectDetails}
               />
 
+              
               <ProjectCard
+                title="Paradise Vault"
+                category="Contracts & Data Room · Paradise"
+                tags={['Schemas', 'Artifacts', 'Lineage-lite', 'Contracts']}
+                context="Repositorio de contratos y artefactos para estandarizar integraciones entre módulos (Data Room)."
+                impact="Base transversal para interoperabilidad: versionado, trazabilidad y exports para demos."
+                color="#a855f7"
+                setCursorVariant={setCursorVariant}
+                onOpenDetails={openProjectDetails}
+              />
+
+              <ProjectCard
+                title="Paradise AI"
+                category="GenAI Orchestrator · Paradise"
+                tags={['Router', 'Context', 'Artifacts', 'Local-first']}
+                context="Interfaz conversacional central: orquesta módulos internos y produce artefactos (sin búsquedas externas)."
+                impact="Evolutivo por tenant: aprende de artefactos/eventos y se integra con Nimbus como hub transversal."
+                color="#0ea5e9"
+                setCursorVariant={setCursorVariant}
+                onOpenDetails={openProjectDetails}
+              />
+
+              <ProjectCard
+                title="The Velvet"
+                category="Nightlife Ops · Paradise (Roadmap)"
+                tags={['Events', 'Staff', 'Access', 'Analytics']}
+                context="Módulo vertical para boliches: operaciones, eventos y analítica con identidad nocturna."
+                impact="Diseño tipo producto + editor estilo Canva para maquetación por venue."
+                color="#f43f5e"
+                setCursorVariant={setCursorVariant}
+                onOpenDetails={openProjectDetails}
+              />
+
+              <ProjectCard
+                title="Paradise Halo"
+                category="No-code Commerce · Paradise (Roadmap)"
+                tags={['Catalog', 'Cart', 'Checkout', 'WhatsApp']}
+                context="Tienda online no-code para emprendedores: catálogo, carrito, checkout y canal WhatsApp."
+                impact="Zero-cost first: plantillas + personalización tipo Canva para lanzar rápido."
+                color="#f59e0b"
+                setCursorVariant={setCursorVariant}
+                onOpenDetails={openProjectDetails}
+              />
+
+<ProjectCard
                 title="ModelArc"
                 category="Power BI + Semantic Modeling · Paradise"
                 tags={['Power BI', 'DAX', 'Star Schema', 'Governance']}
