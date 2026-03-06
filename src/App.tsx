@@ -153,7 +153,21 @@ const PROJECT_DETAILS: Record<string, any> = {
 
 
 
-  ModelArc: {
+  
+  'Paradise Ecosystem': {
+    resumen:
+      'Ecosistema AI-first de productos modulares orientado a resolver problemas reales en distintos dominios: operaciones, educación, logística, laboratorios, deporte, knowledge workflows y verticales de negocio. Cada módulo tiene identidad propia, pero comparte principios de diseño: mock-first, zero-cost mindset, outputs accionables y experiencia tipo producto.',
+    caracteristicas: [
+      'Arquitectura modular con productos que pueden evolucionar de forma independiente.',
+      'Paradise AI como interfaz conversacional central del ecosistema.',
+      'Paradise Nimbus como control plane cloud-first planificado para conectar módulos sin acoplarlos.',
+      'Enfoque portfolio-ready: módulos pensados para demos claras, valor de negocio y storytelling técnico.',
+      'Diseño transversal con experiencias editor / layout tipo Canva en módulos seleccionados.'
+    ],
+    stack: 'TypeScript, React, Vite, arquitectura modular, enfoque mock-first y zero-cost.'
+  },
+
+ModelArc: {
     resumen:
       'Módulo de Paradise orientado a Power BI: modelado semántico (star schema), DAX avanzado y dashboards interactivos con foco en gobernanza y performance. Demo 100% local con datos CSV sintéticos (sin cloud).',
     caracteristicas: [
@@ -501,21 +515,10 @@ export default function Portfolio() {
               <span style={styles.paradiseBadge}>AI-first ecosystem</span>
             </div>
             <p style={styles.paradiseText}>
-              Paradise es un ecosistema de <strong>productos modulares</strong> pensado para resolver problemas reales en distintos dominios (operaciones, educación, logística, laboratorios y deporte). Cada módulo tiene vida propia, pero comparte una visión: <strong>decisiones más rápidas</strong>, <strong>procesos más claros</strong> y <strong>reportes accionables</strong>. En el roadmap, <strong>Paradise Nimbus</strong> actuará como “control plane” para conectar módulos sin acoplarlos.
-            </p>
-          </div>
-
-          <div style={styles.paradiseCollection} className="paradise-collection">
-            <div style={styles.paradiseCollectionHeader}>
-              <h3 style={styles.paradiseCollectionTitle}>Paradise Modules</h3>
-              <span style={styles.paradiseCollectionPill}>Collection</span>
-            </div>
-
-            <p style={styles.paradiseCollectionText}>
-              Módulos del ecosistema <strong>Paradise</strong>. Cada uno se presenta como producto: objetivo claro, flujo simple y paneles listos para demo.
+              Paradise es un ecosistema de <strong>productos modulares</strong> pensado para resolver problemas reales en distintos dominios. Para que la sección de proyectos quede más clara para recruiters, el ecosistema se resume en una sola card y el detalle de módulos aparece recién al abrirla.
             </p>
 
-            <div style={{ display: 'flex', gap: '10px', flexWrap: 'wrap', marginBottom: '14px' }}>
+            <div style={{ display: 'flex', gap: '10px', flexWrap: 'wrap', marginTop: '14px', marginBottom: '14px' }}>
               <a
                 href="mailto:augusto.delgado00@hotmail.com?subject=Paradise%20demo%20request&body=Hola%20Agust%C3%ADn%2C%0A%0AVi%20tu%20portfolio%20y%20me%20interesa%20ver%20una%20demo%20de%20Paradise%20%28m%C3%B3dulos%20y%20casos%20de%20uso%29.%20%C2%BFPodemos%20coordinar%20un%20horario%3F%0A%0AGracias%2C%0A%5BNombre%5D%0A%5BEmpresa%5D%0A"
                 style={{ ...styles.ctaButton, textDecoration: 'none' }}
@@ -525,163 +528,20 @@ export default function Portfolio() {
               <span style={styles.ctaHint}>Demo guiada · Enfoque negocio + producto</span>
             </div>
 
-            <div style={styles.paradiseModulesGrid} className="paradise-modules-grid">
+            <div style={styles.projectsGrid} className="projects-grid">
               <ProjectCard
-                title="AtlasOps"
-                category="Ops + Decision Intelligence · Paradise"
-                tags={['Cloudflare', 'Workers', 'D1', 'Hono', 'React']}
-                context="Decision Intelligence Hub serverless para operaciones: KPIs ejecutivos + alertas accionables."
-                impact="Deploy sin infraestructura siempre encendida (Cloudflare edge) + demo mock-first para portfolio."
-                color="#6366f1"
-                setCursorVariant={setCursorVariant}
-                onOpenDetails={openProjectDetails}
-              />
-
-              <ProjectCard
-                title="Paradise ClubNet"
-                category="Deporte & Clubes · Paradise"
-                tags={['Club Dashboard', 'Salud', 'Entrenamientos', 'Asistencia']}
-                context="Portal para clubes y deporte de base: salud, entrenamientos, asistencia y comunidad, con contexto por deporte y rama."
-                impact="Experiencia tipo producto: launcher por deporte/club + paneles listos para demo."
-                color="#14b8a6"
-                setCursorVariant={setCursorVariant}
-                onOpenDetails={openProjectDetails}
-              />
-
-              <ProjectCard
-                title="Paradise Aulora"
-                category="Educación · Paradise"
-                tags={['Campus Console', 'Seguimiento', 'Inbox', 'Recursos']}
-                context="Consola educativa por escuela/rol/curso con panel, seguimiento de estudiantes y comunicaciones tipo inbox/outbox."
-                impact="Enfoque claro para no técnicos: prioridades, alertas y seguimiento con export de ficha."
-                color="#22c55e"
-                setCursorVariant={setCursorVariant}
-                onOpenDetails={openProjectDetails}
-              />
-
-              <ProjectCard
-                title="Paradise RouteOps"
-                category="Logística · Paradise"
-                tags={['Triage', 'Alerts Queue', 'Drawer', 'Ops Console']}
-                context="Consola para logística: cola de alertas, priorización por severidad y detalle con timeline de incidentes."
-                impact="UX orientada a operación: filtros rápidos, estados claros y contexto para decidir."
-                color="#f59e0b"
-                setCursorVariant={setCursorVariant}
-                onOpenDetails={openProjectDetails}
-              />
-
-              <ProjectCard
-                title="Paradise QC Sentinel"
-                category="Laboratorios (QC) · Paradise"
-                tags={['Quality Control', 'Audit', 'CAPA', 'Export']}
-                context="Workbench de control de calidad: intake, checks, auditoría, trazabilidad y desviaciones/CAPA."
-                impact="Modelo ‘pharma-ready’ en versión demo: decisiones de lote y reportes exportables."
-                color="#3b82f6"
-                setCursorVariant={setCursorVariant}
-                onOpenDetails={openProjectDetails}
-              />
-
-              <ProjectCard
-                title="Paradise Pulse"
-                category="Monitoreo & Alertas · Paradise"
-                tags={['CSV', 'Anomalías', 'Playbooks', 'Export']}
-                context="Monitor local para series temporales: baseline, anomalías y contexto operativo por evento."
-                impact="Alertas priorizadas + playbooks + export a Markdown para comunicación rápida."
-                color="#a855f7"
-                setCursorVariant={setCursorVariant}
-                onOpenDetails={openProjectDetails}
-              />
-
-              <ProjectCard
-                title="Paradise Nexus"
-                category="Knowledge Base · Paradise"
-                tags={['Búsqueda', 'Biblioteca', 'Citations', 'Local-first']}
-                context="Biblioteca personal de documentos con ingest/chunking, búsqueda y respuestas con citations."
-                impact="Flujo simple para no técnicos: subir, buscar, responder y exportar."
-                color="#ec4899"
-                setCursorVariant={setCursorVariant}
-                onOpenDetails={openProjectDetails}
-              />
-
-              <ProjectCard
-                title="Paradise Nimbus"
-                category="Cloud Control Plane · Paradise (Roadmap)"
-                tags={['Registry', 'Artifacts', 'Events', 'Jobs']}
-                context="Control plane para integrar módulos sin acoplarlos: catálogo, eventos, artifacts y snapshots."
-                impact="Capas compartidas para escalar el ecosistema (mock-first, zero-cost, evolutivo)."
-                color="#64748b"
-                setCursorVariant={setCursorVariant}
-                onOpenDetails={openProjectDetails}
-              />
-
-              
-              <ProjectCard
-                title="Paradise Vault"
-                category="Contracts & Data Room · Paradise"
-                tags={['Schemas', 'Artifacts', 'Lineage-lite', 'Contracts']}
-                context="Repositorio de contratos y artefactos para estandarizar integraciones entre módulos (Data Room)."
-                impact="Base transversal para interoperabilidad: versionado, trazabilidad y exports para demos."
-                color="#a855f7"
-                setCursorVariant={setCursorVariant}
-                onOpenDetails={openProjectDetails}
-              />
-
-              <ProjectCard
-                title="Paradise AI"
-                category="GenAI Orchestrator · Paradise"
-                tags={['Router', 'Context', 'Artifacts', 'Local-first']}
-                context="Interfaz conversacional central: orquesta módulos internos y produce artefactos (sin búsquedas externas)."
-                impact="Evolutivo por tenant: aprende de artefactos/eventos y se integra con Nimbus como hub transversal."
-                color="#0ea5e9"
-                setCursorVariant={setCursorVariant}
-                onOpenDetails={openProjectDetails}
-              />
-
-              <ProjectCard
-                title="The Velvet"
-                category="Nightlife Ops · Paradise (Roadmap)"
-                tags={['Events', 'Staff', 'Access', 'Analytics']}
-                context="Módulo vertical para boliches: operaciones, eventos y analítica con identidad nocturna."
-                impact="Diseño tipo producto + editor estilo Canva para maquetación por venue."
-                color="#f43f5e"
-                setCursorVariant={setCursorVariant}
-                onOpenDetails={openProjectDetails}
-              />
-
-              <ProjectCard
-                title="Paradise Halo"
-                category="No-code Commerce · Paradise (Roadmap)"
-                tags={['Catalog', 'Cart', 'Checkout', 'WhatsApp']}
-                context="Tienda online no-code para emprendedores: catálogo, carrito, checkout y canal WhatsApp."
-                impact="Zero-cost first: plantillas + personalización tipo Canva para lanzar rápido."
-                color="#f59e0b"
-                setCursorVariant={setCursorVariant}
-                onOpenDetails={openProjectDetails}
-              />
-
-<ProjectCard
-                title="ModelArc"
-                category="Power BI + Semantic Modeling · Paradise"
-                tags={['Power BI', 'DAX', 'Star Schema', 'Governance']}
-                context="Demo local-first de modelado semántico en Power BI: star schema + medidas DAX + dashboards."
-                impact="Portfolio-ready: 3 páginas (Executive/Deep Dive/Advanced) + Key Influencers para drivers de High Revenue."
-                color="#64748b"
-                setCursorVariant={setCursorVariant}
-                onOpenDetails={openProjectDetails}
-              />
-
-              <ProjectCard
-                title="AI Delivery Copilot"
-                category="GenAI + Product · Paradise"
-                tags={['React', 'TypeScript', 'Zod', 'Vitest']}
-                context="Copiloto para transformar un brief en PRDs, backlogs y QA packs listos para uso."
-                impact="Modo demo sin costos + validación automática + links compartibles para colaboración."
-                color="#ef4444"
+                title="Paradise Ecosystem"
+                category="AI-first modular ecosystem"
+                tags={['AtlasOps', 'ClubNet', 'Aulora', 'Pulse', 'Nexus', 'Nimbus']}
+                context="Resumen del ecosistema Paradise: productos modulares orientados a operaciones, educación, deporte, laboratorios, knowledge workflows y verticales de negocio."
+                impact="Menos ruido visual en el portfolio y mejor navegación: una sola entrada para el ecosistema, con detalle completo al abrir el modal."
+                color="#8b5cf6"
                 setCursorVariant={setCursorVariant}
                 onOpenDetails={openProjectDetails}
               />
             </div>
           </div>
+
 
           <div style={styles.otherProjectsHeader}>
             <h3 style={styles.otherProjectsTitle}>Otros proyectos</h3>
@@ -1006,6 +866,36 @@ export default function Portfolio() {
                 )}
 
                 {/* ... mantené el resto de tus bloques tal cual ... */}
+
+
+                {selectedProjectTitle === 'Paradise Ecosystem' && (
+                  <div style={{ marginTop: '18px' }}>
+                    <h4 style={{ fontSize: '16px', fontWeight: 700, color: '#ffffff', marginBottom: '10px' }}>Modules included</h4>
+                    <div style={{ display: 'grid', gap: '10px' }}>
+                      {[
+                        ['AtlasOps', 'Decision Intelligence para operaciones y alertas accionables.'],
+                        ['Paradise ClubNet', 'Deporte y clubes: salud, entrenamientos, asistencia y comunidad.'],
+                        ['Paradise Aulora', 'Consola educativa con seguimiento, inbox y recursos.'],
+                        ['Paradise RouteOps', 'Ops console logística con triage y timeline de incidentes.'],
+                        ['Paradise QC Sentinel', 'Quality control workbench con CAPA y auditoría.'],
+                        ['Paradise Pulse', 'Monitoreo local-first de anomalías y playbooks.'],
+                        ['Paradise Nexus', 'Knowledge base local-first con búsqueda y citations.'],
+                        ['Paradise Vault', 'Contracts, artifacts y lineage-lite para integraciones.'],
+                        ['Paradise AI', 'Orquestador conversacional del ecosistema.'],
+                        ['Paradise Nimbus', 'Control plane cloud-first en roadmap.'],
+                        ['The Velvet', 'Vertical nightlife ops en roadmap.'],
+                        ['Paradise Halo', 'Vertical no-code commerce + WhatsApp en roadmap.'],
+                        ['ModelArc', 'Semantic modeling y dashboards en Power BI.'],
+                        ['AI Delivery Copilot', 'Copiloto GenAI para PRDs, backlogs y QA packs.']
+                      ].map(([name, desc]) => (
+                        <div key={String(name)} style={{ border: '1px solid rgba(255,255,255,0.08)', borderRadius: '12px', padding: '12px 14px', background: 'rgba(255,255,255,0.02)' }}>
+                          <div style={{ fontSize: '14px', fontWeight: 700, color: '#ffffff', marginBottom: '4px' }}>{name}</div>
+                          <div style={{ fontSize: '13px', color: '#cfcfcf', lineHeight: '1.6' }}>{desc}</div>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                )}
 
                 {PROJECT_DETAILS[selectedProjectTitle].stack && (
                   <div className="modal-section">
