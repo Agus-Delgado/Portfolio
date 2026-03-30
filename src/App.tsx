@@ -1,1261 +1,1305 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useId, useMemo, useState } from 'react'
 
-const PROJECT_DETAILS: Record<string, any> = {
-  AtlasOps: {
-    resumen:
-      'Módulo del ecosistema Paradise orientado a Decision Intelligence para operaciones (e-commerce/retail/logística). Plataforma serverless con métricas ejecutivas y alertas operativas, diseñada para deploy sin infraestructura siempre encendida en Cloudflare (Pages/Workers/D1).',
-    caracteristicas: [
-      'Overview con KPIs ejecutivos (GMV, Net Revenue, Orders, Refund Rate, Delivery SLA) y comparativas (DoD / 7d avg).',
-      'Alertas operativas con filtros por severidad y estado para reducir ruido y priorizar incidentes.',
-      'Mock-first: datos seed para demo instantánea y desarrollo local sin dependencias externas.',
-      'Monorepo con tipos/esquemas compartidos entre frontend y backend.',
-      'Stack Cloudflare-only para costos cero en MVP (sin servidores siempre encendidos).'
-    ],
-    stack: 'Cloudflare Pages, Workers, D1 (SQLite), Hono, TypeScript, React (Vite).'
+type Project = {
+  title: string
+  category: string
+  problem: string
+  analyticalFocus: string
+  outcome: string
+  metricHighlight?: string
+  stack?: string[]
+  bullets?: string[]
+  summary: string
+}
+
+const PRIMARY_PROJECTS: Project[] = [
+  {
+    title: 'Mi Consultorio',
+    category: 'Salud · sistema en producción',
+    problem: 'Información dispersa en papel y planillas; poca visibilidad de turnos, caja y operación diaria.',
+    analyticalFocus:
+      'Centralización de datos, KPIs de agenda y reporting alineado a cómo trabaja el consultorio en la práctica.',
+    outcome: 'Un solo lugar para consultar agenda, asistencias e indicadores operativos y financieros.',
+    metricHighlight: 'En uso real',
+    stack: ['SQL', 'Power BI', 'Python', 'Reporting'],
+    summary:
+      'Problema: información dispersa en papel y planillas, poca visibilidad de turnos, caja y operación diaria. Se centralizaron datos y se construyeron reportes para priorizar turnos, seguimiento y decisiones cotidianas.',
+    bullets: [
+      'Impacto: un solo lugar para consultar agenda, asistencias e indicadores operativos.',
+      'Uso de datos para reducir fricción administrativa y dar continuidad clínica-administrativa.',
+      'Reporting y procesos alineados a cómo trabaja el consultorio en la práctica.'
+    ]
   },
-
-  'Paradise ClubNet': {
-    resumen:
-      'Producto del ecosistema Paradise para clubes y comunidades deportivas: centraliza salud, entrenamientos, asistencia y comunicación en un solo panel, con contexto por deporte y rama.',
-    caracteristicas: [
-      'Inicio tipo catálogo: elegís deporte, rama y club para entrar al portal del club.',
-      'Salud: estado general, riesgos y seguimiento de plantel.',
-      'Entrenamientos: planificación semanal y foco por tipo de sesión.',
-      'Asistencia: ranking, alertas y semáforo por umbrales.',
-      'Export/Docs mock-first listo para demos y portfolio.'
-    ],
-    stack: 'React, TypeScript, Vite (mock-first).'
+  {
+    title: 'SmartClinic No-Show Predictor',
+    category: 'Salud · analítica y BI',
+    problem: 'Inasistencias que afectan ocupación y planificación sin una lectura común del riesgo.',
+    analyticalFocus:
+      'Métricas de riesgo, segmentación y tablero para priorizar recordatorios y decisiones operativas prudentes.',
+    outcome: 'Priorización de turnos según riesgo y lectura más clara frente a la operación esperada.',
+    metricHighlight: 'KPIs + segmentación',
+    stack: ['SQL', 'Power BI', 'Python', 'KPIs'],
+    summary:
+      'Problema: inasistencias que afectan ocupación y planificación. Se analizó un volumen representativo de turnos, se definieron métricas de riesgo y se priorizó la lectura en un tablero para acciones operativas.',
+    bullets: [
+      'Enfoque en indicadores y segmentación para decidir recordatorios o sobreventa prudente.',
+      'Dashboard para comparar patrones y desvíos frente a la operación esperada.',
+      'Menos énfasis en el algoritmo y más en qué mirar y qué hacer con los datos.'
+    ]
   },
-
-  'Paradise Aulora': {
-    resumen:
-      'Campus Console para educación: seguimiento de estudiantes, comunicaciones tipo inbox/outbox, recursos y panel de estado por escuela/rol/curso.',
-    caracteristicas: [
-      'Launcher: selección de escuela, rol y curso antes de entrar al campus.',
-      'Campus Pulse: KPIs y alertas del curso con agenda integrada.',
-      'Seguimiento: tablero de riesgo con semáforo, señales y ficha exportable.',
-      'Comunicaciones: inbox/outbox con composer y estado de lectura (mock).',
-      'Recursos: biblioteca simple para compartir materiales (mock).'
-    ],
-    stack: 'React, TypeScript, Vite (mock-first).'
-  },
-
-  'Paradise RouteOps': {
-    resumen:
-      'Ops Console para logística: cola de alertas y despacho con triage, detalle por incidente y acciones de seguimiento, orientado a operación diaria.',
-    caracteristicas: [
-      'Queue de alertas con severidad y estado (open/ack/closed).',
-      'KPIs rápidos para triage y foco en lo urgente.',
-      'Drawer de detalle con timeline y contexto operativo.',
-      'Inputs y filtros consistentes para priorizar incidentes.',
-      'Mock-first para demo sin backend.'
-    ],
-    stack: 'React, TypeScript, Vite (mock-first).'
-  },
-
-  'Paradise QC Sentinel': {
-    resumen:
-      'Workbench de Quality Control para laboratorios (pharma/QC): intake de muestras, checks, auditoría, export y gestión de desviaciones/CAPA (mock).',
-    caracteristicas: [
-      'Stepper claro: Intake → QC Checks → Audit Log.',
-      'Estado de lote (Batch Status Bar) con métricas de calidad.',
-      'Chain of custody: trazabilidad de eventos por muestra.',
-      'Decisión del lote: Release/Hold/Reject con comentario.',
-      'Deviation & CAPA: raíz, acción correctiva, owner y due date.'
-    ],
-    stack: 'React, TypeScript, Vite (mock-first).'
-  },
-
-  'Paradise Nimbus': {
-    resumen:
-      'Control plane cloud-first (en planificación) para conectar módulos sin acoplarlos: registry, artifacts, eventos, jobs y health/observability.',
-    caracteristicas: [
-      'Module Registry: catálogo del ecosistema y descubrimiento de módulos.',
-      'Artifacts: outputs versionados (Markdown/JSON/CSV) con metadata.',
-      'Event log: eventos para integraciones futuras (notificaciones/webhooks).',
-      'Jobs programados: snapshots y digests automáticos.',
-      'Health unificado: estado y build info del ecosistema.'
-    ],
-    stack: 'Serverless API + storage (MVP v0 planificado).'
-  },
-
-  'Paradise Pulse': {
-    resumen:
-      'Módulo de Paradise para monitoreo local-first de series temporales: detecta anomalías sobre CSV (local o demo), prioriza alertas y exporta reportes accionables en Markdown.',
-    caracteristicas: [
-      'Signals: carga CSV (local/demo), selección de columnas, normalización, baseline y anomalías marcadas.',
-      'Alerts: lista de anomalías con severidad, detalle con contexto antes/después y playbooks por severidad.',
-      'Export: genera un informe Markdown (resumen + tabla de alerts + playbooks) con copy-to-clipboard.',
-      'Docs: documentación del flujo y dataset demo para onboarding.',
-      'Sin backend obligatorio: pensado para portfolio/demos y extensión futura.'
-    ],
-    stack: 'React, TypeScript, Vite, SVG charts, local CSV ingest.'
-  },
-
-  'Paradise Nexus': {
-    resumen:
-      'Sistema local-first de gestión de documentos con búsqueda full-text e IA generativa (modo mock). Biblioteca personal de conocimiento con $0 de infraestructura, indexación automática y respuestas basadas en tu propio contexto.',
-    caracteristicas: [
-      'Library: CRUD de Sources/Documents + upload .md/.txt con auto-fill de título.',
-      'Persistencia local con IndexedDB (idb) y eliminación en cascada (Source → Documents → Chunks).',
-      'Ingest + Index: chunking automático por párrafos (máx. 500 chars) y store de chunks por doc/source.',
-      'Search: full-text keyword sobre chunks con ranking simple y highlights XSS-safe.',
-      'Answer API: Cloudflare Worker con endpoint POST /answer; modo mock determinístico + citations; placeholder BYOK.'
-    ],
-    stack: 'React 18, Vite, TypeScript, IndexedDB (idb), Cloudflare Workers, npm workspaces.'
-  },
-
-  'Paradise Vault': {
-    resumen:
-      'Módulo “Data Room” del ecosistema Paradise: repositorio de schemas/contratos, lineage-lite y artefactos versionados para estandarizar integraciones entre módulos (mock-first, evolutivo).',
-    caracteristicas: [
-      'Catalogación de entidades y contratos (schemas) con versionado.',
-      'Artifacts & Exports: generación y publicación de salidas versionadas.',
-      'Event log y snapshots para auditoría ligera y trazabilidad.',
-      'Diseñado para multi-tenant y acoplamiento mínimo vía contratos.'
-    ],
-    stack: 'TypeScript, React, Vite (UI) · contratos JSON/TS (mock-first).'
-  },
-
-  'Paradise AI': {
-    resumen:
-      'Interfaz conversacional central del ecosistema Paradise: “mente/voz” que orquesta módulos internos y produce artefactos. Enfoque 100% local/mock-first hoy, evolutivo a futuro.',
-    caracteristicas: [
-      'Router de intents hacia módulos internos (sin búsquedas externas).',
-      'Contexto por tenant/cliente + aprendizaje por artefactos/eventos.',
-      'Export de respuestas (docs/artefactos) y trazabilidad de cambios.',
-      'Diseñado para integrarse con Nimbus como capa transversal.'
-    ],
-    stack: 'TypeScript, React · arquitectura modular (core/router/context/export).'
-  },
-
-  'The Velvet': {
-    resumen:
-      'Módulo vertical (roadmap) para gestión de boliches / vida nocturna: operaciones, eventos, staff, listas y analítica. Diseño con identidad nocturna.',
-    caracteristicas: [
-      'Backlog: panel de eventos, control de acceso/listas, staff y métricas.',
-      'UI adaptable + editor tipo Canva para maquetación por venue.',
-      'Pensado como producto: flujos simples y vistas listas para demo.'
-    ],
-    stack: 'React, TypeScript, Vite (mock-first).'
-  },
-
-  'Paradise Halo': {
-    resumen:
-      'Módulo vertical (roadmap) para emprendedores: tienda online no-code con catálogo, carrito, checkout y canal WhatsApp, con identidad Paradise.',
-    caracteristicas: [
-      'Catálogo y carrito listos para usar, sin desarrollo.',
-      'Checkout + automatización hacia WhatsApp para cerrar ventas.',
-      'Plantillas visuales + editor tipo Canva para personalización.'
-    ],
-    stack: 'React, TypeScript, Vite (mock-first).'
-  },
-
-
-
-  
-  'Paradise Ecosystem': {
-    resumen:
-      'Ecosistema AI-first de productos modulares orientado a resolver problemas reales en distintos dominios: operaciones, educación, logística, laboratorios, deporte, knowledge workflows y verticales de negocio. Cada módulo tiene identidad propia, pero comparte principios de diseño: mock-first, zero-cost mindset, outputs accionables y experiencia tipo producto.',
-    caracteristicas: [
-      'Arquitectura modular con productos que pueden evolucionar de forma independiente.',
-      'Paradise AI como interfaz conversacional central del ecosistema.',
-      'Paradise Nimbus como control plane cloud-first planificado para conectar módulos sin acoplarlos.',
-      'Enfoque portfolio-ready: módulos pensados para demos claras, valor de negocio y storytelling técnico.',
-      'Diseño transversal con experiencias editor / layout tipo Canva en módulos seleccionados.'
-    ],
-    stack: 'TypeScript, React, Vite, arquitectura modular, enfoque mock-first y zero-cost.'
-  },
-
-ModelArc: {
-    resumen:
-      'Módulo de Paradise orientado a Power BI: modelado semántico (star schema), DAX avanzado y dashboards interactivos con foco en gobernanza y performance. Demo 100% local con datos CSV sintéticos (sin cloud).',
-    caracteristicas: [
-      'Star schema: 4 dimensiones + 1 fact con relaciones 1-* y atributos de calidad (tipos, formatos, ocultamiento de columnas).',
-      'Medidas DAX (15+): base + time intelligence (MTD/QTD/YTD) + variaciones YoY/MoM + share por categoría/región.',
-      'Dashboard en 3 páginas: Executive Overview, Deep Dive y Advanced con Key Influencers (AI visual).',
-      'Advanced: drivers de RevenueBand=High (Low/Mid/High por percentiles 33/66) con interpretabilidad.',
-      'Repo portfolio-ready: documentación técnica + setup reproducible con plantilla .pbit y datos locales.'
-    ],
-    stack: 'Power BI Desktop, DAX, Star Schema, CSV local-first, documentación Markdown.'
-  },
-
-  'SmartClinic No-Show Predictor': {
-    resumen:
-      'Proyecto de Machine Learning + BI para predecir probabilidad de no-show (inasistencia) en turnos con datos sintéticos y visualización en Power BI.',
-    objetivo: [
-      'Simular comportamiento operativo de agendas y turnos.',
-      'Entrenar Regresión Logística para estimar probabilidad de no-show por turno.',
-      'Dashboard en Power BI para factores de riesgo y ranking de turnos.'
-    ],
-    datos: ['10.000 turnos sintéticos (sin datos reales).', 'Archivos: no_show_sintetico.csv y no_show_scores.csv.'],
-    modelo: ['Train/test 80/20 estratificado.', 'StandardScaler + OneHotEncoder.', "LogisticRegression (class_weight='balanced')."],
-    metricas: ['Tasa no-show: 20,5%', 'Accuracy: 57,3%', 'Recall no-show: 52,7%', 'ROC-AUC: 0,586'],
-    dashboard: ['Resumen general', 'Factores de riesgo (distancia, franja horaria, día)', 'Riesgo de no-show (ranking por no_show_proba)'],
-    stack: 'Python (numpy, pandas, scikit-learn), Power BI'
-  },
-
-  'AI Delivery Copilot': {
-    resumen:
-      'Copiloto GenAI para generar PRDs, backlogs y QA packs a partir de un brief, orientado a acelerar documentación y delivery en equipos de producto.',
-    caracteristicas: [
-      'Modo demo 100% client-side (sin API keys) con artefactos determinísticos para portfolio.',
-      'Validación por esquema (Zod) + bucle de reparación automática ante salidas inválidas.',
-      'Historial local con re-run, controles de privacidad y export a JSON/Markdown.',
-      'Links compartibles vía URL state (sin secretos) + panel de debug (prompt/raw).',
-      'CI profesional (Node 18/20), lint/format/test/build y cobertura opcional.',
-      'Repositorio público y demo en Vercel (costo cero).'
-    ],
-    stack: 'React, TypeScript, Vite, Zustand, Zod, Vitest/RTL, GitHub Actions, Vercel.'
-  },
-
-  'DecisionOps AI Toolkit': {
-    resumen:
-      'Toolkit end-to-end para DecisionOps: entrenás un baseline de churn, hacés predicciones y obtenés explicabilidad, con UI lista para demo incluso sin backend.',
-    caracteristicas: [
-      'API FastAPI con endpoints /train, /predict, /explain y /health.',
-      'Persistencia de artifacts (modelo + schema + métricas) y autocarga al iniciar (lifespan).',
-      'Validación de inputs y manejo de errores consistente en predict.',
-      'Modo Demo en el frontend: funciona sin API y permite presentar el flujo completo.',
-      'Docker Compose para levantar web + api en 1 comando.',
-      'Pytest + CI para asegurar reproducibilidad.'
-    ],
-    stack: 'FastAPI, scikit-learn, pandas, React, Vite, Pytest, Docker, GitHub Actions, Vercel'
-  },
-
-  'Plataforma Geriátricos': {
-    resumen: 'Sistema de gestión para hogares geriátricos con backend API REST y frontend PWA mobile-first.',
-    destinatarios: ['Propietarios/Administradores', 'Profesionales especializados', 'Personal administrativo'],
-    caracteristicas: [
-      'Gestión de residentes (info personal/médica, admisiones/estadías, contactos de emergencia).',
-      'Gestión clínica (resúmenes, diagnósticos, notas clínicas, alergias, medicaciones actuales).',
-      'Gestión de medicaciones (planes, dosificación, frecuencia, horarios, pendientes del día).',
-      'Gestión financiera (solo OWNER): gastos/ingresos, transacciones, múltiples monedas, control por sede.',
-      'Documentos y certificados.',
-      'Seguridad: JWT + roles + auditoría.',
-      'PWA: instalable, offline, optimizada para móviles.',
-      'Web Push (noticias diarias): configuración desde "Mi cuenta".'
-    ],
-    roles: ['OWNER: acceso completo + finanzas + usuarios.', 'PROFESSIONAL: gestión clínica/medicación; sin finanzas.'],
-    stack:
-      'Backend: FastAPI, SQLAlchemy 2.0, PostgreSQL, Alembic, JWT, bcrypt, slowapi. Frontend: React, TypeScript, Vite, Tailwind, React Router, vite-plugin-pwa.'
-  },
-
-  'Mi Consultorio': {
-    resumen: 'Sistema integral en Python/Django para gestión de consultorios y agendas profesionales.',
-    highlights: 'Interfaz moderna (gradientes, glassmorphism), responsive, dashboard analítico, centro de ayuda.',
-    modulos: [
-      'Historias clínicas digitales con CKEditor (texto enriquecido).',
-      'Turnos y agenda: estados (Pendiente/Asistió/Cancelado), validación anti-duplicados, control de asistencia.',
-      'Notificaciones por email: confirmación y recordatorios (48h) + resumen de agenda a profesionales.',
-      'Recetas digitales: integración con MisRX, repetir receta, PDFs listos para imprimir.',
-      'Gestión financiera: caja diaria automatizada, ingresos/egresos, reportes.',
-      'Seguridad: PIN 4 dígitos para acciones sensibles, roles diferenciados (profesionales vs administrativos).'
-    ],
-    stack: 'Django, Python, Bootstrap/Jazzmin, CKEditor'
-  },
-
-  'Consultorio Barcala': {
-    resumen: 'Sitio web del Consultorio Barcala desarrollado con React + TypeScript + Vite.',
-    estructura: 'components/, pages/, design-system/, services/, types/, utils/.',
-    stack: 'React 19, TypeScript, Framer Motion.'
+  {
+    title: 'ModelArc',
+    category: 'BI · KPIs y visualización',
+    problem: 'Lectura poco clara de desempeño y comparativas en reuniones de seguimiento.',
+    analyticalFocus: 'Modelado de métricas ejecutivas, KPIs comparativos y narrativa visual sobria.',
+    outcome: 'Lectura más clara del desempeño mediante KPIs comparativos y foco en desvíos accionables.',
+    metricHighlight: 'Storytelling con datos',
+    stack: ['Power BI', 'DAX', 'Data modeling', 'Storytelling'],
+    summary:
+      'Problema: lectura poco clara de desempeño y comparativas. Se modelaron métricas ejecutivas y vistas simples para detectar desvíos y focalizar reuniones en números, no en discusiones abstractas.',
+    bullets: [
+      'Diseño de KPIs comparativos y narrativa visual sobria.',
+      'Prioridad en interpretación rápida para perfiles de negocio.',
+      'Ejemplo de cómo estructuro tableros sin ruido innecesario.'
+    ]
   }
-};
+]
 
-export default function Portfolio() {
-  const [activeSection, setActiveSection] = useState<string>('');
-  const [isLoaded, setIsLoaded] = useState<boolean>(false);
-  const [mousePos, setMousePos] = useState<{ x: number; y: number }>({ x: 0, y: 0 });
-  const [cursorVariant, setCursorVariant] = useState<'default' | 'hover'>('default');
-  const [isProjectModalOpen, setIsProjectModalOpen] = useState<boolean>(false);
-  const [selectedProjectTitle, setSelectedProjectTitle] = useState<string | null>(null);
+const SECONDARY_PROJECTS: Project[] = [
+  {
+    title: 'AtlasOps',
+    category: 'Complementario · operación',
+    problem: 'Consola orientada a KPIs y alertas.',
+    analyticalFocus: 'Visión de producto y métricas; el portfolio prioriza BI en salud.',
+    outcome: 'Complementa el perfil sin competir con los casos principales.',
+    summary:
+      'Producto de consola con foco en KPIs y alertas. Aporta visión de producto; el portfolio prioriza casos BI en salud y analítica.'
+  },
+  {
+    title: 'Consultorio Barcala',
+    category: 'Complementario · web',
+    problem: 'Presencia institucional online.',
+    analyticalFocus: 'Comunicación clara; no es el eje analítico del perfil.',
+    outcome: 'Sitio institucional en producción.',
+    summary:
+      'Sitio institucional. Comunicación y presencia online; no es el eje analítico del perfil.'
+  },
+  {
+    title: 'Paradise ClubNet',
+    category: 'Complementario · ecosistema',
+    problem: 'Información modular a escala para clubes.',
+    analyticalFocus: 'Organización de módulos y datos; detrás de los proyectos BI.',
+    outcome: 'Muestra orden de información a escala.',
+    summary:
+      'Portal modular para clubes. Muestra organización de información a escala; queda detrás de los proyectos BI y de salud.'
+  }
+]
 
-  useEffect(() => {
-    setTimeout(() => setIsLoaded(true), 100);
+type SkillItem = { name: string; emphasis: number }
 
-    const handleScroll = () => {
-      const sections = ['about', 'projects', 'skills', 'education', 'experience'];
-      for (const section of sections) {
-        const element = document.getElementById(section);
-        if (element) {
-          const rect = element.getBoundingClientRect();
-          if (rect.top <= 150 && rect.bottom >= 150) {
-            setActiveSection(section);
-            break;
-          }
-        }
-      }
-    };
+const SKILL_GROUPS: { title: string; items: SkillItem[] }[] = [
+  {
+    title: 'Núcleo BI y analítica',
+    items: [
+      { name: 'SQL', emphasis: 96 },
+      { name: 'Power BI', emphasis: 94 },
+      { name: 'Excel', emphasis: 90 },
+      { name: 'Python (analytics)', emphasis: 82 },
+      { name: 'ETL / limpieza', emphasis: 88 },
+      { name: 'KPIs & reporting', emphasis: 92 },
+      { name: 'Dashboards', emphasis: 93 },
+      { name: 'Data modeling', emphasis: 86 }
+    ]
+  },
+  {
+    title: 'Complemento',
+    items: [
+      { name: 'Fundamentos ML', emphasis: 52 },
+      { name: 'GenAI / RAG', emphasis: 48 },
+      { name: 'Git / GitHub', emphasis: 72 },
+      { name: 'Desarrollo web (apoyo)', emphasis: 58 }
+    ]
+  }
+]
 
-    const handleMouseMove = (e: MouseEvent) => setMousePos({ x: e.clientX, y: e.clientY });
+type ExperienceItem = {
+  period: string
+  title: string
+  place: string
+  description?: string
+  bullets?: string[]
+  featured?: boolean
+}
 
-    window.addEventListener('scroll', handleScroll);
-    window.addEventListener('mousemove', handleMouseMove);
-    return () => {
-      window.removeEventListener('scroll', handleScroll);
-      window.removeEventListener('mousemove', handleMouseMove);
-    };
-  }, []);
+const EXPERIENCE: ExperienceItem[] = [
+  {
+    period: '2018 — Actualidad',
+    title: 'Data Analyst',
+    place: 'Consultorio médico · Argentina',
+    featured: true,
+    bullets: [
+      'Migración de registros manuales a bases SQL y consultas orientadas a la operación diaria.',
+      'Reducción aproximada del ~70% en el tiempo de búsqueda de información.',
+      'Dashboards en Power BI para KPIs operativos y financieros.',
+      'Reporting mensual automatizado con Python (menos trabajo repetitivo, más consistencia).',
+      'Eliminación de más de 15 horas mensuales de tareas repetitivas.',
+      'Sistema Mi Consultorio en uso real: datos y procesos alineados al consultorio.',
+      'Mejora continua de procesos y soporte a decisiones con información confiable.'
+    ]
+  },
+  {
+    period: 'Formación',
+    title: 'Tecnicatura y especialización en datos',
+    place: 'Formación académica y práctica continua',
+    description:
+      'Base sólida en SQL, Power BI, análisis y herramientas de negocio; actualización constante en entorno de datos.'
+  }
+]
 
-  useEffect(() => {
-    if (isProjectModalOpen) {
-      document.body.style.overflow = 'hidden';
-      const handleEsc = (e: KeyboardEvent) => {
-        if (e.key === 'Escape') closeProjectDetails();
-      };
-      window.addEventListener('keydown', handleEsc);
-      return () => {
-        window.removeEventListener('keydown', handleEsc);
-        document.body.style.overflow = 'unset';
-      };
-    }
-  }, [isProjectModalOpen]);
+type HeroKpi = { value: string; label: string; spark?: number[] }
 
-  const scrollTo = (id: string) => document.getElementById(id)?.scrollIntoView({ behavior: 'smooth' });
+const HERO_KPIS: HeroKpi[] = [
+  { value: '+9 años', label: 'En operación real con datos', spark: [12, 14, 18, 22, 28, 35, 42, 48, 55, 62, 70, 78] },
+  { value: '~70%', label: 'Menos tiempo de búsqueda', spark: [88, 82, 76, 70, 65, 58, 52, 48, 42, 38, 34, 30] },
+  { value: '15+ h/mes', label: 'Automatizadas (reporting)', spark: [8, 12, 18, 22, 28, 32, 38, 44, 50, 58, 65, 72] },
+  { value: 'Op. + finanzas', label: 'Dashboards en Power BI', spark: [20, 28, 35, 42, 48, 55, 60, 66, 72, 78, 84, 90] }
+]
 
-  const openProjectDetails = (title: string) => {
-    setSelectedProjectTitle(title);
-    setIsProjectModalOpen(true);
-  };
+const HERO_TOOLKIT = [
+  'SQL',
+  'Power BI',
+  'Excel',
+  'Python',
+  'ETL',
+  'KPI Design',
+  'Reporting',
+  'Data Modeling',
+]
 
-  const closeProjectDetails = () => {
-    setIsProjectModalOpen(false);
-    setSelectedProjectTitle(null);
-  };
+const ABOUT_HIGHLIGHTS = [
+  {
+    title: 'De datos a decisión',
+    text: 'KPIs y tableros pensados para que equipos no técnicos lean tendencias y desvíos sin ruido.'
+  },
+  {
+    title: 'Operación real',
+    text: 'Experiencia en salud: agenda, caja, reporting y procesos que conviven con el día a día del negocio.'
+  },
+  {
+    title: 'Automatización sensata',
+    text: 'Python y pipelines ligeros donde aportan: menos horas repetitivas y números consistentes.'
+  }
+]
 
+function Sparkline({ values, className = '' }: { values: number[]; className?: string }) {
+  const gradId = useId().replace(/:/g, '')
+  if (!values.length) return null
+  const min = Math.min(...values)
+  const max = Math.max(...values)
+  const range = max - min || 1
+  const w = 100
+  const h = 26
+  const bottom = h - 1
+  const pts = values.map((v, i) => {
+    const x = (i / (values.length - 1 || 1)) * w
+    const y = h - ((v - min) / range) * (h - 5) - 2.5
+    return `${x.toFixed(1)},${y.toFixed(1)}`
+  })
+  const linePts = pts.join(' ')
+  const areaPts = `0,${bottom} ${linePts} ${w},${bottom}`
   return (
-    <div style={styles.container}>
-      <style>{globalStyles}</style>
+    <svg className={`sparkline ${className}`} viewBox={`0 0 ${w} ${h}`} preserveAspectRatio="none" aria-hidden>
+      <defs>
+        <linearGradient id={gradId} x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0%" stopColor="rgba(91, 163, 217, 0.22)" />
+          <stop offset="100%" stopColor="rgba(91, 163, 217, 0)" />
+        </linearGradient>
+      </defs>
+      <polygon className="sparkline-area" points={areaPts} fill={`url(#${gradId})`} />
+      <polyline fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" points={linePts} />
+    </svg>
+  )
+}
 
-      <div
-        className="custom-cursor"
-        style={{
-          left: mousePos.x - 10,
-          top: mousePos.y - 10,
-          transform: cursorVariant === 'hover' ? 'scale(2.5)' : 'scale(1)',
-          backgroundColor: cursorVariant === 'hover' ? 'rgba(99, 102, 241, 0.3)' : 'rgba(99, 102, 241, 0.8)'
-        }}
-      />
-
-      <div className="bg-gradient-1" />
-      <div className="bg-gradient-2" />
-      <div className="noise-overlay" />
-
-      <nav style={styles.nav} className="nav-blur">
-        <div style={styles.navContent}>
-          <span style={styles.logo} className="logo-animate">
-            <span style={{ fontWeight: '700', color: '#ffffff' }}>Agustín</span>
-            <span style={{ fontWeight: '300', color: '#6366f1', marginLeft: '8px' }}>Delgado</span>
-          </span>
-
-          <div style={styles.navLinks}>
-            {['about', 'projects', 'skills', 'education', 'experience'].map((item, i) => (
-              <button
-                key={item}
-                onClick={() => scrollTo(item)}
-                className="nav-link"
-                style={{
-                  ...styles.navLink,
-                  animationDelay: `${i * 0.1}s`,
-                  ...(activeSection === item ? styles.navLinkActive : {})
-                }}
-                onMouseEnter={() => setCursorVariant('hover')}
-                onMouseLeave={() => setCursorVariant('default')}
-              >
-                {item.charAt(0).toUpperCase() + item.slice(1)}
-                {activeSection === item && <span className="nav-indicator" />}
-              </button>
-            ))}
-          </div>
-        </div>
-      </nav>
-
-      <header style={styles.hero}>
-        <div className={`hero-content ${isLoaded ? 'hero-loaded' : ''}`}>
-          <div style={styles.heroBadge} className="hero-badge">
-            <span className="badge-dot" />
-            Disponible para nuevos proyectos
-          </div>
-
-          <h1 style={styles.heroTitle}>
-            <span className="title-line">Agustín</span>
-            <span className="title-line title-accent">Delgado</span>
-          </h1>
-
-          <div style={styles.heroRoles}>
-            <span className="role-tag">Machine Learning Engineer</span>
-            <span className="role-divider">◆</span>
-            <span className="role-tag">Data Analyst</span>
-            <span className="role-divider">◆</span>
-            <span className="role-tag">Full Stack Developer</span>
-          </div>
-
-          <p style={styles.heroDescription}>
-            Transformo datos en decisiones y construyo productos de analítica, machine learning e IA generativa para mejorar operaciones y performance.
-          </p>
-
-          <div style={styles.heroContact}>
-            <a
-              href="mailto:augusto.delgado00@hotmail.com"
-              style={styles.contactLink}
-              className="contact-pill"
-              onMouseEnter={() => setCursorVariant('hover')}
-              onMouseLeave={() => setCursorVariant('default')}
-            >
-              <EmailIcon /> augusto.delgado00@hotmail.com
-            </a>
-
-            <a
-              href="tel:+541150521473"
-              style={styles.contactLink}
-              className="contact-pill"
-              onMouseEnter={() => setCursorVariant('hover')}
-              onMouseLeave={() => setCursorVariant('default')}
-            >
-              <PhoneIcon /> +54 11 5052-1473
-            </a>
-
-            <span style={styles.contactLink} className="contact-pill">
-              <LocationIcon /> Buenos Aires, Argentina
-            </span>
-
-            <a
-              href="https://linkedin.com/in/agustin-delgado-data98615190"
-              target="_blank"
-              rel="noopener noreferrer"
-              style={styles.contactLink}
-              className="contact-pill"
-              onMouseEnter={() => setCursorVariant('hover')}
-              onMouseLeave={() => setCursorVariant('default')}
-            >
-              <LinkedInIcon /> LinkedIn
-            </a>
-          </div>
-
-          <div style={styles.heroStats}>
-            <div style={styles.stat} className="stat-card">
-              <span style={styles.statNumber} className="stat-number">
-                4
-              </span>
-              <span style={styles.statLabel}>Plataformas de formación</span>
-            </div>
-            <div style={styles.stat} className="stat-card">
-              <span style={styles.statNumber} className="stat-number">
-                5+
-              </span>
-              <span style={styles.statLabel}>Proyectos en Prod</span>
-            </div>
-            <div style={styles.stat} className="stat-card">
-              <span style={styles.statNumber} className="stat-number">
-                9+
-              </span>
-              <span style={styles.statLabel}>Proyectos end-to-end</span>
-            </div>
-          </div>
-        </div>
-      </header>
-
-      {/* ABOUT */}
-      <section id="about" style={styles.section}>
-        <div style={styles.sectionContent}>
-          <h2 style={styles.sectionTitle} className="section-title">
-            <span style={styles.sectionNumber}>01</span>Perfil Profesional
-          </h2>
-
-          <div style={styles.aboutGrid}>
-            <div style={styles.aboutText}>
-              <p style={styles.paragraph} className="fade-in-up">
-                Trabajo en la intersección entre análisis de datos, BI, machine learning e IA generativa. Diseño soluciones end-to-end: desde datos y métricas hasta interfaces y flujos de decisión, priorizando demos claras, documentación sólida y despliegues económicos.
-              </p>
-              <p style={styles.paragraph} className="fade-in-up">
-                Combino sólidos fundamentos en Machine Learning, desarrollo Full Stack y Business Intelligence para transformar datos en decisiones estratégicas de negocio.
-              </p>
-              <p style={styles.paragraph} className="fade-in-up">
-                Mi enfoque se centra en aplicar IA de forma práctica para resolver problemas reales: desde la predicción de inasistencias médicas hasta la automatización de procesos administrativos complejos.
-              </p>
-            </div>
-
-            <div style={styles.aboutHighlights}>
-              <div style={styles.highlight} className="highlight-card">
-                <div style={styles.highlightIcon}>🎯</div>
-                <div>
-                  <h4 style={styles.highlightTitle}>Enfoque en impacto operativo</h4>
-                  <p style={styles.highlightText}>Soluciones aplicadas a performance, decisiones y automatización en distintos dominios</p>
-                </div>
-              </div>
-              <div style={styles.highlight} className="highlight-card">
-                <div style={styles.highlightIcon}>🔧</div>
-                <div>
-                  <h4 style={styles.highlightTitle}>Stack Completo</h4>
-                  <p style={styles.highlightText}>Python, FastAPI, React, Django, PostgreSQL</p>
-                </div>
-              </div>
-              <div style={styles.highlight} className="highlight-card">
-                <div style={styles.highlightIcon}>📊</div>
-                <div>
-                  <h4 style={styles.highlightTitle}>BI Avanzado</h4>
-                  <p style={styles.highlightText}>Power BI, Tableau, SQL, Pandas, NumPy</p>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* PROJECTS */}
-      <section id="projects" style={{ ...styles.section, ...styles.sectionAlt }}>
-        <div style={styles.sectionContent}>
-          <h2 style={styles.sectionTitle} className="section-title">
-            <span style={styles.sectionNumber}>02</span>Proyectos Destacados
-          </h2>
-
-          <div style={styles.paradiseBox} className="paradise-box">
-            <div style={styles.paradiseHeader}>
-              <span style={styles.paradiseTitle}>Paradise</span>
-              <span style={styles.paradiseBadge}>AI-first ecosystem</span>
-            </div>
-            <p style={styles.paradiseText}>
-              Paradise es un ecosistema de <strong>productos modulares</strong> pensado para resolver problemas reales en distintos dominios. Para que la sección de proyectos quede más clara para recruiters, el ecosistema se resume en una sola card y el detalle de módulos aparece recién al abrirla.
-            </p>
-
-            <div style={{ display: 'flex', gap: '10px', flexWrap: 'wrap', marginTop: '14px', marginBottom: '14px' }}>
-              <a
-                href="mailto:augusto.delgado00@hotmail.com?subject=Paradise%20demo%20request&body=Hola%20Agust%C3%ADn%2C%0A%0AVi%20tu%20portfolio%20y%20me%20interesa%20ver%20una%20demo%20de%20Paradise%20%28m%C3%B3dulos%20y%20casos%20de%20uso%29.%20%C2%BFPodemos%20coordinar%20un%20horario%3F%0A%0AGracias%2C%0A%5BNombre%5D%0A%5BEmpresa%5D%0A"
-                style={{ ...styles.ctaButton, textDecoration: 'none' }}
-              >
-                Coordinar demo
-              </a>
-              <span style={styles.ctaHint}>Demo guiada · Enfoque negocio + producto</span>
-            </div>
-
-            <div style={styles.projectsGrid} className="projects-grid">
-              <ProjectCard
-                title="Paradise Ecosystem"
-                category="AI-first modular ecosystem"
-                tags={['AtlasOps', 'ClubNet', 'Aulora', 'Pulse', 'Nexus', 'Nimbus']}
-                context="Resumen del ecosistema Paradise: productos modulares orientados a operaciones, educación, deporte, laboratorios, knowledge workflows y verticales de negocio."
-                impact="Menos ruido visual en el portfolio y mejor navegación: una sola entrada para el ecosistema, con detalle completo al abrir el modal."
-                color="#8b5cf6"
-                setCursorVariant={setCursorVariant}
-                onOpenDetails={openProjectDetails}
-              />
-            </div>
-          </div>
-
-
-          <div style={styles.otherProjectsHeader}>
-            <h3 style={styles.otherProjectsTitle}>Otros proyectos</h3>
-            <p style={styles.otherProjectsText}>Aplicaciones y productos fuera del ecosistema Paradise.</p>
-          </div>
-
-          <div style={styles.projectsGrid} className="projects-grid">
-            <ProjectCard
-              title="DecisionOps AI Toolkit"
-              category="DecisionOps + ML"
-              tags={['FastAPI', 'scikit-learn', 'React', 'Docker', 'Pytest']}
-              context="Toolkit end-to-end para entrenar, predecir churn y explicar decisiones con un flujo guiado."
-              impact="Demo deployable en Vercel (modo sin backend) + artifacts persistidos + CI para calidad."
-              color="#06b6d4"
-              setCursorVariant={setCursorVariant}
-              onOpenDetails={openProjectDetails}
-            />
-
-            <ProjectCard
-              title="SmartClinic No-Show Predictor"
-              category="Machine Learning + BI"
-              tags={['Python', 'Scikit-learn', 'Power BI', 'SQL']}
-              context="Sistema predictivo que analiza 10,000+ turnos para identificar patrones de inasistencias."
-              impact="Dashboard interactivo con 3 vistas analíticas para decisiones data-driven."
-              color="#14b8a6"
-              setCursorVariant={setCursorVariant}
-              onOpenDetails={openProjectDetails}
-            />
-
-            <ProjectCard
-              title="Plataforma Geriátricos"
-              category="Full Stack + PWA"
-              tags={['FastAPI', 'React', 'TypeScript', 'PostgreSQL']}
-              context="Sistema integral con 23 tablas relacionales para gestión de múltiples sedes."
-              impact="Gestión completa de 3 sedes con funcionalidad offline."
-              color="#3b82f6"
-              setCursorVariant={setCursorVariant}
-              onOpenDetails={openProjectDetails}
-            />
-
-            <ProjectCard
-              title="Mi Consultorio"
-              category="Healthcare SaaS"
-              tags={['Django', 'Python', 'Bootstrap']}
-              context="Plataforma para profesionales de salud con CKEditor y recetas digitales."
-              impact="Dashboard con métricas en tiempo real y generación de PDFs."
-              color="#8b5cf6"
-              setCursorVariant={setCursorVariant}
-              onOpenDetails={openProjectDetails}
-            />
-
-            <ProjectCard
-              title="Consultorio Barcala"
-              category="Modern Web"
-              tags={['React 19', 'TypeScript', 'Framer Motion']}
-              context="Sitio web moderno con sistema de diseño centralizado."
-              impact="Plataforma con animaciones y routing optimizado."
-              color="#f59e0b"
-              setCursorVariant={setCursorVariant}
-              onOpenDetails={openProjectDetails}
-            />
-          </div>
-        </div>
-      </section>
-
-      {/* SKILLS */}
-      <section id="skills" style={styles.section}>
-        <div style={styles.sectionContent}>
-          <h2 style={styles.sectionTitle} className="section-title">
-            <span style={styles.sectionNumber}>03</span>Stack Tecnológico
-          </h2>
-          <div style={styles.skillsGrid}>
-            <SkillCategory title="Lenguajes" icon="💻" skills={['Python', 'TypeScript', 'JavaScript', 'SQL']} />
-            <SkillCategory title="Machine Learning" icon="🤖" skills={['Scikit-learn', 'Pandas', 'NumPy', 'TensorFlow']} />
-            <SkillCategory title="Backend" icon="⚙️" skills={['FastAPI', 'Django', 'SQLAlchemy', 'JWT Auth']} />
-            <SkillCategory title="Frontend" icon="🎨" skills={['React 18/19', 'TypeScript', 'Vite', 'Tailwind']} />
-            <SkillCategory title="Databases" icon="🏗️" skills={['PostgreSQL', 'SQLite', 'Supabase']} />
-            <SkillCategory title="BI Tools" icon="📈" skills={['Power BI', 'Tableau', 'Data Viz']} />
-            <SkillCategory title="DevOps" icon="🚀" skills={['Git', 'Vercel', 'Docker', 'CI/CD']} />
-            <SkillCategory title="Core Skills" icon="✨" skills={['Problem Solving', 'Agile', 'APIs', 'Testing']} />
-          </div>
-        
-          <div style={styles.languagesPanel} className="skill-card">
-            <div style={styles.languagesHeader}>
-              <span style={styles.languagesIcon}>🌍</span>
-              <span style={styles.languagesTitle}>Idiomas</span>
-            </div>
-            <div style={styles.languagesBadges}>
-              <span style={styles.languagePill}>Español — Nativo</span>
-              <span style={styles.languagePill}>Inglés — B2 (Upper-Intermediate)</span>
-            </div>
-          </div>
-
-        </div>
-      </section>
-
-      {/* EDUCATION */}
-      <section id="education" style={{ ...styles.section, ...styles.sectionAlt }}>
-        <div style={styles.sectionContent}>
-          <h2 style={styles.sectionTitle} className="section-title">
-            <span style={styles.sectionNumber}>04</span>Formación
-          </h2>
-
-          <div style={styles.educationGrid}>
-            <EducationCard title="Tecnicatura en IA y Ciencia de Datos" institution="Instituto Superior Santo Domingo" period="2024 - Actualidad" status="En curso" />
-            <EducationCard title="Analista de Datos" institution="Coderhouse" period="2024 - 2025" status="Finalizado" />
-            <EducationCard title="Educación Secundaria (Bachiller) – Humanidades" institution="Colegio del Parque" period="2013 - 2018" status="Finalizado" />
-          </div>
-
-          <div style={styles.certificationsBox} className="cert-box">
-            <div className="cert-number">LEARN</div>
-            <h3 style={styles.certTitle}>Aprendizaje & Certificaciones</h3>
-            <p style={styles.certSubtitle}>
-              Aprendizaje continuo con foco en excelencia técnica: Data &amp; BI, ML/GenAI y prácticas modernas de ingeniería de software.
-            </p>
-
-            <div style={styles.certProviders}>
-              {['Coursera (Google)', 'Coderhouse', 'Udemy', 'LinkedIn Learning'].map((p) => (
-                <span key={p} style={styles.certProviderBadge} className="cert-tag">
-                  {p}
-                </span>
-              ))}
-            </div>
-
-            <div style={styles.certCategories}>
-              {['Data Analytics', 'Power BI / Tableau', 'Machine Learning', 'Python', 'SQL', 'Cloud & DevOps', 'Cybersecurity'].map((cat) => (
-                <span key={cat} style={styles.certBadge} className="cert-tag">
-                  {cat}
-                </span>
-              ))}
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* EXPERIENCE */}
-      <section id="experience" style={styles.section}>
-        <div style={styles.sectionContent}>
-          <h2 style={styles.sectionTitle} className="section-title">
-            <span style={styles.sectionNumber}>05</span>Experiencia
-          </h2>
-          <div style={styles.experienceTimeline}>
-            <ExperienceCard
-              title="Administrativo & ML Engineer"
-              company="Operaciones en consultorio privado"
-              period="2018 - Presente"
-              description="Desarrollo e implementación de soluciones ML para optimización de turnos. Digitalización completa de procesos administrativos con sistemas propios."
-              current={true}
-            />
-            <ExperienceCard
-              title="Desarrollador Full Stack"
-              company="Blanc Labs (Proyecto Rotoplas)"
-              period="2021"
-              description="Participación en proyecto de transformación digital. Desarrollo frontend con React y colaboración en arquitectura de microservicios."
-              current={false}
-            />
-          </div>
-        </div>
-      </section>
-
-      {/* FOOTER */}
-      <footer style={styles.footer}>
-        <div style={styles.footerContent}>
-          <div style={styles.footerMain}>
-            <h3 style={styles.footerTitle}>¿Trabajamos juntos?</h3>
-            <p style={styles.footerText}>Estoy buscando nuevas oportunidades en ML Engineering, Data Analytics o Full Stack Development.</p>
-            <a
-              href="mailto:augusto.delgado00@hotmail.com"
-              style={styles.footerCta}
-              className="cta-button"
-              onMouseEnter={() => setCursorVariant('hover')}
-              onMouseLeave={() => setCursorVariant('default')}
-            >
-              Contactame →
-            </a>
-          </div>
-
-          <div style={styles.footerLinks}>
-            <a href="mailto:augusto.delgado00@hotmail.com" style={styles.footerLink} className="footer-link">
-              Email
-            </a>
-            <a
-              href="https://linkedin.com/in/agustin-delgado-data98615190"
-              target="_blank"
-              rel="noopener noreferrer"
-              style={styles.footerLink}
-              className="footer-link"
-            >
-              LinkedIn
-            </a>
-            <a href="https://github.com/agustindelgado" target="_blank" rel="noopener noreferrer" style={styles.footerLink} className="footer-link">
-              GitHub
-            </a>
-          </div>
-
-          <div style={styles.footerBottom}>
-            <p style={styles.footerCopy}>© {new Date().getFullYear()} Agustín Delgado. Diseñado & desarrollado con ♥</p>
-          </div>
-        </div>
-      </footer>
-
-      {/* MODAL */}
-      {isProjectModalOpen && selectedProjectTitle && (
-        <div
-          onClick={closeProjectDetails}
-          style={{
-            position: 'fixed',
-            inset: 0,
-            backgroundColor: 'rgba(0, 0, 0, 0.6)',
-            zIndex: 1001,
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center'
-          }}
-        >
-          <div
-            onClick={(e) => e.stopPropagation()}
-            style={{
-              position: 'relative',
-              backgroundColor: 'rgba(20, 20, 22, 0.95)',
-              border: '1px solid rgba(99, 102, 241, 0.2)',
-              borderRadius: '24px',
-              maxWidth: '600px',
-              width: '90%',
-              maxHeight: '70vh',
-              overflowY: 'auto',
-              padding: '32px',
-              backdropFilter: 'blur(10px)'
-            }}
-          >
-            <button
-              onClick={closeProjectDetails}
-              style={{
-                position: 'absolute',
-                top: '16px',
-                right: '16px',
-                background: 'rgba(99, 102, 241, 0.1)',
-                border: 'none',
-                width: '36px',
-                height: '36px',
-                borderRadius: '8px',
-                cursor: 'pointer',
-                fontSize: '20px',
-                color: '#a3a3a3',
-                transition: 'all 0.2s ease'
-              }}
-              onMouseEnter={(e) => {
-                (e.target as HTMLButtonElement).style.background = 'rgba(99, 102, 241, 0.2)';
-                (e.target as HTMLButtonElement).style.color = '#fff';
-              }}
-              onMouseLeave={(e) => {
-                (e.target as HTMLButtonElement).style.background = 'rgba(99, 102, 241, 0.1)';
-                (e.target as HTMLButtonElement).style.color = '#a3a3a3';
-              }}
-            >
-              {'\u00D7'}
-            </button>
-
-            <h2 style={{ fontSize: '28px', fontWeight: '700', color: '#fff', marginBottom: '24px', fontFamily: "'Space Grotesk', sans-serif" }}>
-              {selectedProjectTitle}
-            </h2>
-
-            {PROJECT_DETAILS[selectedProjectTitle] && (
-              <div style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
-                {['AtlasOps', 'Paradise Pulse', 'Paradise Nexus', 'ModelArc', 'AI Delivery Copilot'].includes(selectedProjectTitle) && (
-                  <div
-                    className="modal-section"
-                    style={{
-                      padding: '14px 14px',
-                      borderRadius: '14px',
-                      border: '1px solid rgba(255,255,255,0.08)',
-                      background: 'rgba(255,255,255,0.03)'
-                    }}
-                  >
-                    <div style={{ fontSize: '12px', fontWeight: 800, letterSpacing: '0.6px', textTransform: 'uppercase', color: '#86efac', marginBottom: '6px' }}>
-                      Demo privada / a pedido
-                    </div>
-
-                    <p style={{ margin: 0, fontSize: '13px', color: '#a3a3a3', lineHeight: 1.6 }}>
-                      Para proteger la IP del ecosistema Paradise, el código y repositorios se mantienen privados. Puedo compartir un video demo y/o realizar una demo guiada en vivo.
-                    </p>
-
-                    {/* ✅ FIX: style={{ ... }} */}
-                    <div style={{ marginTop: '10px', display: 'flex', gap: '10px', flexWrap: 'wrap' }}>
-                      <a
-                        href="mailto:augusto.delgado00@hotmail.com?subject=Request%20Paradise%20demo&body=Hola%20Agust%C3%ADn%2C%0A%0AVi%20tu%20portfolio%20y%20me%20interesa%20ver%20una%20demo%20privada%20de%20Paradise%20%28AtlasOps%20/%20Pulse%20/%20Nexus%20/%20ModelArc%29.%20%C2%BFPodemos%20coordinar%20un%20horario%3F%0A%0AGracias%2C%0A%5BNombre%5D%0A%5BEmpresa%5D%0A"
-                        style={{ ...styles.ctaButton, textDecoration: 'none' }}
-                      >
-                        Request demo
-                      </a>
-                      <span style={styles.ctaHint}>Respuesta en 24–48h</span>
-                    </div>
-                  </div>
-                )}
-
-                {PROJECT_DETAILS[selectedProjectTitle].resumen && (
-                  <div className="modal-section">
-                    <h3
-                      className="modal-section-title"
-                      style={{ fontSize: '16px', fontWeight: '600', color: '#6366f1', marginBottom: '8px', textTransform: 'uppercase', letterSpacing: '1px' }}
-                    >
-                      Resumen
-                    </h3>
-                    <p style={{ fontSize: '15px', color: '#d4d4d4', lineHeight: '1.7' }}>{PROJECT_DETAILS[selectedProjectTitle].resumen}</p>
-                  </div>
-                )}
-
-                {/* resto de secciones (objetivo/datos/modelo/etc) igual que tu archivo */}
-                {PROJECT_DETAILS[selectedProjectTitle].objetivo && (
-                  <div className="modal-section">
-                    <h3 className="modal-section-title" style={{ fontSize: '16px', fontWeight: '600', color: '#6366f1', marginBottom: '8px', textTransform: 'uppercase', letterSpacing: '1px' }}>
-                      Objetivo
-                    </h3>
-                    <ul className="modal-list" style={{ listStyle: 'none', padding: 0, display: 'flex', flexDirection: 'column', gap: '8px' }}>
-                      {PROJECT_DETAILS[selectedProjectTitle].objetivo.map((item: string, i: number) => (
-                        <li key={i} style={{ fontSize: '14px', color: '#a3a3a3', paddingLeft: '20px', position: 'relative' }}>
-                          <span style={{ position: 'absolute', left: 0, color: '#6366f1' }}>•</span> {item}
-                        </li>
-                      ))}
-                    </ul>
-                  </div>
-                )}
-
-                {/* ... mantené el resto de tus bloques tal cual ... */}
-
-
-                {selectedProjectTitle === 'Paradise Ecosystem' && (
-                  <div style={{ marginTop: '18px' }}>
-                    <h4 style={{ fontSize: '16px', fontWeight: 700, color: '#ffffff', marginBottom: '10px' }}>Modules included</h4>
-                    <div style={{ display: 'grid', gap: '10px' }}>
-                      {[
-                        ['AtlasOps', 'Decision Intelligence para operaciones y alertas accionables.'],
-                        ['Paradise ClubNet', 'Deporte y clubes: salud, entrenamientos, asistencia y comunidad.'],
-                        ['Paradise Aulora', 'Consola educativa con seguimiento, inbox y recursos.'],
-                        ['Paradise RouteOps', 'Ops console logística con triage y timeline de incidentes.'],
-                        ['Paradise QC Sentinel', 'Quality control workbench con CAPA y auditoría.'],
-                        ['Paradise Pulse', 'Monitoreo local-first de anomalías y playbooks.'],
-                        ['Paradise Nexus', 'Knowledge base local-first con búsqueda y citations.'],
-                        ['Paradise Vault', 'Contracts, artifacts y lineage-lite para integraciones.'],
-                        ['Paradise AI', 'Orquestador conversacional del ecosistema.'],
-                        ['Paradise Nimbus', 'Control plane cloud-first en roadmap.'],
-                        ['The Velvet', 'Vertical nightlife ops en roadmap.'],
-                        ['Paradise Halo', 'Vertical no-code commerce + WhatsApp en roadmap.'],
-                        ['ModelArc', 'Semantic modeling y dashboards en Power BI.'],
-                        ['AI Delivery Copilot', 'Copiloto GenAI para PRDs, backlogs y QA packs.']
-                      ].map(([name, desc]) => (
-                        <div key={String(name)} style={{ border: '1px solid rgba(255,255,255,0.08)', borderRadius: '12px', padding: '12px 14px', background: 'rgba(255,255,255,0.02)' }}>
-                          <div style={{ fontSize: '14px', fontWeight: 700, color: '#ffffff', marginBottom: '4px' }}>{name}</div>
-                          <div style={{ fontSize: '13px', color: '#cfcfcf', lineHeight: '1.6' }}>{desc}</div>
-                        </div>
-                      ))}
-                    </div>
-                  </div>
-                )}
-
-                {PROJECT_DETAILS[selectedProjectTitle].stack && (
-                  <div className="modal-section">
-                    <h3 className="modal-section-title" style={{ fontSize: '16px', fontWeight: '600', color: '#6366f1', marginBottom: '8px', textTransform: 'uppercase', letterSpacing: '1px' }}>
-                      Stack
-                    </h3>
-                    <p style={{ fontSize: '14px', color: '#a3a3a3' }}>{PROJECT_DETAILS[selectedProjectTitle].stack}</p>
-                  </div>
-                )}
-              </div>
-            )}
-          </div>
-        </div>
-      )}
+function HeroMiniBars() {
+  const bars = [42, 68, 55, 82, 61, 90, 74]
+  return (
+    <div className="hero-mini-bars-wrap" aria-hidden>
+      <div className="hero-mini-bars-head">
+        <span className="hero-mini-bars-label">Comparativa editorial</span>
+        <span className="hero-mini-bars-axis" />
+      </div>
+      <div className="hero-mini-bars-track">
+        {bars.map((h, i) => (
+          <div key={i} className="hero-mini-bar" style={{ height: `${h}%` }} />
+        ))}
+      </div>
     </div>
-  );
+  )
+}
+
+function SectionTitle({ eyebrow, title, intro }: { eyebrow: string; title: string; intro?: string }) {
+  return (
+    <div className="section-title-wrap">
+      <span className="eyebrow">{eyebrow}</span>
+      <h2>{title}</h2>
+      {intro ? <p className="section-intro">{intro}</p> : null}
+    </div>
+  )
 }
 
 function ProjectCard({
-  title,
-  category,
-  tags,
-  context,
-  impact,
-  color,
-  setCursorVariant,
-  onOpenDetails
+  project,
+  primary = false,
+  onOpen
 }: {
-  title: string;
-  category: string;
-  tags: string[];
-  context: string;
-  impact: string;
-  color: string;
-  setCursorVariant: (v: 'default' | 'hover') => void;
-  onOpenDetails: (title: string) => void;
+  project: Project
+  primary?: boolean
+  onOpen: (project: Project) => void
 }) {
   return (
-    <div className="project-card" style={{ ['--accent-color' as any]: color }} onMouseEnter={() => setCursorVariant('hover')} onMouseLeave={() => setCursorVariant('default')}>
-      <div className="project-glow" style={{ background: color }} />
-      <button className="project-more" onClick={(e) => { e.stopPropagation(); onOpenDetails(title); }} style={{ background: color }} title="Ver detalles">
-        →
+    <article className={`project-card ${primary ? 'primary' : 'secondary'}`}>
+      <div className="project-card-top">
+        <div className="project-meta">
+          <span>{project.category}</span>
+        </div>
+        {project.metricHighlight ? <span className="metric-pill">{project.metricHighlight}</span> : null}
+      </div>
+      <h3>{project.title}</h3>
+      <dl className="project-facts">
+        <div>
+          <dt>Problema</dt>
+          <dd>{project.problem}</dd>
+        </div>
+        <div>
+          <dt>Enfoque analítico</dt>
+          <dd>{project.analyticalFocus}</dd>
+        </div>
+      </dl>
+      {project.stack ? (
+        <div className="tag-row project-tools">
+          {project.stack.map((tag: string) => (
+            <span key={tag} className="tag tag--tool">
+              {tag}
+            </span>
+          ))}
+        </div>
+      ) : null}
+      <div className="project-outcome">
+        <span className="project-outcome-label">Resultado</span>
+        <p>{project.outcome}</p>
+      </div>
+      <button type="button" className="ghost-link" onClick={() => onOpen(project)}>
+        Ver detalle
       </button>
-      <div className="project-content">
-        <div className="project-header">
-          <span className="project-category">{category}</span>
-          <div className="project-line" style={{ backgroundColor: color }} />
-        </div>
-        <h3 className="project-title">{title}</h3>
-        <p className="project-context">{context}</p>
-        <p className="project-impact">
-          <span style={{ color }}>→</span> {impact}
-        </p>
-        <div className="project-tags">{tags.map((tag) => (<span key={tag} className="project-tag">{tag}</span>))}</div>
+    </article>
+  )
+}
+
+export default function App() {
+  const [activeSection, setActiveSection] = useState('inicio')
+  const [selectedProject, setSelectedProject] = useState<Project | null>(null)
+
+  useEffect(() => {
+    const ids = ['sobre-mi', 'proyectos', 'skills', 'experiencia', 'contacto']
+    const onScroll = () => {
+      for (const id of ids) {
+        const el = document.getElementById(id)
+        if (!el) continue
+        const rect = el.getBoundingClientRect()
+        if (rect.top <= 140 && rect.bottom >= 140) {
+          setActiveSection(id)
+          return
+        }
+      }
+      setActiveSection('inicio')
+    }
+    window.addEventListener('scroll', onScroll)
+    onScroll()
+    return () => window.removeEventListener('scroll', onScroll)
+  }, [])
+
+  useEffect(() => {
+    if (!selectedProject) return
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') setSelectedProject(null)
+    }
+    document.body.style.overflow = 'hidden'
+    window.addEventListener('keydown', onKey)
+    return () => {
+      document.body.style.overflow = ''
+      window.removeEventListener('keydown', onKey)
+    }
+  }, [selectedProject])
+
+  const navItems = useMemo(
+    () =>
+      [
+        ['inicio', 'Inicio'],
+        ['sobre-mi', 'Sobre mí'],
+        ['proyectos', 'Proyectos'],
+        ['skills', 'Stack'],
+        ['experiencia', 'Experiencia'],
+        ['contacto', 'Contacto']
+      ] as const,
+    []
+  )
+
+  const scrollTo = (id: string) => {
+    if (id === 'inicio') {
+      window.scrollTo({ top: 0, behavior: 'smooth' })
+      return
+    }
+    document.getElementById(id)?.scrollIntoView({ behavior: 'smooth', block: 'start' })
+  }
+
+  return (
+    <>
+      <style>{styles}</style>
+      <div className="page-shell">
+        <div className="bg-orb orb-a" aria-hidden />
+        <div className="bg-orb orb-b" aria-hidden />
+
+        <nav className="topbar">
+          <div className="container topbar-inner">
+            <div className="brand-block">
+              <span className="brand-mark" aria-hidden />
+              <div className="brand-text">
+                <strong>Agustín Delgado</strong>
+                <span>Data Analyst · BI</span>
+              </div>
+            </div>
+            <div className="nav-links">
+              {navItems.map(([id, label]) => (
+                <button
+                  type="button"
+                  key={id}
+                  className={activeSection === id ? 'active' : ''}
+                  onClick={() => scrollTo(id)}
+                >
+                  {label}
+                </button>
+              ))}
+            </div>
+          </div>
+        </nav>
+
+        <header className="hero container hero--wide" id="inicio">
+          <div className="hero-grid">
+            <div className="hero-copy">
+              <p className="hero-name">Agustín Delgado</p>
+              <p className="hero-role">Data Analyst | BI Analyst</p>
+              <p className="hero-lead">
+                Transformo datos en información útil para la operación y la toma de decisiones mediante dashboards, KPIs,
+                reporting y automatización de procesos.
+              </p>
+              <div className="hero-toolkit" aria-label="Stack principal">
+                <div className="hero-toolkit-title">Stack principal</div>
+                <div className="hero-toolkit-grid">
+                  {HERO_TOOLKIT.map((t) => (
+                    <span key={t} className="hero-toolkit-chip">
+                      {t}
+                    </span>
+                  ))}
+                </div>
+              </div>
+            </div>
+            <aside className="hero-analytics card subtle" aria-label="Resumen de impacto y foco analítico">
+              <div className="hero-analytics-head">
+                <span className="eyebrow">Impacto &amp; foco</span>
+                <p className="hero-analytics-dek">
+                  Señales de trabajo con métricas, reporting y visualización — sin simular un dashboard completo.
+                </p>
+              </div>
+              <div className="kpi-grid">
+                {HERO_KPIS.map((k) => (
+                  <div className="kpi-cell" key={k.label}>
+                    {k.spark ? <Sparkline values={k.spark} /> : null}
+                    <span className="kpi-value">{k.value}</span>
+                    <span className="kpi-label">{k.label}</span>
+                  </div>
+                ))}
+              </div>
+              <HeroMiniBars />
+            </aside>
+          </div>
+        </header>
+
+        <main>
+          <section className="section section--tight container section-divider about-section" id="sobre-mi">
+            <div className="about-section-inner">
+              <div className="about-head">
+                <SectionTitle
+                  eyebrow="Sobre mí"
+                  title="Analítica aplicada a operación real"
+                intro="SQL, Power BI, Excel y Python aplicados a operación real en salud. ETL, KPIs y reporting para decisiones más claras."
+                />
+              </div>
+              <div className="about-grid">
+                <div className="text-block text-block--about">
+                  <p>
+                    Trabajo con datos de punta a punta: modelado y consultas en SQL, tableros en Power BI, limpieza y preparación
+                    de información, y scripts en Python para análisis y reporting repetible. El foco es que los números sirvan
+                    para decidir: indicadores claros, procesos más ordenados y menos tiempo perdido en tareas manuales.
+                  </p>
+                  <p>
+                    En el consultorio médico apliqué eso en un entorno real: pasar de registros dispersos a bases consultables,
+                    construir vistas operativas y financieras, y automatizar reportes que antes consumían horas. El sistema{' '}
+                    <strong>Mi Consultorio</strong> es parte de esa entrega y está en uso en la práctica diaria.
+                  </p>
+                  <p className="muted-note">
+                    Herramientas de ML o entornos generativos pueden sumar cuando el problema lo justifica; no son el mensaje
+                    central de este perfil.
+                  </p>
+                </div>
+                <aside className="about-highlights">
+                  {ABOUT_HIGHLIGHTS.map((h) => (
+                    <div key={h.title} className="about-highlight card subtle">
+                      <h3>{h.title}</h3>
+                      <p>{h.text}</p>
+                    </div>
+                  ))}
+                </aside>
+              </div>
+            </div>
+          </section>
+
+          <section className="section container section-divider" id="proyectos">
+            <SectionTitle
+              eyebrow="Proyectos"
+              title="Casos con narrativa BI"
+              intro="Problema de negocio, enfoque analítico y resultado medible. Los casos complementarios quedan al final."
+            />
+            <div className="project-grid primary-grid">
+              {PRIMARY_PROJECTS.map((project) => (
+                <ProjectCard key={project.title} project={project} primary onOpen={setSelectedProject} />
+              ))}
+            </div>
+
+            <div className="secondary-wrap">
+              <div className="section-subtitle">Complementarios</div>
+              <div className="project-grid secondary-grid">
+                {SECONDARY_PROJECTS.map((project) => (
+                  <ProjectCard key={project.title} project={project} onOpen={setSelectedProject} />
+                ))}
+              </div>
+            </div>
+          </section>
+
+          <section className="section container section-divider" id="skills">
+            <SectionTitle
+              eyebrow="Stack"
+              title="Toolkit analítico"
+              intro="Núcleo BI primero. Las barras funcionan como énfasis visual, no como puntaje formal."
+            />
+            <div className="skills-stack">
+              {SKILL_GROUPS.map((group) => (
+                <article key={group.title} className="skill-panel card subtle">
+                  <h3>{group.title}</h3>
+                  <ul className="skill-bars">
+                    {group.items.map((item) => (
+                      <li key={item.name}>
+                        <div className="skill-bar-row">
+                          <span className="skill-bar-name">{item.name}</span>
+                          <div className="skill-bar-track" role="presentation">
+                            <span className="skill-bar-fill" style={{ width: `${item.emphasis}%` }} />
+                          </div>
+                        </div>
+                      </li>
+                    ))}
+                  </ul>
+                </article>
+              ))}
+            </div>
+          </section>
+
+          <section className="section container section-divider" id="experiencia">
+            <div className="experience-block">
+              <SectionTitle
+                eyebrow="Experiencia"
+                title="Impacto medible y sistemas en uso"
+                intro="El núcleo del perfil está en el consultorio: datos, reporting y automatización en uso real. La formación sostiene ese recorrido."
+              />
+              <div className="timeline-wrap">
+                {EXPERIENCE.map((item) => (
+                  <article
+                    key={item.title + item.period}
+                    className={`timeline-card card subtle${item.featured ? ' timeline-card--featured' : ''}`}
+                  >
+                    {item.featured ? <span className="featured-ribbon">Rol principal</span> : null}
+                    <span className="timeline-period">{item.period}</span>
+                    <h3>{item.title}</h3>
+                    <strong>{item.place}</strong>
+                    {item.bullets ? (
+                      <ul className="timeline-bullets">
+                        {item.bullets.map((b) => (
+                          <li key={b}>{b}</li>
+                        ))}
+                      </ul>
+                    ) : null}
+                    {item.description ? <p className="timeline-desc">{item.description}</p> : null}
+                  </article>
+                ))}
+              </div>
+            </div>
+          </section>
+
+          <section className="section container section-divider" id="contacto">
+            <div className="contact-card card subtle">
+              <div className="contact-card-inner">
+                <div>
+                  <span className="eyebrow">Contacto</span>
+                  <h2 className="contact-heading">Conversaciones profesionales</h2>
+                  <p className="contact-copy">
+                    Para roles de Data Analyst o BI Analyst. Escribime por correo, LinkedIn o revisá código en GitHub.
+                  </p>
+                  <p className="contact-loc muted-note">Argentina</p>
+                </div>
+                <div className="contact-actions">
+                  <a href="mailto:augusto.delgado00@hotmail.com" className="button button--quiet primary">
+                    Enviar mail
+                  </a>
+                  <a
+                    href="https://linkedin.com/in/agustin-delgado-data98615190"
+                    target="_blank"
+                    rel="noreferrer"
+                    className="button button--quiet secondary"
+                  >
+                    LinkedIn
+                  </a>
+                  <a href="https://github.com/Agus-Delgado" target="_blank" rel="noreferrer" className="button button--quiet secondary">
+                    GitHub
+                  </a>
+                </div>
+              </div>
+            </div>
+          </section>
+        </main>
+
+        <footer className="footer container">
+          <div className="footer-meta">
+            <span>© {new Date().getFullYear()} Agustín Delgado</span>
+            <span className="footer-loc">Data Analyst · BI · Argentina</span>
+          </div>
+          <div className="footer-links">
+            <a href="mailto:augusto.delgado00@hotmail.com">augusto.delgado00@hotmail.com</a>
+            <span className="footer-sep" aria-hidden>
+              ·
+            </span>
+            <a href="https://linkedin.com/in/agustin-delgado-data98615190" target="_blank" rel="noreferrer">
+              LinkedIn
+            </a>
+            <span className="footer-sep" aria-hidden>
+              ·
+            </span>
+            <a href="https://github.com/Agus-Delgado" target="_blank" rel="noreferrer">
+              GitHub
+            </a>
+          </div>
+        </footer>
+
+        {selectedProject ? (
+          <div className="modal-backdrop" role="presentation" onClick={() => setSelectedProject(null)}>
+            <div className="modal card" role="dialog" aria-modal onClick={(e) => e.stopPropagation()}>
+              <button type="button" className="modal-close" onClick={() => setSelectedProject(null)} aria-label="Cerrar">
+                ×
+              </button>
+              <span className="eyebrow">Detalle</span>
+              <h3>{selectedProject.title}</h3>
+              <p>{selectedProject.summary}</p>
+              <dl className="modal-facts">
+                <div>
+                  <dt>Problema</dt>
+                  <dd>{selectedProject.problem}</dd>
+                </div>
+                <div>
+                  <dt>Enfoque analítico</dt>
+                  <dd>{selectedProject.analyticalFocus}</dd>
+                </div>
+                <div>
+                  <dt>Resultado</dt>
+                  <dd>{selectedProject.outcome}</dd>
+                </div>
+              </dl>
+              {selectedProject.stack ? (
+                <>
+                  <h4>Herramientas</h4>
+                  <div className="tag-row">
+                    {selectedProject.stack.map((tag: string) => (
+                      <span key={tag} className="tag">
+                        {tag}
+                      </span>
+                    ))}
+                  </div>
+                </>
+              ) : null}
+              {selectedProject.bullets ? (
+                <>
+                  <h4>Aspectos clave</h4>
+                  <ul className="modal-list">
+                    {selectedProject.bullets.map((item: string) => (
+                      <li key={item}>{item}</li>
+                    ))}
+                  </ul>
+                </>
+              ) : null}
+            </div>
+          </div>
+        ) : null}
       </div>
-    </div>
-  );
+    </>
+  )
 }
 
-function SkillCategory({ title, icon, skills }: { title: string; icon: string; skills: string[] }) {
-  return (
-    <div className="skill-card">
-      <div style={styles.skillHeader}>
-        <span style={styles.skillIcon}>{icon}</span>
-        <h4 style={styles.skillTitle}>{title}</h4>
-      </div>
-      <div style={styles.skillList}>{skills.map((skill) => (<span key={skill} style={styles.skillBadge} className="skill-badge">{skill}</span>))}</div>
-    </div>
-  );
+const styles = `:root {
+  --bg: #060d16;
+  --border: rgba(130, 155, 190, 0.14);
+  --text: #e8eef8;
+  --muted: #94a3b8;
+  --accent: #5ba3d9;
+  --accent-soft: rgba(91, 163, 217, 0.12);
+  --shadow: 0 12px 40px rgba(0, 0, 0, 0.35);
+  --font: "DM Sans", ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
 }
-
-function EducationCard({ title, institution, period, status }: { title: string; institution: string; period: string; status: string }) {
-  return (
-    <div style={styles.educationCard} className="edu-card">
-      <div style={styles.educationHeader}>
-        <h4 style={styles.educationTitle}>{title}</h4>
-        <span style={{ ...styles.educationStatus, backgroundColor: status === 'En curso' ? '#dbeafe' : '#f3f4f6', color: status === 'En curso' ? '#1d4ed8' : '#6b7280' }}>{status}</span>
-      </div>
-      <p style={styles.educationInstitution}>{institution}</p>
-      <p style={styles.educationPeriod}>{period}</p>
-    </div>
-  );
+* { box-sizing: border-box; }
+html { scroll-behavior: smooth; }
+body {
+  margin: 0;
+  font-family: var(--font);
+  background: var(--bg);
+  background-image:
+    radial-gradient(ellipse 80% 50% at 50% -20%, rgba(40, 70, 110, 0.28), transparent),
+    linear-gradient(180deg, #050a10 0%, #070f18 100%);
+  color: var(--text);
 }
-
-function ExperienceCard({ title, company, period, description, current }: { title: string; company: string; period: string; description: string; current: boolean }) {
-  return (
-    <div style={styles.experienceCard} className="exp-card">
-      <div style={styles.experienceDot} className={current ? 'dot-pulse' : ''} />
-      <div style={styles.experienceContent}>
-        <div style={styles.experienceHeader}>
-          <h4 style={styles.experienceTitle}>{title}</h4>
-          {current && <span style={styles.currentBadge}>Actual</span>}
-        </div>
-        <p style={styles.experienceCompany}>{company}</p>
-        <p style={styles.experiencePeriod}>{period}</p>
-        <p style={styles.experienceDescription}>{description}</p>
-      </div>
-    </div>
-  );
+a { color: inherit; text-decoration: none; }
+a:hover { text-decoration: underline; text-underline-offset: 3px; }
+button { font: inherit; }
+.page-shell { position: relative; min-height: 100vh; overflow-x: hidden; }
+.bg-orb {
+  position: fixed; border-radius: 999px; filter: blur(72px); pointer-events: none; opacity: 0.11;
 }
-
-function EmailIcon() {
-  return (
-    <svg style={styles.icon} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-      <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z" />
-      <polyline points="22,6 12,13 2,6" />
-    </svg>
-  );
+.orb-a { width: 300px; height: 300px; background: #1a3a5c; top: 32px; left: -100px; }
+.orb-b { width: 240px; height: 240px; background: #152a45; right: -90px; top: 200px; }
+.container { width: min(1180px, calc(100% - 48px)); margin: 0 auto; }
+.hero--wide.container { width: min(1220px, calc(100% - 48px)); }
+.topbar {
+  position: sticky; top: 0; z-index: 30;
+  backdrop-filter: blur(12px);
+  background: rgba(5, 10, 16, 0.88);
+  border-bottom: 1px solid var(--border);
 }
-
-function PhoneIcon() {
-  return (
-    <svg style={styles.icon} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-      <path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07 19.5 19.5 0 01-6-6 19.79 19.79 0 01-3.07-8.67A2 2 0 014.11 2h3a2 2 0 012 1.72 12.84 12.84 0 00.7 2.81 2 2 0 01-.45 2.11L8.09 9.91a16 16 0 006 6l1.27-1.27a2 2 0 012.11-.45 12.84 12.84 0 002.81.7A2 2 0 0122 16.92z" />
-    </svg>
-  );
+.topbar-inner {
+  display: flex; align-items: center; justify-content: space-between; min-height: 68px; gap: 20px;
 }
-
-function LocationIcon() {
-  return (
-    <svg style={styles.icon} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-      <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0118 0z" />
-      <circle cx="12" cy="10" r="3" />
-    </svg>
-  );
+.brand-block {
+  display: flex; align-items: center; gap: 14px;
+  padding: 4px 0;
 }
-
-function LinkedInIcon() {
-  return (
-    <svg style={styles.icon} viewBox="0 0 24 24" fill="currentColor">
-      <path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433a2.062 2.062 0 01-2.063-2.065 2.064 2.064 0 112.063 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z" />
-    </svg>
-  );
+.brand-mark {
+  width: 11px; height: 38px;
+  border-radius: 4px;
+  background: linear-gradient(180deg, var(--accent) 0%, rgba(91, 163, 217, 0.32) 100%);
+  box-shadow: 0 0 22px rgba(91, 163, 217, 0.22);
+  flex-shrink: 0;
 }
+.brand-text { display: flex; flex-direction: column; gap: 4px; line-height: 1.2; }
+.brand-text strong {
+  font-size: 0.97rem;
+  letter-spacing: -0.03em;
+  font-weight: 650;
+}
+.brand-text span { color: #8fa3b8; font-size: 0.73rem; letter-spacing: 0.04em; font-weight: 500; }
+.nav-links { display: flex; gap: 3px; flex-wrap: wrap; justify-content: flex-end; }
+.nav-links button {
+  background: transparent; color: var(--muted); border: 1px solid transparent; border-radius: 999px;
+  padding: 8px 11px; cursor: pointer; transition: color 0.15s ease, border-color 0.15s ease, background 0.15s ease;
+  font-size: 0.82rem;
+  font-weight: 500;
+}
+.nav-links button.active, .nav-links button:hover {
+  color: var(--text); border-color: var(--border); background: rgba(255,255,255,0.035);
+}
+.hero { padding: 76px 0 72px; }
+.hero-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1.05fr) minmax(360px, 1fr);
+  gap: clamp(32px, 4.5vw, 56px);
+  align-items: start;
+}
+.hero-copy { align-self: start; max-width: 42rem; padding-top: 4px; }
+.hero-name {
+  margin: 0 0 12px;
+  font-size: clamp(1.15rem, 2.1vw, 1.38rem);
+  font-weight: 650;
+  letter-spacing: -0.025em;
+  color: var(--text);
+}
+.hero-role {
+  margin: 0 0 22px;
+  font-size: clamp(1.04rem, 1.9vw, 1.22rem);
+  font-weight: 650;
+  color: var(--accent);
+  letter-spacing: -0.018em;
+}
+.hero-lead {
+  margin: 0;
+  color: var(--muted);
+  font-size: 1.03rem;
+  line-height: 1.8;
+  max-width: 54ch;
+}
+.hero-analytics {
+  padding: 24px 24px 22px;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  border: 1px solid rgba(91, 163, 217, 0.16);
+  border-radius: 18px;
+  background: linear-gradient(152deg, rgba(11, 20, 32, 0.96) 0%, rgba(6, 12, 20, 0.78) 100%);
+  box-shadow: 0 16px 48px rgba(0, 0, 0, 0.28), inset 0 1px 0 rgba(255,255,255,0.04);
+  transition: border-color 0.25s ease, box-shadow 0.25s ease;
+}
+.hero-analytics:hover {
+  border-color: rgba(91, 163, 217, 0.22);
+  box-shadow: 0 20px 52px rgba(0, 0, 0, 0.32), inset 0 1px 0 rgba(255,255,255,0.05);
+}
+.hero-analytics-head { padding-right: 4px; border-bottom: 1px solid rgba(130, 155, 190, 0.1); padding-bottom: 14px; margin-bottom: 2px; }
+.hero-analytics-dek {
+  margin: 10px 0 0;
+  font-size: 0.84rem;
+  color: #7f90a3;
+  line-height: 1.58;
+  max-width: none;
+}
+.kpi-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 14px 16px;
+}
+.kpi-cell {
+  padding: 14px 14px 12px;
+  border-radius: 13px;
+  border: 1px solid rgba(130, 155, 190, 0.11);
+  background: rgba(0, 0, 0, 0.22);
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+  min-height: 98px;
+  transition: border-color 0.2s ease, background 0.2s ease, transform 0.2s ease;
+}
+.kpi-cell:hover {
+  border-color: rgba(91, 163, 217, 0.22);
+  background: rgba(91, 163, 217, 0.04);
+  transform: translateY(-1px);
+}
+.sparkline {
+  width: 100%;
+  height: 26px;
+  color: rgba(91, 163, 217, 0.62);
+  opacity: 1;
+}
+.kpi-value {
+  font-size: 1.08rem;
+  font-weight: 700;
+  letter-spacing: -0.03em;
+  color: #e2eaf5;
+}
+.kpi-label {
+  font-size: 0.67rem;
+  color: var(--muted);
+  line-height: 1.38;
+  text-transform: uppercase;
+  letter-spacing: 0.065em;
+}
+.hero-mini-bars-wrap {
+  margin-top: 2px;
+  padding: 14px 14px 12px;
+  border-radius: 12px;
+  border: 1px solid rgba(130, 155, 190, 0.1);
+  background: rgba(0, 0, 0, 0.18);
+}
+.hero-mini-bars-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 12px;
+}
+.hero-mini-bars-label {
+  font-size: 0.64rem;
+  text-transform: uppercase;
+  letter-spacing: 0.09em;
+  color: #7a8b9e;
+  font-weight: 600;
+}
+.hero-mini-bars-axis {
+  flex: 1;
+  height: 1px;
+  background: linear-gradient(90deg, rgba(91, 163, 217, 0.25), transparent);
+  opacity: 0.8;
+}
+.hero-mini-bars-track {
+  display: flex;
+  align-items: flex-end;
+  gap: 6px;
+  height: 56px;
+  padding: 4px 4px 0;
+  border-bottom: 1px solid rgba(130, 155, 190, 0.14);
+}
+.hero-mini-bar {
+  flex: 1;
+  border-radius: 4px 4px 0 0;
+  background: linear-gradient(180deg, rgba(91, 163, 217, 0.5) 0%, rgba(91, 163, 217, 0.1) 100%);
+  min-height: 10px;
+  transition: opacity 0.2s ease, filter 0.2s ease, transform 0.2s ease;
+}
+.hero-mini-bar:hover { filter: brightness(1.08); transform: scaleY(1.04); transform-origin: bottom center; }
+.hero-mini-bar:nth-child(3n) { opacity: 0.88; }
 
-const globalStyles = `
-@import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Outfit:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap');
-*{margin:0;padding:0;box-sizing:border-box;cursor:none}
-html{scroll-behavior:smooth}
-body{font-family:'Outfit',-apple-system,BlinkMacSystemFont,sans-serif;background:#050505;color:#e5e5e5;line-height:1.6;overflow-x:hidden}
-strong{color:#fff;font-weight:600}
-::selection{background:rgba(99,102,241,0.4);color:#fff}
-.custom-cursor{position:fixed;width:20px;height:20px;border-radius:50%;pointer-events:none;z-index:9999;transition:transform .15s ease-out,background-color .15s ease;mix-blend-mode:difference;will-change:transform}
-@media(max-width:768px){.custom-cursor{display:none}*{cursor:auto}}
-.bg-gradient-1{position:fixed;top:-50%;left:-50%;width:200%;height:200%;background:radial-gradient(circle at 30% 30%,rgba(99,102,241,0.08) 0%,transparent 50%);animation:float 20s ease-in-out infinite;pointer-events:none;z-index:0}
-.bg-gradient-2{position:fixed;top:-50%;right:-50%;width:200%;height:200%;background:radial-gradient(circle at 70% 70%,rgba(236,72,153,0.05) 0%,transparent 50%);animation:float 25s ease-in-out infinite reverse;pointer-events:none;z-index:0}
-.noise-overlay{position:fixed;top:0;left:0;width:100%;height:100%;background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");opacity:0.03;pointer-events:none;z-index:1}
-@keyframes float{0%,100%{transform:translate(0,0) rotate(0deg)}33%{transform:translate(30px,-30px) rotate(5deg)}66%{transform:translate(-20px,20px) rotate(-5deg)}}
-.nav-blur{backdrop-filter:blur(20px) saturate(180%);-webkit-backdrop-filter:blur(20px) saturate(180%)}
-.nav-link{position:relative;animation:fadeInDown .5s ease forwards;opacity:0}
-.nav-link:hover{color:#fff!important;background:rgba(99,102,241,0.1)!important}
-.nav-indicator{position:absolute;bottom:-2px;left:50%;transform:translateX(-50%);width:20px;height:2px;background:linear-gradient(90deg,#6366f1,#ec4899);border-radius:2px}
-.logo-animate{animation:logoReveal 1s ease forwards}
-.logo-bracket{color:#6366f1;font-weight:400}
-@keyframes logoReveal{from{opacity:0;transform:translateY(-10px)}to{opacity:1;transform:translateY(0)}}
-@keyframes fadeInDown{from{opacity:0;transform:translateY(-10px)}to{opacity:1;transform:translateY(0)}}
-.hero-content{opacity:0;transform:translateY(40px);transition:all 1s cubic-bezier(0.16,1,0.3,1);text-align:center}
-.hero-loaded{opacity:1;transform:translateY(0)}
-.badge-dot{display:inline-block;width:8px;height:8px;background:#10b981;border-radius:50%;margin-right:8px;animation:dot-pulse 1.5s ease-in-out infinite}
-@keyframes dot-pulse{0%,100%{opacity:1;transform:scale(1)}50%{opacity:0.5;transform:scale(1.2)}}
-.title-line{display:block;animation:slideUp .8s ease forwards;animation-delay:.2s;opacity:0;transform:translateY(100%)}
-.title-accent{background:linear-gradient(135deg,#6366f1 0%,#ec4899 50%,#f59e0b 100%);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;animation-delay:.4s}
-@keyframes slideUp{to{opacity:1;transform:translateY(0)}}
-.hero-roles{animation:fadeIn .8s ease forwards;animation-delay:.6s;opacity:0}
-.role-tag{display:inline-block;padding:4px 12px;background:rgba(99,102,241,0.1);border:1px solid rgba(99,102,241,0.2);border-radius:20px;font-size:14px;transition:all .3s ease}
-.role-tag:hover{background:rgba(99,102,241,0.2);transform:translateY(-2px)}
-.role-divider{margin:0 12px;color:#6366f1;font-size:8px}
-.hero-description{animation:fadeIn .8s ease forwards;animation-delay:.7s;opacity:0}
-@keyframes fadeIn{to{opacity:1}}
-.hero-contact{animation:fadeIn .8s ease forwards;animation-delay:.8s;opacity:0}
-.contact-pill{transition:all .3s ease;border:1px solid rgba(255,255,255,0.1)}
-.contact-pill:hover{background:rgba(99,102,241,0.15)!important;border-color:rgba(99,102,241,0.3);transform:translateY(-2px)}
-.hero-stats{animation:fadeIn .8s ease forwards;animation-delay:.9s;opacity:0}
-.stat-card{transition:all .3s ease;border:1px solid rgba(255,255,255,0.05);background:rgba(255,255,255,0.02)}
-.stat-card:hover{transform:translateY(-5px);border-color:rgba(99,102,241,0.3);background:rgba(99,102,241,0.05)}
-.stat-number{background:linear-gradient(135deg,#6366f1,#ec4899);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
-.scroll-indicator{position:absolute;bottom:20px;left:50%;transform:translateX(-50%);display:flex;flex-direction:column;align-items:center;gap:8px;color:#737373;font-size:11px;text-transform:uppercase;letter-spacing:2px;animation:fadeIn 1s ease forwards,bounce 2s ease-in-out infinite;animation-delay:1.5s,2s;opacity:0;z-index:1}
-.scroll-line{width:1px;height:24px;background:linear-gradient(to bottom,#6366f1,transparent)}
-@keyframes bounce{0%,100%{transform:translateX(-50%) translateY(0)}50%{transform:translateX(-50%) translateY(10px)}}
-.section-title{position:relative}
-.section-title::after{content:'';position:absolute;bottom:-10px;left:0;width:60px;height:3px;background:linear-gradient(90deg,#6366f1,#ec4899);border-radius:2px}
-.project-large,.project-medium,.project-small{grid-column:span 1}
-
-.project-card{position:relative;padding:32px;background:rgba(20,20,22,0.8);border-radius:24px;border:1px solid rgba(255,255,255,0.05);overflow:hidden;transition:all .4s cubic-bezier(0.16,1,0.3,1)}
-.project-card:hover{transform:translateY(-8px) scale(1.02);border-color:var(--accent-color);box-shadow:0 20px 40px -20px var(--accent-color)}
-.project-glow{position:absolute;top:0;left:0;width:100%;height:4px;opacity:0.8}
-.project-card:hover .project-glow{height:100%;opacity:0.05;transition:all .4s ease}
-.project-content{position:relative;z-index:1;height:100%;display:flex;flex-direction:column}
-.project-header{display:flex;align-items:center;gap:12px;margin-bottom:16px}
-.project-category{font-size:12px;font-weight:600;text-transform:uppercase;letter-spacing:1px;color:var(--accent-color)}
-.project-line{flex:1;height:1px;opacity:0.3}
-.project-title{font-family:'Space Grotesk',sans-serif;font-size:22px;font-weight:700;color:#fff;margin-bottom:16px;line-height:1.3}
-.project-context{font-size:15px;color:#a3a3a3;margin-bottom:12px;flex:1}
-.project-impact{font-size:14px;color:#d4d4d4;margin-bottom:20px;padding:12px;background:rgba(255,255,255,0.03);border-radius:8px}
-.project-tags{display:flex;flex-wrap:wrap;gap:8px;margin-top:auto}
-.project-tag{font-size:12px;font-family:'JetBrains Mono',monospace;padding:6px 12px;background:rgba(255,255,255,0.05);border-radius:6px;color:#a3a3a3;transition:all .2s ease}
-.project-card:hover .project-tag{background:rgba(255,255,255,0.1)}
-.skill-card{padding:24px;background:rgba(255,255,255,0.02);border-radius:16px;border:1px solid rgba(255,255,255,0.05);transition:all .3s ease}
-.skill-card:hover{transform:translateY(-4px);border-color:rgba(99,102,241,0.3);background:rgba(99,102,241,0.05)}
-.skill-badge{transition:all .2s ease}
-.skill-card:hover .skill-badge{background:rgba(99,102,241,0.15);color:#c7d2fe}
-.edu-card{transition:all .3s ease}
-.edu-card:hover{transform:translateY(-4px);border-color:rgba(99,102,241,0.3)}
-.cert-box{position:relative;overflow:hidden}
-.cert-number{position:absolute;top:-20px;right:-20px;font-family:'Space Grotesk',sans-serif;font-size:150px;font-weight:800;color:rgba(99,102,241,0.05);line-height:1;pointer-events:none}
-.cert-tag{transition:all .2s ease}
-.cert-tag:hover{background:rgba(99,102,241,0.2);transform:translateY(-2px)}
-.exp-card{transition:all .3s ease}
-.exp-card:hover{transform:translateX(8px)}
-.dot-pulse{position:relative}
-.dot-pulse::after{content:'';position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:100%;height:100%;border-radius:50%;background:#3b82f6;animation:pulse-ring 1.5s ease-out infinite}
-@keyframes pulse-ring{0%{transform:translate(-50%,-50%) scale(1);opacity:0.5}100%{transform:translate(-50%,-50%) scale(2.5);opacity:0}}
-.cta-button{position:relative;overflow:hidden;transition:all .3s ease}
-.cta-button::before{content:'';position:absolute;top:0;left:-100%;width:100%;height:100%;background:linear-gradient(90deg,transparent,rgba(255,255,255,0.2),transparent);transition:left .5s ease}
-.cta-button:hover{transform:translateY(-3px);box-shadow:0 10px 30px -10px rgba(99,102,241,0.5)}
-.cta-button:hover::before{left:100%}
-.footer-link{position:relative;transition:all .2s ease}
-.footer-link::after{content:'';position:absolute;bottom:-2px;left:0;width:0;height:1px;background:#6366f1;transition:width .3s ease}
-.footer-link:hover{color:#fff!important}
-.footer-link:hover::after{width:100%}
-.highlight-card{transition:all .3s ease}
-.highlight-card:hover{transform:translateX(8px);background:rgba(99,102,241,0.05)}
-.fade-in-up{animation:fadeInUp .6s ease forwards;opacity:0}
-@keyframes fadeInUp{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}
-.project-more{position:absolute;top:18px;right:18px;width:36px;height:36px;border-radius:8px;border:none;font-weight:700;font-size:18px;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all .3s ease;z-index:2;color:#fff}
-.project-more:hover{transform:scale(1.1);box-shadow:0 8px 16px rgba(99,102,241,0.3)}
-.modal-backdrop{animation:fadeIn .2s ease}
-.modal-panel{animation:slideUp .3s cubic-bezier(0.16,1,0.3,1)}
-@keyframes slideUp{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}
-@media(max-width:900px){.hero-contact{flex-direction:column;align-items:center}.hero-stats{flex-direction:column;align-items:center}}
-@media(max-width:768px){.projects-grid{grid-template-columns:1fr!important}.project-more{top:12px;right:12px;width:32px;height:32px;font-size:16px}}
-`;
-
-const styles: Record<string, any> = {
-  container: { minHeight: '100vh', backgroundColor: '#050505', position: 'relative' },
-  nav: { position: 'fixed', top: 0, left: 0, right: 0, zIndex: 1000, backgroundColor: 'rgba(5, 5, 5, 0.7)', borderBottom: '1px solid rgba(255,255,255,0.05)' },
-  navContent: { maxWidth: '1400px', margin: '0 auto', padding: '16px 32px', display: 'flex', justifyContent: 'space-between', alignItems: 'center' },
-  logo: { fontFamily: "'Space Grotesk', sans-serif", fontSize: '18px', letterSpacing: '-0.5px', display: 'flex', alignItems: 'center' },
-  navLinks: { display: 'flex', gap: '8px' },
-  navLink: { background: 'none', border: 'none', color: '#a3a3a3', fontSize: '14px', fontWeight: '500', padding: '10px 18px', borderRadius: '10px', cursor: 'none', transition: 'all 0.2s ease', fontFamily: 'inherit' },
-  navLinkActive: { color: '#ffffff', backgroundColor: 'rgba(99, 102, 241, 0.1)' },
-
-  hero: { minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center', position: 'relative', padding: '120px 32px 80px' },
-  heroBadge: { display: 'inline-flex', alignItems: 'center', padding: '10px 20px', backgroundColor: 'rgba(16, 185, 129, 0.1)', border: '1px solid rgba(16, 185, 129, 0.2)', borderRadius: '100px', fontSize: '14px', fontWeight: '500', color: '#10b981', marginBottom: '32px' },
-  heroTitle: { fontFamily: "'Space Grotesk', sans-serif", fontSize: 'clamp(48px, 10vw, 100px)', fontWeight: '800', lineHeight: '1', letterSpacing: '-3px', marginBottom: '24px', color: '#ffffff' },
-  heroRoles: { display: 'flex', flexWrap: 'wrap', alignItems: 'center', justifyContent: 'center', gap: '8px', marginBottom: '24px' },
-  heroDescription: { fontSize: '18px', color: '#a3a3a3', maxWidth: '500px', margin: '0 auto 32px', textAlign: 'center', lineHeight: '1.7' },
-  heroContact: { display: 'flex', flexWrap: 'wrap', justifyContent: 'center', gap: '12px', marginBottom: '48px' },
-  contactLink: { display: 'inline-flex', alignItems: 'center', gap: '8px', padding: '10px 18px', backgroundColor: 'rgba(255,255,255,0.03)', borderRadius: '10px', color: '#a3a3a3', textDecoration: 'none', fontSize: '14px', transition: 'all 0.2s ease' },
-
-  heroStats: { display: 'flex', justifyContent: 'center', gap: '24px', flexWrap: 'wrap' },
-  stat: { textAlign: 'center', padding: '24px 32px', backgroundColor: 'rgba(255,255,255,0.02)', borderRadius: '16px', minWidth: '140px' },
-  statNumber: { display: 'block', fontFamily: "'Space Grotesk', sans-serif", fontSize: '42px', fontWeight: '800', marginBottom: '4px' },
-  statLabel: { fontSize: '13px', color: '#737373', textTransform: 'uppercase', letterSpacing: '1px' },
-
-  section: { padding: '120px 32px', position: 'relative', zIndex: 2 },
-  sectionAlt: { backgroundColor: 'rgba(255,255,255,0.01)' },
-  sectionContent: { maxWidth: '1200px', margin: '0 auto' },
-  sectionTitle: { fontFamily: "'Space Grotesk', sans-serif", fontSize: '36px', fontWeight: '700', color: '#ffffff', marginBottom: '48px', display: 'flex', alignItems: 'center', gap: '16px' },
-  sectionNumber: { fontFamily: "'JetBrains Mono', monospace", fontSize: '14px', fontWeight: '500', color: '#6366f1', padding: '6px 12px', backgroundColor: 'rgba(99, 102, 241, 0.1)', borderRadius: '6px' },
-
-  projectsGrid: { display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: '24px' },
-
-  paradiseBox: { padding: '24px', backgroundColor: 'rgba(20, 20, 22, 0.55)', borderRadius: '18px', border: '1px solid rgba(255,255,255,0.06)', marginBottom: '28px', backdropFilter: 'blur(12px)' },
-  paradiseHeader: { display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '12px', marginBottom: '10px' },
-  paradiseTitle: { fontFamily: "'Space Grotesk', sans-serif", fontSize: '18px', fontWeight: '800', letterSpacing: '-0.5px', color: '#ffffff' },
-  paradiseBadge: { fontSize: '11px', fontWeight: '700', color: '#c7d2fe', padding: '6px 10px', backgroundColor: 'rgba(99, 102, 241, 0.12)', borderRadius: '999px', border: '1px solid rgba(99, 102, 241, 0.2)', whiteSpace: 'nowrap' },
-  paradiseText: { fontSize: '14px', color: '#a3a3a3', lineHeight: '1.7', margin: 0 },
-
-  paradiseCollection: { padding: '22px', backgroundColor: 'rgba(20, 20, 22, 0.35)', borderRadius: '18px', border: '1px solid rgba(255,255,255,0.06)', marginBottom: '22px', backdropFilter: 'blur(10px)' },
-  paradiseCollectionHeader: { display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '12px', marginBottom: '10px' },
-  paradiseCollectionTitle: { fontFamily: "'Space Grotesk', sans-serif", fontSize: '16px', fontWeight: '800', letterSpacing: '-0.3px', color: '#ffffff', margin: 0 },
-  paradiseCollectionPill: { fontSize: '11px', fontWeight: '700', color: '#bbf7d0', padding: '6px 10px', backgroundColor: 'rgba(34, 197, 94, 0.10)', borderRadius: '999px', border: '1px solid rgba(34, 197, 94, 0.18)', whiteSpace: 'nowrap' },
-  paradiseCollectionText: { fontSize: '13px', color: '#a3a3a3', lineHeight: '1.7', margin: '0 0 14px 0' },
-  paradiseModulesGrid: { display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: '22px' },
-
-  otherProjectsHeader: { marginTop: '18px', marginBottom: '14px' },
-  otherProjectsTitle: { fontFamily: "'Space Grotesk', sans-serif", fontSize: '16px', fontWeight: '800', letterSpacing: '-0.3px', color: '#ffffff', margin: 0 },
-  otherProjectsText: { fontSize: '13px', color: '#9ca3af', lineHeight: '1.6', margin: '6px 0 0 0' },
-
-  // ✅ FIX: ESTO VA ADENTRO DE styles (no afuera)
-  ctaButton: {
-    padding: '10px 14px',
-    borderRadius: '12px',
-    fontSize: '13px',
-    fontWeight: '800',
-    color: '#ffffff',
-    backgroundColor: 'rgba(255,255,255,0.08)',
-    border: '1px solid rgba(255,255,255,0.14)',
-    cursor: 'pointer',
-    display: 'inline-flex',
-    alignItems: 'center',
-    justifyContent: 'center',
-    transition: 'transform 0.15s ease, background 0.15s ease, border-color 0.15s ease'
-  },
-  ctaHint: { fontSize: '12px', color: '#9ca3af', display: 'inline-flex', alignItems: 'center' },
-
-  icon: { width: '16px', height: '16px' },
-
-  // ... (el resto de tus estilos tal cual)
-  aboutGrid: { display: 'grid', gridTemplateColumns: '1.5fr 1fr', gap: '60px', alignItems: 'start' },
-  aboutText: { display: 'flex', flexDirection: 'column', gap: '20px' },
-  paragraph: { fontSize: '17px', color: '#d4d4d4', lineHeight: '1.8' },
-  aboutHighlights: { display: 'flex', flexDirection: 'column', gap: '20px' },
-  highlight: { display: 'flex', gap: '16px', padding: '20px', backgroundColor: 'rgba(255,255,255,0.02)', borderRadius: '12px', border: '1px solid rgba(255,255,255,0.05)' },
-  highlightIcon: { fontSize: '28px', flexShrink: 0 },
-  highlightTitle: { fontSize: '16px', fontWeight: '600', color: '#ffffff', marginBottom: '4px' },
-  highlightText: { fontSize: '14px', color: '#a3a3a3' },
-
-  skillsGrid: { display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))', gap: '16px' },
-
-  languagesPanel: { marginTop: '22px', padding: '20px', backgroundColor: 'rgba(255,255,255,0.02)', borderRadius: '16px', border: '1px solid rgba(255,255,255,0.05)' },
-  languagesHeader: { display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '10px' },
-  languagesIcon: { fontSize: '18px' },
-  languagesTitle: { fontSize: '15px', fontWeight: '700', color: '#ffffff' },
-  languagesBadges: { display: 'flex', flexWrap: 'wrap', gap: '10px' },
-  languagePill: { fontSize: '13px', color: '#e5e5e5', padding: '8px 12px', backgroundColor: 'rgba(255,255,255,0.05)', borderRadius: '12px', border: '1px solid rgba(255,255,255,0.10)' },
-  skillHeader: { display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '16px' },
-  skillIcon: { fontSize: '24px' },
-  skillTitle: { fontSize: '15px', fontWeight: '600', color: '#ffffff' },
-  skillList: { display: 'flex', flexWrap: 'wrap', gap: '8px' },
-  skillBadge: { fontSize: '13px', color: '#a3a3a3', padding: '6px 12px', backgroundColor: 'rgba(255,255,255,0.05)', borderRadius: '6px' },
-
-  educationGrid: { display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(320px, 1fr))', gap: '20px', marginBottom: '48px' },
-  educationCard: { padding: '28px', backgroundColor: 'rgba(20, 20, 22, 0.8)', borderRadius: '16px', border: '1px solid rgba(255,255,255,0.05)' },
-  educationHeader: { display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', gap: '12px', marginBottom: '12px' },
-  educationTitle: { fontSize: '16px', fontWeight: '600', color: '#ffffff', flex: 1, lineHeight: '1.4' },
-  educationStatus: { fontSize: '11px', fontWeight: '600', padding: '4px 12px', borderRadius: '100px', whiteSpace: 'nowrap' },
-  educationInstitution: { fontSize: '14px', color: '#a3a3a3', marginBottom: '4px' },
-  educationPeriod: { fontSize: '13px', color: '#737373' },
-
-  certificationsBox: { padding: '40px', background: 'linear-gradient(135deg, rgba(99, 102, 241, 0.08), rgba(236, 72, 153, 0.08))', borderRadius: '24px', border: '1px solid rgba(255,255,255,0.05)', position: 'relative', overflow: 'hidden' },
-  certTitle: { fontSize: '22px', fontWeight: '700', color: '#ffffff', marginBottom: '8px' },
-  certSubtitle: { fontSize: '14px', color: '#a3a3a3', marginBottom: '16px' },
-  certCategories: { display: 'flex', flexWrap: 'wrap', gap: '8px' },
-  certBadge: { fontSize: '12px', color: '#c7d2fe', padding: '6px 10px', backgroundColor: 'rgba(99, 102, 241, 0.12)', borderRadius: '8px', border: '1px solid rgba(99, 102, 241, 0.2)' },
-
-  certProviders: { display: 'flex', flexWrap: 'wrap', gap: '10px', marginBottom: '14px' },
-  certProviderBadge: { fontSize: '12px', color: '#d4d4d4', padding: '7px 12px', backgroundColor: 'rgba(255,255,255,0.05)', borderRadius: '10px', border: '1px solid rgba(255,255,255,0.08)' },
-
-  experienceTimeline: { display: 'flex', flexDirection: 'column', gap: '16px', position: 'relative', paddingLeft: '8px' },
-  experienceCard: { position: 'relative', padding: '24px 24px 24px 32px', backgroundColor: 'rgba(20, 20, 22, 0.8)', borderRadius: '16px', border: '1px solid rgba(255,255,255,0.05)' },
-  experienceDot: { position: 'absolute', left: '12px', top: '28px', width: '10px', height: '10px', borderRadius: '50%', backgroundColor: '#3b82f6', boxShadow: '0 0 0 3px rgba(59, 130, 246, 0.2)' },
-  experienceContent: { marginLeft: '24px', display: 'flex', flexDirection: 'column', gap: '6px' },
-  experienceHeader: { display: 'flex', alignItems: 'center', gap: '12px' },
-  experienceTitle: { fontSize: '16px', fontWeight: '700', color: '#ffffff' },
-  currentBadge: { fontSize: '11px', fontWeight: '700', color: '#0ea5e9', backgroundColor: 'rgba(14, 165, 233, 0.15)', padding: '4px 10px', borderRadius: '999px' },
-  experienceCompany: { fontSize: '14px', color: '#a3a3a3' },
-  experiencePeriod: { fontSize: '13px', color: '#737373' },
-  experienceDescription: { fontSize: '14px', color: '#d4d4d4', lineHeight: '1.6' },
-
-  footer: { padding: '80px 32px', backgroundColor: 'rgba(12, 12, 14, 0.9)', borderTop: '1px solid rgba(255,255,255,0.05)' },
-  footerContent: { maxWidth: '1200px', margin: '0 auto', display: 'grid', gridTemplateColumns: '2fr 1fr', gap: '40px', alignItems: 'center' },
-  footerMain: { display: 'flex', flexDirection: 'column', gap: '12px' },
-  footerTitle: { fontSize: '26px', fontWeight: '700', color: '#ffffff' },
-  footerText: { fontSize: '15px', color: '#a3a3a3', lineHeight: '1.6' },
-  footerCta: { display: 'inline-block', marginTop: '8px', padding: '12px 20px', background: 'linear-gradient(135deg, #6366f1, #ec4899)', borderRadius: '12px', color: '#fff', textDecoration: 'none', fontWeight: '600', boxShadow: '0 10px 30px -12px rgba(99, 102, 241, 0.5)' },
-  footerLinks: { display: 'flex', gap: '16px', justifyContent: 'flex-end' },
-  footerLink: { color: '#a3a3a3', textDecoration: 'none', fontSize: '14px' },
-  footerBottom: { gridColumn: '1 / -1', display: 'flex', flexWrap: 'wrap', justifyContent: 'space-between', alignItems: 'center', gap: '12px', borderTop: '1px solid rgba(255,255,255,0.05)', paddingTop: '20px' },
-  footerCopy: { fontSize: '13px', color: '#737373' },
-  // Languages moved to the main "Stack Tecnológico" section for better visibility.
-};
+.hero-toolkit {
+  margin-top: 28px;
+  padding: 16px 16px 14px;
+  border-radius: 15px;
+  border: 1px solid rgba(130, 155, 190, 0.12);
+  background: rgba(255, 255, 255, 0.022);
+}
+.hero-toolkit-title {
+  font-size: 0.72rem;
+  text-transform: uppercase;
+  letter-spacing: 0.095em;
+  color: #8497ad;
+  font-weight: 700;
+  margin-bottom: 14px;
+}
+.hero-toolkit-grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 10px 11px;
+}
+.hero-toolkit-chip {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 36px;
+  padding: 8px 9px;
+  border-radius: 11px;
+  border: 1px solid rgba(130, 155, 190, 0.16);
+  background: rgba(91, 163, 217, 0.055);
+  color: #b2c5e0;
+  font-size: 0.78rem;
+  font-weight: 500;
+  line-height: 1;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.button {
+  display: inline-flex; align-items: center; justify-content: center;
+  min-width: 124px;
+  padding: 10px 16px; border-radius: 10px; text-decoration: none; border: 1px solid var(--border);
+  transition: background 0.15s ease, border-color 0.15s ease;
+  font-weight: 600; font-size: 0.88rem;
+}
+.button--quiet.primary {
+  background: rgba(91, 163, 217, 0.18);
+  color: var(--text);
+  border-color: rgba(91, 163, 217, 0.35);
+}
+.button--quiet.primary:hover { background: rgba(91, 163, 217, 0.28); text-decoration: none; }
+.button--quiet.secondary {
+  background: rgba(255,255,255,0.03);
+  color: var(--text);
+}
+.button--quiet.secondary:hover { background: rgba(255,255,255,0.06); text-decoration: none; }
+.card {
+  border: 1px solid var(--border);
+  border-radius: 17px;
+  box-shadow: var(--shadow);
+  position: relative;
+  transition: border-color 0.22s ease, box-shadow 0.22s ease, transform 0.22s ease;
+}
+.subtle {
+  background: rgba(8, 14, 22, 0.62);
+}
+.section { padding: 72px 0 0; }
+.section--tight { padding-top: 56px; }
+.section-divider {
+  border-top: 1px solid rgba(130, 155, 190, 0.08);
+  padding-top: 72px;
+  margin-top: 8px;
+}
+.section-title-wrap { max-width: 700px; margin-bottom: 28px; }
+.section-title-wrap h2 {
+  margin: 12px 0 12px;
+  font-size: clamp(1.34rem, 2.45vw, 1.68rem);
+  line-height: 1.18;
+  letter-spacing: -0.03em;
+  font-weight: 650;
+}
+.section-intro {
+  color: #94a6bb;
+  line-height: 1.62;
+  margin: 0;
+  font-size: 0.93rem;
+  max-width: 58ch;
+  padding-left: 12px;
+  border-left: 2px solid rgba(91, 163, 217, 0.2);
+}
+.eyebrow {
+  display: inline-flex;
+  letter-spacing: 0.09em;
+  text-transform: uppercase;
+  font-size: 0.73rem;
+  color: #78b0db;
+  font-weight: 700;
+  opacity: 0.96;
+}
+.about-section-inner { width: 100%; }
+.about-head .section-title-wrap { margin-bottom: 0; max-width: 760px; }
+.about-head { margin-bottom: 30px; }
+.about-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1.12fr) minmax(268px, 380px);
+  gap: 28px 46px;
+  align-items: start;
+  align-content: start;
+}
+.text-block--about {
+  margin: 0;
+  padding: 0;
+}
+.about-highlights {
+  margin: 0;
+  padding: 0;
+  align-self: start;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+.text-block--about p {
+  color: var(--muted);
+  line-height: 1.8;
+  margin: 0 0 16px;
+  font-size: 0.97rem;
+}
+.text-block--about strong { color: #c8d4e8; font-weight: 600; }
+.about-highlight {
+  padding: 16px 18px;
+  border: 1px solid rgba(130, 155, 190, 0.12);
+  border-radius: 14px;
+  transition: border-color 0.2s ease, background 0.2s ease;
+}
+.about-highlight:hover {
+  border-color: rgba(91, 163, 217, 0.18);
+  background: rgba(91, 163, 217, 0.04);
+}
+.about-highlight h3 {
+  margin: 0 0 8px;
+  font-size: 0.88rem;
+  font-weight: 650;
+  letter-spacing: -0.02em;
+  color: #c5d2e8;
+}
+.about-highlight p {
+  margin: 0;
+  font-size: 0.84rem;
+  line-height: 1.6;
+  color: #8b9cb0;
+}
+.muted-note {
+  font-size: 0.87rem !important;
+  color: #7c8a9e !important;
+  font-style: normal;
+}
+.project-grid { display: grid; gap: 18px; }
+.primary-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+.secondary-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+.project-card {
+  padding: 24px 24px 22px;
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+  border: 1px solid rgba(130, 155, 190, 0.12);
+  border-radius: 17px;
+}
+.project-card:hover {
+  border-color: rgba(91, 163, 217, 0.16);
+  box-shadow: 0 14px 44px rgba(0, 0, 0, 0.32);
+  transform: translateY(-2px);
+}
+.project-card.primary {
+  background: linear-gradient(165deg, rgba(12, 20, 32, 0.95) 0%, rgba(7, 12, 20, 0.72) 100%);
+}
+.project-card.secondary { background: rgba(6, 12, 20, 0.48); padding: 20px; }
+.project-card-top {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 10px;
+  margin-bottom: 12px;
+}
+.project-meta span {
+  display: inline-flex; padding: 5px 10px; border-radius: 999px; font-size: 0.68rem; color: var(--accent);
+  background: var(--accent-soft); border: 1px solid rgba(91, 163, 217, 0.18);
+  line-height: 1.3;
+}
+.metric-pill {
+  font-size: 0.65rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: #a8bdd4;
+  padding: 5px 8px;
+  border-radius: 8px;
+  border: 1px solid rgba(130, 155, 190, 0.15);
+  background: rgba(255,255,255,0.02);
+  white-space: nowrap;
+}
+.project-card h3 {
+  margin: 0 0 14px;
+  font-size: 1.08rem;
+  letter-spacing: -0.025em;
+  font-weight: 650;
+  line-height: 1.2;
+}
+.project-facts {
+  margin: 0 0 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+.project-facts div { margin: 0; }
+.project-facts dt {
+  font-size: 0.62rem;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: #6b7c90;
+  margin: 0 0 4px;
+  font-weight: 600;
+}
+.project-facts dd {
+  margin: 0;
+  font-size: 0.86rem;
+  line-height: 1.55;
+  color: #9fb0c4;
+}
+.project-tools { margin-top: 0; margin-bottom: 14px; }
+.tag-row { display: flex; flex-wrap: wrap; gap: 6px; }
+.tag {
+  display: inline-flex; padding: 5px 9px; border-radius: 8px; border: 1px solid var(--border); font-size: 0.72rem;
+  background: rgba(255,255,255,0.02);
+  color: var(--muted);
+}
+.tag--tool {
+  border-color: rgba(91, 163, 217, 0.2);
+  background: rgba(91, 163, 217, 0.06);
+  color: #a8bdd4;
+}
+.project-outcome {
+  padding: 12px 14px;
+  border-radius: 10px;
+  border: 1px solid rgba(91, 163, 217, 0.12);
+  background: rgba(91, 163, 217, 0.05);
+  margin-bottom: 12px;
+}
+.project-outcome-label {
+  display: block;
+  font-size: 0.62rem;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--accent);
+  font-weight: 600;
+  margin-bottom: 6px;
+}
+.project-outcome p {
+  margin: 0;
+  font-size: 0.88rem;
+  line-height: 1.55;
+  color: #c5d4e6;
+}
+.ghost-link {
+  margin-top: auto;
+  padding: 0; background: transparent; border: 0; color: var(--accent); cursor: pointer; font-weight: 600;
+  font-size: 0.86rem; align-self: flex-start;
+}
+.ghost-link:hover { text-decoration: underline; }
+.secondary-wrap { margin-top: 44px; }
+.section-subtitle { color: var(--muted); margin-bottom: 14px; font-size: 0.87rem; font-weight: 500; }
+.skills-stack {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 18px;
+  max-width: 900px;
+}
+.skill-panel { padding: 22px 22px 18px; border-radius: 17px; }
+.skill-panel:hover { border-color: rgba(91, 163, 217, 0.14); }
+.skill-panel h3 {
+  margin: 0 0 16px;
+  font-size: 0.95rem;
+  font-weight: 650;
+  letter-spacing: -0.02em;
+}
+.skill-bars { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 10px; }
+.skill-bar-row {
+  display: grid;
+  grid-template-columns: minmax(0, 42%) 1fr;
+  gap: 12px;
+  align-items: center;
+}
+.skill-bar-name { font-size: 0.8rem; color: #a8b6c8; }
+.skill-bar-track {
+  height: 6px;
+  border-radius: 999px;
+  background: rgba(255,255,255,0.04);
+  border: 1px solid rgba(130, 155, 190, 0.08);
+  overflow: hidden;
+}
+.skill-bar-fill {
+  display: block;
+  height: 100%;
+  border-radius: 999px;
+  background: linear-gradient(90deg, rgba(91, 163, 217, 0.25) 0%, rgba(91, 163, 217, 0.65) 100%);
+  transition: width 0.5s cubic-bezier(0.22, 1, 0.36, 1);
+}
+.experience-block { max-width: 860px; }
+.timeline-wrap { display: flex; flex-direction: column; gap: 16px; margin-top: 14px; }
+.timeline-card {
+  padding: 24px 24px 22px;
+  border-radius: 17px;
+}
+.timeline-card:hover {
+  border-color: rgba(130, 155, 190, 0.18);
+  box-shadow: 0 12px 36px rgba(0, 0, 0, 0.28);
+}
+.timeline-card--featured {
+  border-color: rgba(91, 163, 217, 0.22);
+  background: linear-gradient(160deg, rgba(14, 24, 38, 0.95) 0%, rgba(8, 14, 22, 0.75) 100%);
+  padding-top: 26px;
+}
+.featured-ribbon {
+  position: absolute;
+  top: 14px;
+  right: 16px;
+  font-size: 0.62rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: var(--accent);
+  opacity: 0.9;
+}
+.timeline-period {
+  display: inline-flex; margin-bottom: 8px; color: var(--accent); font-size: 0.7rem; text-transform: uppercase; letter-spacing: 0.08em;
+  font-weight: 600;
+}
+.timeline-card h3 {
+  margin: 0 0 6px;
+  font-size: 1.06rem;
+  letter-spacing: -0.02em;
+  font-weight: 650;
+}
+.timeline-card strong { display: block; color: #c5d2e8; margin-bottom: 12px; font-size: 0.87rem; font-weight: 500; }
+.timeline-bullets {
+  margin: 0 0 0 1.05rem;
+  padding: 0;
+  color: var(--muted);
+  line-height: 1.65;
+  font-size: 0.91rem;
+}
+.timeline-bullets li { margin-bottom: 8px; }
+.timeline-desc { color: var(--muted); font-size: 0.9rem; line-height: 1.7; margin: 0; }
+.contact-card { padding: 0; border: 1px solid rgba(91, 163, 217, 0.14); overflow: hidden; border-radius: 17px; }
+.contact-card:hover { border-color: rgba(91, 163, 217, 0.2); }
+.contact-card-inner {
+  display: flex;
+  justify-content: space-between;
+  gap: 28px;
+  flex-wrap: wrap;
+  padding: 28px 30px 26px;
+  align-items: flex-start;
+}
+.contact-heading {
+  margin: 8px 0 10px;
+  font-size: clamp(1.18rem, 2.1vw, 1.42rem);
+  font-weight: 650;
+  letter-spacing: -0.03em;
+}
+.contact-copy { color: var(--muted); max-width: 44ch; line-height: 1.7; margin: 0 0 8px; font-size: 0.94rem; }
+.contact-loc { margin: 0 !important; }
+.contact-actions { display: flex; flex-direction: column; gap: 10px; min-width: 160px; }
+.footer {
+  padding: 36px 0 48px;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  color: var(--muted);
+  font-size: 0.85rem;
+  border-top: 1px solid var(--border);
+  margin-top: 28px;
+}
+.footer-meta { display: flex; flex-wrap: wrap; gap: 12px; align-items: center; }
+.footer-loc { color: #6b7a8f; }
+.footer-links { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; }
+.footer-links a { color: var(--muted); }
+.footer-links a:hover { color: var(--text); }
+.footer-sep { color: #4a5568; user-select: none; }
+.modal-backdrop {
+  position: fixed; inset: 0; background: rgba(2, 6, 12, 0.78);
+  backdrop-filter: blur(4px);
+  display: grid; place-items: center; padding: 24px; z-index: 60;
+}
+.modal {
+  width: min(640px, 100%); background: rgba(10, 16, 24, 0.98); padding: 26px;
+  border-radius: 16px;
+}
+.modal-close {
+  position: absolute; top: 14px; right: 14px; width: 36px; height: 36px; border-radius: 999px; border: 1px solid var(--border);
+  background: rgba(255,255,255,0.03); color: var(--text); cursor: pointer; font-size: 1.25rem; line-height: 1;
+}
+.modal h3 { margin: 8px 0 12px; font-size: 1.32rem; letter-spacing: -0.03em; }
+.modal h4 { margin: 16px 0 8px; font-size: 0.82rem; text-transform: uppercase; letter-spacing: 0.06em; color: var(--muted); font-weight: 600; }
+.modal p, .modal-list { color: var(--muted); line-height: 1.75; font-size: 0.94rem; }
+.modal-facts { margin: 16px 0; display: flex; flex-direction: column; gap: 12px; }
+.modal-facts dt {
+  font-size: 0.65rem; text-transform: uppercase; letter-spacing: 0.07em; color: #6b7c90; margin-bottom: 4px; font-weight: 600;
+}
+.modal-facts dd { margin: 0; font-size: 0.9rem; color: #9fb0c4; line-height: 1.6; }
+.modal-list { padding-left: 18px; margin: 0; }
+@media (prefers-reduced-motion: no-preference) {
+  .hero-copy { animation: heroIn 0.68s cubic-bezier(0.22, 1, 0.36, 1) both; }
+  .hero-analytics { animation: heroIn 0.72s cubic-bezier(0.22, 1, 0.36, 1) 0.08s both; }
+}
+@keyframes heroIn {
+  from { opacity: 0; transform: translateY(14px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .hero-copy, .hero-analytics { animation: none !important; }
+  .project-card, .timeline-card, .card, .kpi-cell, .hero-analytics, .about-highlight { transition: none !important; }
+  .project-card:hover, .timeline-card:hover, .kpi-cell:hover { transform: none !important; }
+}
+@media (max-width: 1080px) {
+  .hero-grid { grid-template-columns: 1fr; }
+  .hero-analytics { max-width: 100%; }
+  .hero-toolkit-grid { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+  .about-grid { grid-template-columns: 1fr; }
+  .primary-grid, .secondary-grid { grid-template-columns: 1fr; }
+  .skills-stack { grid-template-columns: 1fr; }
+  .skill-bar-row { grid-template-columns: minmax(0, 46%) 1fr; }
+}
+@media (max-width: 720px) {
+  .container { width: min(100% - 28px, 1120px); }
+  .topbar-inner { padding: 8px 0; align-items: flex-start; flex-direction: column; }
+  .nav-links { justify-content: flex-start; }
+  .hero { padding: 48px 0 40px; }
+  .hero-analytics { max-width: none; }
+  .hero-toolkit { margin-top: 24px; padding: 14px 14px 12px; }
+  .hero-toolkit-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px 9px; }
+  .hero-toolkit-chip { min-height: 34px; font-size: 0.75rem; }
+  .kpi-grid { grid-template-columns: 1fr; }
+  .section-divider { padding-top: 56px; }
+  .project-card, .timeline-card, .skill-panel { padding: 18px; }
+  .nav-links button { padding: 7px 9px; font-size: 0.8rem; }
+  .contact-card-inner { padding: 22px 20px; }
+}
+`
