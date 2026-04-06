@@ -1,5 +1,7 @@
 import React, { useEffect, useId, useMemo, useState } from 'react'
 
+type ProjectAccent = 'blue' | 'cyan' | 'violet'
+
 type Project = {
   title: string
   category: string
@@ -10,10 +12,13 @@ type Project = {
   stack?: string[]
   bullets?: string[]
   summary: string
+  /** Un solo acento dominante por card (borde, pill de categoría, resultado, link). */
+  accent: ProjectAccent
 }
 
 const PRIMARY_PROJECTS: Project[] = [
   {
+    accent: 'blue',
     title: 'Mi Consultorio',
     category: 'Salud · sistema en producción',
     problem: 'Información dispersa en papel y planillas; poca visibilidad de turnos, caja y operación diaria.',
@@ -31,6 +36,7 @@ const PRIMARY_PROJECTS: Project[] = [
     ]
   },
   {
+    accent: 'violet',
     title: 'SmartClinic No-Show Predictor',
     category: 'Salud · analítica y BI',
     problem: 'Inasistencias que afectan ocupación y planificación sin una lectura común del riesgo.',
@@ -42,83 +48,112 @@ const PRIMARY_PROJECTS: Project[] = [
     summary:
       'Problema: inasistencias que afectan ocupación y planificación. Se analizó un volumen representativo de turnos, se definieron métricas de riesgo y se priorizó la lectura en un tablero para acciones operativas.',
     bullets: [
-      'Enfoque en indicadores y segmentación para decidir recordatorios o sobreventa prudente.',
+      'Indicadores y segmentación para decidir recordatorios o ajustes de agenda con criterio.',
       'Dashboard para comparar patrones y desvíos frente a la operación esperada.',
-      'Menos énfasis en el algoritmo y más en qué mirar y qué hacer con los datos.'
+      'Prioridad en qué mirar y qué hacer con los datos en el día a día, no en el modelo en sí.'
     ]
   },
   {
+    accent: 'cyan',
     title: 'ModelArc',
-    category: 'BI · KPIs y visualización',
-    problem: 'Lectura poco clara de desempeño y comparativas en reuniones de seguimiento.',
-    analyticalFocus: 'Modelado de métricas ejecutivas, KPIs comparativos y narrativa visual sobria.',
-    outcome: 'Lectura más clara del desempeño mediante KPIs comparativos y foco en desvíos accionables.',
+    category: 'BI · tableros para dirección (no vertical salud)',
+    problem:
+      'Seguimiento de desempeño y comparativas poco legibles en reuniones: mucho dato, poca línea clara para decidir.',
+    analyticalFocus:
+      'Modelado DAX y KPIs comparativos para lectura ejecutiva: desvíos, benchmarks y narrativa visual sobria — caso de portfolio distinto del núcleo operativo en salud.',
+    outcome:
+      'Reuniones ancladas en números comparables y desvíos accionables, con tableros pensados para perfiles de negocio.',
     metricHighlight: 'Storytelling con datos',
     stack: ['Power BI', 'DAX', 'Data modeling', 'Storytelling'],
     summary:
-      'Problema: lectura poco clara de desempeño y comparativas. Se modelaron métricas ejecutivas y vistas simples para detectar desvíos y focalizar reuniones en números, no en discusiones abstractas.',
+      'Caso de BI orientado a dirección y seguimiento: métricas ejecutivas, comparativas y vistas que ordenan la conversación. Muestra cómo estructuro tableros y modelo de datos fuera del contexto clínico-operativo de Mi Consultorio.',
     bullets: [
-      'Diseño de KPIs comparativos y narrativa visual sobria.',
-      'Prioridad en interpretación rápida para perfiles de negocio.',
-      'Ejemplo de cómo estructuro tableros sin ruido innecesario.'
+      'KPIs comparativos y foco en desvíos que merecen una acción.',
+      'Prioridad en interpretación rápida para stakeholders no técnicos.',
+      'Contrasta con los proyectos de salud: aquí el valor es claridad ejecutiva y diseño de métricas.'
     ]
   }
 ]
 
+/** Paradise no usa ProjectCard: es un ecosistema; ver componente `ParadiseEcosystem`. */
+const PARADISE_ECOSYSTEM = {
+  subtitle: 'Ecosistema modular de productos conceptuales',
+  whatIs:
+    'Paradise es una familia de piezas de producto que comparten una misma idea: resolver casos de operación y gestión con módulos intercambiables, en lugar de un monolito rígido.',
+  explores:
+    'Explora cómo ordenar operación, analítica, automatización e inteligencia aplicada en capas: cada módulo responde a un tipo de pregunta o tarea, y puede coexistir con otros según el escenario.',
+  portfolioWhy:
+    'Entra en este portfolio porque muestra product thinking, estructura modular y continuidad con datos: no reemplaza los casos puntuales de arriba, los complementa con una visión de sistema.',
+  modules: [
+    {
+      id: 'atlasops',
+      name: 'AtlasOps',
+      tag: 'Más cercano a BI / analytics',
+      description:
+        'Consola de KPIs, alertas y señales en contexto: qué mirar primero, cómo priorizar y qué soporta la decisión operativa. Es el módulo con el vínculo más directo con análisis de datos y tableros.',
+      featured: true
+    },
+    {
+      id: 'paradise-ai',
+      name: 'Paradise AI',
+      tag: 'Inteligencia aplicada',
+      description:
+        'Capa conversacional y de asistencia sobre el ecosistema: respuestas acotadas, flujos guiados y apoyo donde la IA suma sin reemplazar reglas de negocio claras.',
+      featured: false
+    },
+    {
+      id: 'clubnet',
+      name: 'ClubNet',
+      tag: 'Vertical modular',
+      description:
+        'Ejemplo de producto por vertical: experiencia web y flujos acotados a un dominio concreto, reutilizando la misma lógica modular del resto del ecosistema.',
+      featured: false
+    }
+  ] as const
+}
+
+/** Complementario: pieza de ejecución web; layout dedicado cuando hay una sola card (`.secondary-grid--single`). */
 const SECONDARY_PROJECTS: Project[] = [
   {
-    title: 'AtlasOps',
-    category: 'Complementario · operación',
-    problem: 'Consola orientada a KPIs y alertas.',
-    analyticalFocus: 'Visión de producto y métricas; el portfolio prioriza BI en salud.',
-    outcome: 'Complementa el perfil sin competir con los casos principales.',
-    summary:
-      'Producto de consola con foco en KPIs y alertas. Aporta visión de producto; el portfolio prioriza casos BI en salud y analítica.'
-  },
-  {
+    accent: 'blue',
     title: 'Consultorio Barcala',
-    category: 'Complementario · web',
-    problem: 'Presencia institucional online.',
-    analyticalFocus: 'Comunicación clara; no es el eje analítico del perfil.',
-    outcome: 'Sitio institucional en producción.',
+    category: 'Web · presencia y servicios',
+    problem:
+      'Un consultorio necesitaba presencia digital clara: servicios, ubicación y contacto accesibles sin fricción.',
+    analyticalFocus:
+      'Estructura de contenidos, jerarquía visual y recorridos cortos: prioridad en claridad y confianza para el paciente.',
+    outcome: 'Sitio en producción: información útil ordenada y contacto directo desde cualquier dispositivo.',
+    metricHighlight: 'Sitio en vivo',
+    stack: ['Web', 'UX contenido', 'Contacto & ubicación'],
     summary:
-      'Sitio institucional. Comunicación y presencia online; no es el eje analítico del perfil.'
-  },
-  {
-    title: 'Paradise ClubNet',
-    category: 'Complementario · ecosistema',
-    problem: 'Información modular a escala para clubes.',
-    analyticalFocus: 'Organización de módulos y datos; detrás de los proyectos BI.',
-    outcome: 'Muestra orden de información a escala.',
-    summary:
-      'Portal modular para clubes. Muestra organización de información a escala; queda detrás de los proyectos BI y de salud.'
+      'Sitio web profesional para un consultorio médico: servicios y datos de contacto bien ubicados, lectura rápida y experiencia simple. Muestra capacidad de llevar una necesidad real de presencia digital a una solución concreta y mantenible.',
+    bullets: [
+      'Organización clara de servicios y vías de contacto.',
+      'Enfoque en usabilidad y mensaje confiable para pacientes.',
+      'Ejecución web aplicada a un contexto profesional real.'
+    ]
   }
 ]
 
-type SkillItem = { name: string; emphasis: number }
-
-const SKILL_GROUPS: { title: string; items: SkillItem[] }[] = [
+const SKILL_GROUPS: { title: string; items: string[]; tone: 'primary' | 'quiet' }[] = [
   {
+    tone: 'primary',
     title: 'Núcleo BI y analítica',
     items: [
-      { name: 'SQL', emphasis: 96 },
-      { name: 'Power BI', emphasis: 94 },
-      { name: 'Excel', emphasis: 90 },
-      { name: 'Python (analytics)', emphasis: 82 },
-      { name: 'ETL / limpieza', emphasis: 88 },
-      { name: 'KPIs & reporting', emphasis: 92 },
-      { name: 'Dashboards', emphasis: 93 },
-      { name: 'Data modeling', emphasis: 86 }
+      'SQL',
+      'Power BI',
+      'Excel',
+      'Python',
+      'ETL',
+      'KPIs & reporting',
+      'Dashboards',
+      'Data modeling'
     ]
   },
   {
-    title: 'Complemento',
-    items: [
-      { name: 'Fundamentos ML', emphasis: 52 },
-      { name: 'GenAI / RAG', emphasis: 48 },
-      { name: 'Git / GitHub', emphasis: 72 },
-      { name: 'Desarrollo web (apoyo)', emphasis: 58 }
-    ]
+    tone: 'quiet',
+    title: 'Automatización e IA aplicada',
+    items: ['Fundamentos ML', 'GenAI / RAG', 'Git / GitHub', 'Automatización', 'Desarrollo web (apoyo)']
   }
 ]
 
@@ -174,6 +209,7 @@ const HERO_TOOLKIT = [
   'KPI Design',
   'Reporting',
   'Data Modeling',
+  'IA aplicada',
 ]
 
 const ABOUT_HIGHLIGHTS = [
@@ -258,7 +294,7 @@ function ProjectCard({
   onOpen: (project: Project) => void
 }) {
   return (
-    <article className={`project-card ${primary ? 'primary' : 'secondary'}`}>
+    <article className={`project-card project-card--${project.accent} ${primary ? 'primary' : 'secondary'}`}>
       <div className="project-card-top">
         <div className="project-meta">
           <span>{project.category}</span>
@@ -293,6 +329,55 @@ function ProjectCard({
         Ver detalle
       </button>
     </article>
+  )
+}
+
+function ParadiseEcosystem() {
+  const p = PARADISE_ECOSYSTEM
+  return (
+    <div className="paradise-ecosystem" aria-labelledby="paradise-eco-title">
+      <div className="paradise-ecosystem-inner">
+        <div className="paradise-ecosystem-copy">
+          <span className="eyebrow paradise-ecosystem-eyebrow">Ecosistema</span>
+          <h3 id="paradise-eco-title" className="paradise-ecosystem-title">
+            Paradise
+          </h3>
+          <p className="paradise-ecosystem-dek">{p.subtitle}</p>
+          <div className="paradise-ecosystem-editorial">
+            <div className="paradise-eco-block">
+              <h4 className="paradise-eco-label">Qué es</h4>
+              <p>{p.whatIs}</p>
+            </div>
+            <div className="paradise-eco-block">
+              <h4 className="paradise-eco-label">Qué explora</h4>
+              <p>{p.explores}</p>
+            </div>
+            <div className="paradise-eco-block">
+              <h4 className="paradise-eco-label">Por qué está en este portfolio</h4>
+              <p>{p.portfolioWhy}</p>
+            </div>
+          </div>
+        </div>
+        <div className="paradise-ecosystem-modules-wrap">
+          <p className="paradise-modules-heading">Módulos destacados</p>
+          <ul className="paradise-modules" role="list">
+            {p.modules.map((m) => (
+              <li
+                key={m.id}
+                className={`paradise-module card subtle${m.featured ? ' paradise-module--featured' : ''}`}
+              >
+                <div className="paradise-module-head">
+                  <span className="paradise-module-name">{m.name}</span>
+                  {m.featured ? <span className="paradise-module-badge">Analítica / decisión</span> : null}
+                </div>
+                <span className="paradise-module-tag">{m.tag}</span>
+                <p className="paradise-module-desc">{m.description}</p>
+              </li>
+            ))}
+          </ul>
+        </div>
+      </div>
+    </div>
   )
 }
 
@@ -366,7 +451,7 @@ export default function App() {
               <span className="brand-mark" aria-hidden />
               <div className="brand-text">
                 <strong>Agustín Delgado</strong>
-                <span>Data Analyst · BI</span>
+                <span>Data Analyst · BI · IA aplicada</span>
               </div>
             </div>
             <div className="nav-links">
@@ -388,10 +473,10 @@ export default function App() {
           <div className="hero-grid">
             <div className="hero-copy">
               <p className="hero-name">Agustín Delgado</p>
-              <p className="hero-role">Data Analyst | BI Analyst</p>
+              <p className="hero-role">Data Analyst | BI | IA aplicada</p>
               <p className="hero-lead">
-                Transformo datos en información útil para la operación y la toma de decisiones mediante dashboards, KPIs,
-                reporting y automatización de procesos.
+                Ayudo a operar y decidir con datos: tableros, KPIs y reporting; automatización donde reduce fricción; y IA
+                aplicada cuando mejora análisis o priorización sin sumar complejidad innecesaria.
               </p>
               <div className="hero-toolkit" aria-label="Stack principal">
                 <div className="hero-toolkit-title">Stack principal</div>
@@ -408,7 +493,7 @@ export default function App() {
               <div className="hero-analytics-head">
                 <span className="eyebrow">Impacto &amp; foco</span>
                 <p className="hero-analytics-dek">
-                  Señales de trabajo con métricas, reporting y visualización — sin simular un dashboard completo.
+                  Señales de impacto con métricas, reporting y foco en decisión — sin simular un dashboard completo.
                 </p>
               </div>
               <div className="kpi-grid">
@@ -428,15 +513,14 @@ export default function App() {
         <main>
           <section className="section section--tight container section-divider about-section" id="sobre-mi">
             <div className="about-section-inner">
-              <div className="about-head">
-                <SectionTitle
-                  eyebrow="Sobre mí"
-                  title="Analítica aplicada a operación real"
-                intro="SQL, Power BI, Excel y Python aplicados a operación real en salud. ETL, KPIs y reporting para decisiones más claras."
-                />
-              </div>
               <div className="about-grid">
-                <div className="text-block text-block--about">
+                <div className="about-column about-column--main">
+                  <SectionTitle
+                    eyebrow="Sobre mí"
+                    title="Analítica aplicada a operación real"
+                    intro="SQL, Power BI, Excel y Python aplicados a operación real en salud. ETL, KPIs y reporting para decisiones más claras."
+                  />
+                  <div className="text-block text-block--about">
                   <p>
                     Trabajo con datos de punta a punta: modelado y consultas en SQL, tableros en Power BI, limpieza y preparación
                     de información, y scripts en Python para análisis y reporting repetible. El foco es que los números sirvan
@@ -448,9 +532,10 @@ export default function App() {
                     <strong>Mi Consultorio</strong> es parte de esa entrega y está en uso en la práctica diaria.
                   </p>
                   <p className="muted-note">
-                    Herramientas de ML o entornos generativos pueden sumar cuando el problema lo justifica; no son el mensaje
-                    central de este perfil.
+                    Integro ML o entornos generativos como <strong>complemento</strong> cuando el caso lo justifica: el foco sigue
+                    en utilidad de negocio y en lo defendible, no en la complejidad técnica por moda.
                   </p>
+                  </div>
                 </div>
                 <aside className="about-highlights">
                   {ABOUT_HIGHLIGHTS.map((h) => (
@@ -467,8 +552,8 @@ export default function App() {
           <section className="section container section-divider" id="proyectos">
             <SectionTitle
               eyebrow="Proyectos"
-              title="Casos con narrativa BI"
-              intro="Problema de negocio, enfoque analítico y resultado medible. Los casos complementarios quedan al final."
+              title="Casos de operación, analítica y producto"
+              intro="Casos concretos con datos y entregables arriba; más abajo, Paradise como exploración de producto modular. Al final, un complemento web."
             />
             <div className="project-grid primary-grid">
               {PRIMARY_PROJECTS.map((project) => (
@@ -476,9 +561,13 @@ export default function App() {
               ))}
             </div>
 
-            <div className="secondary-wrap">
-              <div className="section-subtitle">Complementarios</div>
-              <div className="project-grid secondary-grid">
+            <ParadiseEcosystem />
+
+            <div className={`secondary-wrap${SECONDARY_PROJECTS.length === 1 ? ' secondary-wrap--single' : ''}`}>
+              <div className="section-subtitle">Complementario</div>
+              <div
+                className={`project-grid secondary-grid${SECONDARY_PROJECTS.length === 1 ? ' secondary-grid--single' : ''}`}
+              >
                 {SECONDARY_PROJECTS.map((project) => (
                   <ProjectCard key={project.title} project={project} onOpen={setSelectedProject} />
                 ))}
@@ -490,24 +579,26 @@ export default function App() {
             <SectionTitle
               eyebrow="Stack"
               title="Toolkit analítico"
-              intro="Núcleo BI primero. Las barras funcionan como énfasis visual, no como puntaje formal."
+              intro="BI como núcleo; IA aplicada como capa complementaria. Herramientas y prácticas agrupadas por foco, sin niveles subjetivos."
             />
             <div className="skills-stack">
               {SKILL_GROUPS.map((group) => (
-                <article key={group.title} className="skill-panel card subtle">
+                <article
+                  key={group.title}
+                  className={`skill-panel card subtle${group.tone === 'quiet' ? ' skill-panel--quiet skill-panel--ia-accent' : ''}`}
+                >
                   <h3>{group.title}</h3>
-                  <ul className="skill-bars">
-                    {group.items.map((item) => (
-                      <li key={item.name}>
-                        <div className="skill-bar-row">
-                          <span className="skill-bar-name">{item.name}</span>
-                          <div className="skill-bar-track" role="presentation">
-                            <span className="skill-bar-fill" style={{ width: `${item.emphasis}%` }} />
-                          </div>
-                        </div>
-                      </li>
+                  <div className="skill-chip-row" role="list">
+                    {group.items.map((name) => (
+                      <span
+                        key={name}
+                        className={`skill-chip${group.tone === 'quiet' ? ' skill-chip--quiet' : ''}`}
+                        role="listitem"
+                      >
+                        {name}
+                      </span>
                     ))}
-                  </ul>
+                  </div>
                 </article>
               ))}
             </div>
@@ -579,7 +670,7 @@ export default function App() {
         <footer className="footer container">
           <div className="footer-meta">
             <span>© {new Date().getFullYear()} Agustín Delgado</span>
-            <span className="footer-loc">Data Analyst · BI · Argentina</span>
+            <span className="footer-loc">Data Analyst · BI · IA aplicada · Argentina</span>
           </div>
           <div className="footer-links">
             <a href="mailto:augusto.delgado00@hotmail.com">augusto.delgado00@hotmail.com</a>
@@ -658,6 +749,10 @@ const styles = `:root {
   --muted: #94a3b8;
   --accent: #5ba3d9;
   --accent-soft: rgba(91, 163, 217, 0.12);
+  --accent-cyan: #52b5c4;
+  --accent-cyan-soft: rgba(82, 181, 196, 0.11);
+  --accent-violet: #9b8ed4;
+  --accent-violet-soft: rgba(155, 142, 212, 0.11);
   --shadow: 0 12px 40px rgba(0, 0, 0, 0.35);
   --font: "DM Sans", ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
 }
@@ -956,14 +1051,22 @@ button { font: inherit; }
   opacity: 0.96;
 }
 .about-section-inner { width: 100%; }
-.about-head .section-title-wrap { margin-bottom: 0; max-width: 760px; }
-.about-head { margin-bottom: 30px; }
+.about-column--main .section-title-wrap {
+  margin-bottom: 22px;
+  max-width: none;
+}
+.about-column--main .section-intro {
+  max-width: 58ch;
+}
 .about-grid {
   display: grid;
   grid-template-columns: minmax(0, 1.12fr) minmax(268px, 380px);
   gap: 28px 46px;
   align-items: start;
   align-content: start;
+}
+.about-column--main {
+  min-width: 0;
 }
 .text-block--about {
   margin: 0;
@@ -1015,23 +1118,185 @@ button { font: inherit; }
 .project-grid { display: grid; gap: 18px; }
 .primary-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); }
 .secondary-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+.paradise-ecosystem {
+  margin-top: 40px;
+  padding: 28px 28px 26px;
+  border-radius: 18px;
+  border: 1px solid color-mix(in srgb, var(--accent-violet) 20%, rgba(130, 155, 190, 0.12));
+  background: linear-gradient(145deg, rgba(16, 14, 32, 0.58) 0%, rgba(7, 12, 20, 0.82) 100%);
+  box-shadow: 0 0 0 1px color-mix(in srgb, var(--accent) 7%, transparent), 0 18px 52px rgba(0, 0, 0, 0.3);
+}
+.paradise-ecosystem-inner {
+  display: grid;
+  grid-template-columns: minmax(0, 1.08fr) minmax(280px, 0.95fr);
+  gap: clamp(24px, 4vw, 42px);
+  align-items: start;
+}
+.paradise-ecosystem-eyebrow { color: #9b8ed4 !important; }
+.paradise-ecosystem-title {
+  margin: 10px 0 8px;
+  font-size: clamp(1.15rem, 2vw, 1.4rem);
+  letter-spacing: -0.03em;
+  font-weight: 650;
+  line-height: 1.15;
+}
+.paradise-ecosystem-dek {
+  margin: 0 0 20px;
+  color: #94a6bb;
+  font-size: 0.91rem;
+  line-height: 1.58;
+  max-width: 54ch;
+}
+.paradise-ecosystem-editorial { display: flex; flex-direction: column; gap: 16px; }
+.paradise-eco-block p {
+  margin: 0;
+  font-size: 0.88rem;
+  line-height: 1.65;
+  color: #9fb0c4;
+}
+.paradise-eco-label {
+  margin: 0 0 6px;
+  font-size: 0.65rem;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: #6b7c90;
+  font-weight: 600;
+}
+.paradise-modules-heading {
+  margin: 0 0 14px;
+  font-size: 0.72rem;
+  text-transform: uppercase;
+  letter-spacing: 0.095em;
+  color: #8497ad;
+  font-weight: 700;
+}
+.paradise-modules {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+.paradise-module {
+  padding: 14px 16px;
+  border-radius: 14px;
+  border: 1px solid rgba(130, 155, 190, 0.12);
+  border-top: 2px solid rgba(130, 155, 190, 0.16);
+  background: rgba(6, 11, 18, 0.52);
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+.paradise-module:hover {
+  border-color: rgba(130, 155, 190, 0.16);
+}
+.paradise-module--featured {
+  border-top-color: var(--accent-cyan);
+  border-color: color-mix(in srgb, var(--accent-cyan) 22%, rgba(130, 155, 190, 0.12));
+  background: linear-gradient(165deg, rgba(8, 22, 28, 0.88) 0%, rgba(6, 12, 20, 0.58) 100%);
+  box-shadow: 0 0 0 1px color-mix(in srgb, var(--accent-cyan) 14%, transparent);
+}
+.paradise-module-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  flex-wrap: wrap;
+  margin-bottom: 6px;
+}
+.paradise-module-name {
+  font-weight: 650;
+  font-size: 0.95rem;
+  letter-spacing: -0.02em;
+  color: #e2eaf5;
+}
+.paradise-module-badge {
+  font-size: 0.62rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.07em;
+  color: var(--accent-cyan);
+  padding: 4px 8px;
+  border-radius: 8px;
+  border: 1px solid color-mix(in srgb, var(--accent-cyan) 35%, transparent);
+  background: rgba(82, 181, 196, 0.08);
+}
+.paradise-module-tag {
+  display: block;
+  font-size: 0.68rem;
+  color: #8b9cb0;
+  margin-bottom: 8px;
+  font-weight: 500;
+}
+.paradise-module-desc {
+  margin: 0;
+  font-size: 0.82rem;
+  line-height: 1.55;
+  color: #9fb0c4;
+}
+.secondary-grid--single {
+  grid-template-columns: minmax(0, 1fr);
+  max-width: min(560px, 100%);
+  margin-inline: auto;
+}
+.secondary-wrap--single {
+  margin-top: 48px;
+  padding-top: 28px;
+  border-top: 1px solid rgba(130, 155, 190, 0.1);
+}
+.secondary-wrap--single .section-subtitle {
+  text-align: center;
+  margin-bottom: 18px;
+}
+.secondary-grid--single .project-card {
+  max-width: 100%;
+}
 .project-card {
+  --pc: var(--accent);
+  --pc-soft: var(--accent-soft);
   padding: 24px 24px 22px;
   display: flex;
   flex-direction: column;
   gap: 0;
   border: 1px solid rgba(130, 155, 190, 0.12);
+  border-top: 3px solid var(--pc);
   border-radius: 17px;
+  box-shadow: 0 10px 32px rgba(0, 0, 0, 0.22);
 }
+.project-card--blue { --pc: var(--accent); --pc-soft: var(--accent-soft); }
+.project-card--cyan { --pc: var(--accent-cyan); --pc-soft: var(--accent-cyan-soft); }
+.project-card--violet { --pc: var(--accent-violet); --pc-soft: var(--accent-violet-soft); }
 .project-card:hover {
-  border-color: rgba(91, 163, 217, 0.16);
-  box-shadow: 0 14px 44px rgba(0, 0, 0, 0.32);
+  border: 1px solid color-mix(in srgb, var(--pc) 18%, rgba(130, 155, 190, 0.12));
+  border-top: 3px solid var(--pc);
+  box-shadow: 0 14px 44px rgba(0, 0, 0, 0.32), 0 0 0 1px color-mix(in srgb, var(--pc) 12%, transparent);
   transform: translateY(-2px);
 }
-.project-card.primary {
+.project-card.secondary:hover {
+  border-top-width: 2px;
+}
+.project-card.primary.project-card--blue {
   background: linear-gradient(165deg, rgba(12, 20, 32, 0.95) 0%, rgba(7, 12, 20, 0.72) 100%);
 }
-.project-card.secondary { background: rgba(6, 12, 20, 0.48); padding: 20px; }
+.project-card.primary.project-card--cyan {
+  background: linear-gradient(165deg, rgba(10, 22, 28, 0.95) 0%, rgba(7, 14, 18, 0.72) 100%);
+}
+.project-card.primary.project-card--violet {
+  background: linear-gradient(165deg, rgba(14, 12, 26, 0.95) 0%, rgba(8, 10, 20, 0.72) 100%);
+}
+.project-card.secondary {
+  padding: 20px;
+  border-top-width: 2px;
+  box-shadow: 0 8px 28px rgba(0, 0, 0, 0.2);
+}
+.project-card.secondary.project-card--blue {
+  background: linear-gradient(165deg, rgba(8, 14, 22, 0.52) 0%, rgba(6, 12, 20, 0.42) 100%);
+}
+.project-card.secondary.project-card--cyan {
+  background: linear-gradient(165deg, rgba(6, 14, 20, 0.52) 0%, rgba(6, 12, 18, 0.42) 100%);
+}
+.project-card.secondary.project-card--violet {
+  background: linear-gradient(165deg, rgba(10, 10, 22, 0.48) 0%, rgba(6, 12, 20, 0.4) 100%);
+}
 .project-card-top {
   display: flex;
   align-items: flex-start;
@@ -1040,8 +1305,13 @@ button { font: inherit; }
   margin-bottom: 12px;
 }
 .project-meta span {
-  display: inline-flex; padding: 5px 10px; border-radius: 999px; font-size: 0.68rem; color: var(--accent);
-  background: var(--accent-soft); border: 1px solid rgba(91, 163, 217, 0.18);
+  display: inline-flex;
+  padding: 5px 10px;
+  border-radius: 999px;
+  font-size: 0.68rem;
+  color: var(--pc);
+  background: var(--pc-soft);
+  border: 1px solid color-mix(in srgb, var(--pc) 26%, transparent);
   line-height: 1.3;
 }
 .metric-pill {
@@ -1091,16 +1361,16 @@ button { font: inherit; }
   background: rgba(255,255,255,0.02);
   color: var(--muted);
 }
-.tag--tool {
-  border-color: rgba(91, 163, 217, 0.2);
-  background: rgba(91, 163, 217, 0.06);
-  color: #a8bdd4;
+.project-card .tag--tool {
+  border-color: color-mix(in srgb, var(--pc) 24%, transparent);
+  background: color-mix(in srgb, var(--pc) 7%, transparent);
+  color: #aabaca;
 }
 .project-outcome {
   padding: 12px 14px;
   border-radius: 10px;
-  border: 1px solid rgba(91, 163, 217, 0.12);
-  background: rgba(91, 163, 217, 0.05);
+  border: 1px solid color-mix(in srgb, var(--pc) 18%, rgba(130, 155, 190, 0.12));
+  background: color-mix(in srgb, var(--pc) 6%, rgba(0, 0, 0, 0.15));
   margin-bottom: 12px;
 }
 .project-outcome-label {
@@ -1108,7 +1378,7 @@ button { font: inherit; }
   font-size: 0.62rem;
   text-transform: uppercase;
   letter-spacing: 0.08em;
-  color: var(--accent);
+  color: var(--pc);
   font-weight: 600;
   margin-bottom: 6px;
 }
@@ -1118,12 +1388,18 @@ button { font: inherit; }
   line-height: 1.55;
   color: #c5d4e6;
 }
-.ghost-link {
+.project-card .ghost-link {
   margin-top: auto;
-  padding: 0; background: transparent; border: 0; color: var(--accent); cursor: pointer; font-weight: 600;
-  font-size: 0.86rem; align-self: flex-start;
+  padding: 0;
+  background: transparent;
+  border: 0;
+  color: var(--pc);
+  cursor: pointer;
+  font-weight: 600;
+  font-size: 0.86rem;
+  align-self: flex-start;
 }
-.ghost-link:hover { text-decoration: underline; }
+.project-card .ghost-link:hover { text-decoration: underline; }
 .secondary-wrap { margin-top: 44px; }
 .section-subtitle { color: var(--muted); margin-bottom: 14px; font-size: 0.87rem; font-weight: 500; }
 .skills-stack {
@@ -1140,27 +1416,54 @@ button { font: inherit; }
   font-weight: 650;
   letter-spacing: -0.02em;
 }
-.skill-bars { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 10px; }
-.skill-bar-row {
-  display: grid;
-  grid-template-columns: minmax(0, 42%) 1fr;
-  gap: 12px;
+.skill-panel--quiet h3 {
+  color: #9aaaba;
+  font-weight: 600;
+}
+.skill-chip-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px 10px;
+  align-items: flex-start;
+}
+.skill-chip {
+  display: inline-flex;
   align-items: center;
+  padding: 7px 11px;
+  border-radius: 10px;
+  border: 1px solid rgba(91, 163, 217, 0.22);
+  background: rgba(91, 163, 217, 0.07);
+  color: #b8c9e0;
+  font-size: 0.8rem;
+  font-weight: 500;
+  line-height: 1.25;
+  max-width: 100%;
+  word-break: break-word;
 }
-.skill-bar-name { font-size: 0.8rem; color: #a8b6c8; }
-.skill-bar-track {
-  height: 6px;
-  border-radius: 999px;
-  background: rgba(255,255,255,0.04);
-  border: 1px solid rgba(130, 155, 190, 0.08);
-  overflow: hidden;
+.skill-chip--quiet {
+  border-color: rgba(130, 155, 190, 0.14);
+  background: rgba(255, 255, 255, 0.03);
+  color: #8e9faf;
+  font-size: 0.78rem;
+  font-weight: 500;
 }
-.skill-bar-fill {
-  display: block;
-  height: 100%;
-  border-radius: 999px;
-  background: linear-gradient(90deg, rgba(91, 163, 217, 0.25) 0%, rgba(91, 163, 217, 0.65) 100%);
-  transition: width 0.5s cubic-bezier(0.22, 1, 0.36, 1);
+.skill-panel--quiet {
+  border-color: rgba(130, 155, 190, 0.11);
+  background: rgba(6, 11, 18, 0.55);
+}
+.skill-panel--ia-accent {
+  border-color: color-mix(in srgb, var(--accent-cyan) 22%, rgba(130, 155, 190, 0.12));
+  box-shadow: 0 0 0 1px color-mix(in srgb, var(--accent-violet) 8%, transparent), 0 12px 36px rgba(0, 0, 0, 0.22);
+}
+.skill-panel--ia-accent:hover {
+  border-color: color-mix(in srgb, var(--accent-cyan) 28%, rgba(130, 155, 190, 0.14));
+  box-shadow: 0 0 0 1px color-mix(in srgb, var(--accent-violet) 12%, transparent), 0 14px 40px rgba(0, 0, 0, 0.26);
+}
+.skill-panel--quiet:hover {
+  border-color: rgba(130, 155, 190, 0.14);
+}
+.skill-panel--quiet.skill-panel--ia-accent:hover {
+  border-color: color-mix(in srgb, var(--accent-cyan) 30%, rgba(130, 155, 190, 0.15));
 }
 .experience-block { max-width: 860px; }
 .timeline-wrap { display: flex; flex-direction: column; gap: 16px; margin-top: 14px; }
@@ -1284,8 +1587,8 @@ button { font: inherit; }
   .hero-toolkit-grid { grid-template-columns: repeat(4, minmax(0, 1fr)); }
   .about-grid { grid-template-columns: 1fr; }
   .primary-grid, .secondary-grid { grid-template-columns: 1fr; }
+  .paradise-ecosystem-inner { grid-template-columns: 1fr; }
   .skills-stack { grid-template-columns: 1fr; }
-  .skill-bar-row { grid-template-columns: minmax(0, 46%) 1fr; }
 }
 @media (max-width: 720px) {
   .container { width: min(100% - 28px, 1120px); }
@@ -1299,6 +1602,8 @@ button { font: inherit; }
   .kpi-grid { grid-template-columns: 1fr; }
   .section-divider { padding-top: 56px; }
   .project-card, .timeline-card, .skill-panel { padding: 18px; }
+  .skill-chip { padding: 6px 10px; font-size: 0.76rem; }
+  .skill-chip--quiet { font-size: 0.74rem; }
   .nav-links button { padding: 7px 9px; font-size: 0.8rem; }
   .contact-card-inner { padding: 22px 20px; }
 }
