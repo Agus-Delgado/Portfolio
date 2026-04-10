@@ -1,1610 +1,1108 @@
-import React, { useEffect, useId, useMemo, useState } from 'react'
+import React, { useMemo, useState } from 'react'
 
-type ProjectAccent = 'blue' | 'cyan' | 'violet'
+type Accent = 'cyan' | 'violet' | 'blue'
 
-type Project = {
+type FeaturedProject = {
   title: string
-  category: string
-  problem: string
-  analyticalFocus: string
-  outcome: string
-  metricHighlight?: string
-  stack?: string[]
-  bullets?: string[]
+  label: string
+  headline: string
   summary: string
-  /** Un solo acento dominante por card (borde, pill de categoría, resultado, link). */
-  accent: ProjectAccent
+  signals: string[]
+  stack: string[]
+  accent: Accent
 }
 
-const PRIMARY_PROJECTS: Project[] = [
-  {
-    accent: 'blue',
-    title: 'Mi Consultorio',
-    category: 'Salud · sistema en producción',
-    problem: 'Información dispersa en papel y planillas; poca visibilidad de turnos, caja y operación diaria.',
-    analyticalFocus:
-      'Centralización de datos, KPIs de agenda y reporting alineado a cómo trabaja el consultorio en la práctica.',
-    outcome: 'Un solo lugar para consultar agenda, asistencias e indicadores operativos y financieros.',
-    metricHighlight: 'En uso real',
-    stack: ['SQL', 'Power BI', 'Python', 'Reporting'],
-    summary:
-      'Problema: información dispersa en papel y planillas, poca visibilidad de turnos, caja y operación diaria. Se centralizaron datos y se construyeron reportes para priorizar turnos, seguimiento y decisiones cotidianas.',
-    bullets: [
-      'Impacto: un solo lugar para consultar agenda, asistencias e indicadores operativos.',
-      'Uso de datos para reducir fricción administrativa y dar continuidad clínica-administrativa.',
-      'Reporting y procesos alineados a cómo trabaja el consultorio en la práctica.'
-    ]
-  },
-  {
-    accent: 'violet',
-    title: 'SmartClinic No-Show Predictor',
-    category: 'Salud · analítica y BI',
-    problem: 'Inasistencias que afectan ocupación y planificación sin una lectura común del riesgo.',
-    analyticalFocus:
-      'Métricas de riesgo, segmentación y tablero para priorizar recordatorios y decisiones operativas prudentes.',
-    outcome: 'Priorización de turnos según riesgo y lectura más clara frente a la operación esperada.',
-    metricHighlight: 'KPIs + segmentación',
-    stack: ['SQL', 'Power BI', 'Python', 'KPIs'],
-    summary:
-      'Problema: inasistencias que afectan ocupación y planificación. Se analizó un volumen representativo de turnos, se definieron métricas de riesgo y se priorizó la lectura en un tablero para acciones operativas.',
-    bullets: [
-      'Indicadores y segmentación para decidir recordatorios o ajustes de agenda con criterio.',
-      'Dashboard para comparar patrones y desvíos frente a la operación esperada.',
-      'Prioridad en qué mirar y qué hacer con los datos en el día a día, no en el modelo en sí.'
-    ]
-  },
-  {
-    accent: 'cyan',
-    title: 'ModelArc',
-    category: 'BI · tableros para dirección (no vertical salud)',
-    problem:
-      'Seguimiento de desempeño y comparativas poco legibles en reuniones: mucho dato, poca línea clara para decidir.',
-    analyticalFocus:
-      'Modelado DAX y KPIs comparativos para lectura ejecutiva: desvíos, benchmarks y narrativa visual sobria — caso de portfolio distinto del núcleo operativo en salud.',
-    outcome:
-      'Reuniones ancladas en números comparables y desvíos accionables, con tableros pensados para perfiles de negocio.',
-    metricHighlight: 'Storytelling con datos',
-    stack: ['Power BI', 'DAX', 'Data modeling', 'Storytelling'],
-    summary:
-      'Caso de BI orientado a dirección y seguimiento: métricas ejecutivas, comparativas y vistas que ordenan la conversación. Muestra cómo estructuro tableros y modelo de datos fuera del contexto clínico-operativo de Mi Consultorio.',
-    bullets: [
-      'KPIs comparativos y foco en desvíos que merecen una acción.',
-      'Prioridad en interpretación rápida para stakeholders no técnicos.',
-      'Contrasta con los proyectos de salud: aquí el valor es claridad ejecutiva y diseño de métricas.'
-    ]
-  }
-]
-
-/** Paradise no usa ProjectCard: es un ecosistema; ver componente `ParadiseEcosystem`. */
-const PARADISE_ECOSYSTEM = {
-  subtitle: 'Ecosistema modular de productos conceptuales',
-  whatIs:
-    'Paradise es una familia de piezas de producto que comparten una misma idea: resolver casos de operación y gestión con módulos intercambiables, en lugar de un monolito rígido.',
-  explores:
-    'Explora cómo ordenar operación, analítica, automatización e inteligencia aplicada en capas: cada módulo responde a un tipo de pregunta o tarea, y puede coexistir con otros según el escenario.',
-  portfolioWhy:
-    'Entra en este portfolio porque muestra product thinking, estructura modular y continuidad con datos: no reemplaza los casos puntuales de arriba, los complementa con una visión de sistema.',
-  modules: [
-    {
-      id: 'atlasops',
-      name: 'AtlasOps',
-      tag: 'Más cercano a BI / analytics',
-      description:
-        'Consola de KPIs, alertas y señales en contexto: qué mirar primero, cómo priorizar y qué soporta la decisión operativa. Es el módulo con el vínculo más directo con análisis de datos y tableros.',
-      featured: true
-    },
-    {
-      id: 'paradise-ai',
-      name: 'Paradise AI',
-      tag: 'Inteligencia aplicada',
-      description:
-        'Capa conversacional y de asistencia sobre el ecosistema: respuestas acotadas, flujos guiados y apoyo donde la IA suma sin reemplazar reglas de negocio claras.',
-      featured: false
-    },
-    {
-      id: 'clubnet',
-      name: 'ClubNet',
-      tag: 'Vertical modular',
-      description:
-        'Ejemplo de producto por vertical: experiencia web y flujos acotados a un dominio concreto, reutilizando la misma lógica modular del resto del ecosistema.',
-      featured: false
-    }
-  ] as const
-}
-
-/** Complementario: pieza de ejecución web; layout dedicado cuando hay una sola card (`.secondary-grid--single`). */
-const SECONDARY_PROJECTS: Project[] = [
-  {
-    accent: 'blue',
-    title: 'Consultorio Barcala',
-    category: 'Web · presencia y servicios',
-    problem:
-      'Un consultorio necesitaba presencia digital clara: servicios, ubicación y contacto accesibles sin fricción.',
-    analyticalFocus:
-      'Estructura de contenidos, jerarquía visual y recorridos cortos: prioridad en claridad y confianza para el paciente.',
-    outcome: 'Sitio en producción: información útil ordenada y contacto directo desde cualquier dispositivo.',
-    metricHighlight: 'Sitio en vivo',
-    stack: ['Web', 'UX contenido', 'Contacto & ubicación'],
-    summary:
-      'Sitio web profesional para un consultorio médico: servicios y datos de contacto bien ubicados, lectura rápida y experiencia simple. Muestra capacidad de llevar una necesidad real de presencia digital a una solución concreta y mantenible.',
-    bullets: [
-      'Organización clara de servicios y vías de contacto.',
-      'Enfoque en usabilidad y mensaje confiable para pacientes.',
-      'Ejecución web aplicada a un contexto profesional real.'
-    ]
-  }
-]
-
-const SKILL_GROUPS: { title: string; items: string[]; tone: 'primary' | 'quiet' }[] = [
-  {
-    tone: 'primary',
-    title: 'Núcleo BI y analítica',
-    items: [
-      'SQL',
-      'Power BI',
-      'Excel',
-      'Python',
-      'ETL',
-      'KPIs & reporting',
-      'Dashboards',
-      'Data modeling'
-    ]
-  },
-  {
-    tone: 'quiet',
-    title: 'Automatización e IA aplicada',
-    items: ['Fundamentos ML', 'GenAI / RAG', 'Git / GitHub', 'Automatización', 'Desarrollo web (apoyo)']
-  }
-]
-
-type ExperienceItem = {
-  period: string
+type SecondaryProject = {
   title: string
-  place: string
-  description?: string
-  bullets?: string[]
-  featured?: boolean
+  type: string
+  description: string
 }
 
-const EXPERIENCE: ExperienceItem[] = [
+type ContactLink = {
+  label: string
+  href: string
+}
+
+const featuredProjects: FeaturedProject[] = [
   {
-    period: '2018 — Actualidad',
-    title: 'Data Analyst',
-    place: 'Consultorio médico · Argentina',
-    featured: true,
-    bullets: [
-      'Migración de registros manuales a bases SQL y consultas orientadas a la operación diaria.',
-      'Reducción aproximada del ~70% en el tiempo de búsqueda de información.',
-      'Dashboards en Power BI para KPIs operativos y financieros.',
-      'Reporting mensual automatizado con Python (menos trabajo repetitivo, más consistencia).',
-      'Eliminación de más de 15 horas mensuales de tareas repetitivas.',
-      'Sistema Mi Consultorio en uso real: datos y procesos alineados al consultorio.',
-      'Mejora continua de procesos y soporte a decisiones con información confiable.'
-    ]
+    title: 'Paradise',
+    label: 'AI product ecosystem',
+    headline: 'Arquitectura SaaS modular con enfoque AI-first, diseño adaptable y visión de plataforma.',
+    summary:
+      'Paradise está planteado como un ecosistema de módulos desacoplados, capas compartidas, experiencia configurable por vertical y evolución continua. El valor del proyecto no está solo en la interfaz: está en la lógica de producto, la escalabilidad conceptual y la capacidad de conectar operación, datos e inteligencia dentro de un mismo sistema.',
+    signals: ['System design', 'Multi-tenant thinking', 'UX adaptable', 'Producto modular'],
+    stack: ['React', 'TypeScript', 'Arquitectura modular', 'Design system', 'Cloud-first vision'],
+    accent: 'violet',
   },
   {
-    period: 'Formación',
-    title: 'Tecnicatura y especialización en datos',
-    place: 'Formación académica y práctica continua',
-    description:
-      'Base sólida en SQL, Power BI, análisis y herramientas de negocio; actualización constante en entorno de datos.'
-  }
-]
-
-type HeroKpi = { value: string; label: string; spark?: number[] }
-
-const HERO_KPIS: HeroKpi[] = [
-  { value: '+9 años', label: 'En operación real con datos', spark: [12, 14, 18, 22, 28, 35, 42, 48, 55, 62, 70, 78] },
-  { value: '~70%', label: 'Menos tiempo de búsqueda', spark: [88, 82, 76, 70, 65, 58, 52, 48, 42, 38, 34, 30] },
-  { value: '15+ h/mes', label: 'Automatizadas (reporting)', spark: [8, 12, 18, 22, 28, 32, 38, 44, 50, 58, 65, 72] },
-  { value: 'Op. + finanzas', label: 'Dashboards en Power BI', spark: [20, 28, 35, 42, 48, 55, 60, 66, 72, 78, 84, 90] }
-]
-
-const HERO_TOOLKIT = [
-  'SQL',
-  'Power BI',
-  'Excel',
-  'Python',
-  'ETL',
-  'KPI Design',
-  'Reporting',
-  'Data Modeling',
-  'IA aplicada',
-]
-
-const ABOUT_HIGHLIGHTS = [
-  {
-    title: 'De datos a decisión',
-    text: 'KPIs y tableros pensados para que equipos no técnicos lean tendencias y desvíos sin ruido.'
+    title: 'Mi Consultorio',
+    label: 'Healthcare operations',
+    headline: 'Sistema real para agenda, historias clínicas, caja, reporting y soporte operativo en salud.',
+    summary:
+      'Este proyecto muestra trabajo sobre una necesidad operativa concreta. Centraliza procesos clínicos y administrativos, mejora trazabilidad, incorpora automatización y deja evidencia de uso real. Es una pieza fuerte porque combina datos, sistema, contexto de negocio y criterio funcional en un entorno sensible como salud.',
+    signals: ['Operación real', 'Seguridad y roles', 'Automatización', 'Contexto healthcare'],
+    stack: ['Python', 'Django', 'PostgreSQL', 'Dashboards', 'Notificaciones'],
+    accent: 'cyan',
   },
   {
-    title: 'Operación real',
-    text: 'Experiencia en salud: agenda, caja, reporting y procesos que conviven con el día a día del negocio.'
+    title: 'Paradigm',
+    label: 'Data science + analytics',
+    headline: 'Caso end-to-end para métricas, análisis reproducible, BI ejecutivo y capa inteligente aplicada.',
+    summary:
+      'Paradigm funciona como puente entre analytics, ciencia de datos e inteligencia aplicada. El proyecto parte de una base estructurada, construye métricas consistentes, habilita exploración y reporting, y deja espacio para modelos o reglas inteligentes cuando suman capacidad predictiva o priorización real.',
+    signals: ['SQL + Python', 'BI reproducible', 'Capas analíticas', 'ML aplicable'],
+    stack: ['SQL', 'Python', 'Power BI', 'Tableau', 'scikit-learn'],
+    accent: 'blue',
   },
-  {
-    title: 'Automatización sensata',
-    text: 'Python y pipelines ligeros donde aportan: menos horas repetitivas y números consistentes.'
-  }
 ]
 
-function Sparkline({ values, className = '' }: { values: number[]; className?: string }) {
-  const gradId = useId().replace(/:/g, '')
-  if (!values.length) return null
-  const min = Math.min(...values)
-  const max = Math.max(...values)
-  const range = max - min || 1
-  const w = 100
-  const h = 26
-  const bottom = h - 1
-  const pts = values.map((v, i) => {
-    const x = (i / (values.length - 1 || 1)) * w
-    const y = h - ((v - min) / range) * (h - 5) - 2.5
-    return `${x.toFixed(1)},${y.toFixed(1)}`
-  })
-  const linePts = pts.join(' ')
-  const areaPts = `0,${bottom} ${linePts} ${w},${bottom}`
-  return (
-    <svg className={`sparkline ${className}`} viewBox={`0 0 ${w} ${h}`} preserveAspectRatio="none" aria-hidden>
-      <defs>
-        <linearGradient id={gradId} x1="0" y1="0" x2="0" y2="1">
-          <stop offset="0%" stopColor="rgba(91, 163, 217, 0.22)" />
-          <stop offset="100%" stopColor="rgba(91, 163, 217, 0)" />
-        </linearGradient>
-      </defs>
-      <polygon className="sparkline-area" points={areaPts} fill={`url(#${gradId})`} />
-      <polyline fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" points={linePts} />
-    </svg>
-  )
+const secondaryProjects: SecondaryProject[] = [
+  {
+    title: 'Consultorio Barcala',
+    type: 'Website',
+    description: 'Sitio institucional con foco en claridad de propuesta, confianza visual y contacto rápido.',
+  },
+  {
+    title: 'Plataforma geriátrica',
+    type: 'Healthcare app',
+    description: 'Aplicación orientada a soporte operativo, seguimiento y experiencia de uso en entorno asistencial.',
+  },
+  {
+    title: 'Otros desarrollos web',
+    type: 'Product delivery',
+    description: 'Implementaciones complementarias que refuerzan capacidad de entrega, adaptación y criterio visual.',
+  },
+]
+
+const methods = [
+  {
+    index: '01',
+    title: 'Defino el problema correcto',
+    text: 'Arranco por operación, decisión y contexto. Primero entiendo qué hay que mejorar; después elijo la herramienta.',
+  },
+  {
+    index: '02',
+    title: 'Construyo una base trazable',
+    text: 'Datos, métricas y validaciones tienen que ser consistentes para que reporting, automatización o modelos no se rompan a la primera.',
+  },
+  {
+    index: '03',
+    title: 'Diseño una solución utilizable',
+    text: 'La salida tiene que servir: dashboard, sistema, flujo o capa inteligente que ayude a ejecutar mejor.',
+  },
+  {
+    index: '04',
+    title: 'Hago la demo defendible',
+    text: 'Cada proyecto busca dejar narrativa, stack, entregables y explicación clara para entrevista, review o producto.',
+  },
+]
+
+const stackAreas = [
+  {
+    title: 'Data & Analytics',
+    description: 'Métricas, reporting, exploración y modelado orientado a decisión.',
+    items: ['SQL', 'Power BI', 'Tableau', 'Excel', 'Data modeling', 'KPI design'],
+  },
+  {
+    title: 'Engineering & Automation',
+    description: 'Workflows reproducibles, sistemas y automatización con foco operativo.',
+    items: ['Python', 'Django', 'ETL', 'Automatización', 'Quality checks', 'Git / GitHub'],
+  },
+  {
+    title: 'AI & Product Thinking',
+    description: 'Aplicación gradual de inteligencia, visión de producto y diseño de soluciones más amplias.',
+    items: ['Machine Learning', 'Applied AI', 'Scoring / segmentación', 'SaaS thinking', 'System design', 'UX con criterio'],
+  },
+]
+
+const contactLinks: ContactLink[] = [
+  { label: 'LinkedIn', href: 'https://www.linkedin.com/in/agustin-delgado-data98615190/' },
+  { label: 'GitHub', href: 'https://github.com/Agus-Delgado' },
+  { label: 'Email', href: 'mailto:augusto.delgado00@hotmail.com' },
+]
+
+const styles = `
+:root {
+  color-scheme: dark;
+  --bg: #06101d;
+  --bg-2: #091728;
+  --card: rgba(10, 20, 35, 0.76);
+  --card-strong: rgba(12, 23, 39, 0.92);
+  --line: rgba(141, 172, 228, 0.14);
+  --text: #eef4ff;
+  --muted: #92a4c2;
+  --soft: #c8d4e8;
+  --cyan: #61d8ff;
+  --violet: #aa8fff;
+  --blue: #7ea8ff;
+  --success: #7cf2c7;
+  --shadow: 0 30px 80px rgba(0, 0, 0, 0.34);
+  --radius-xl: 30px;
+  --radius-lg: 24px;
+  --radius-md: 18px;
 }
 
-function HeroMiniBars() {
-  const bars = [42, 68, 55, 82, 61, 90, 74]
-  return (
-    <div className="hero-mini-bars-wrap" aria-hidden>
-      <div className="hero-mini-bars-head">
-        <span className="hero-mini-bars-label">Comparativa editorial</span>
-        <span className="hero-mini-bars-axis" />
-      </div>
-      <div className="hero-mini-bars-track">
-        {bars.map((h, i) => (
-          <div key={i} className="hero-mini-bar" style={{ height: `${h}%` }} />
-        ))}
-      </div>
-    </div>
-  )
-}
-
-function SectionTitle({ eyebrow, title, intro }: { eyebrow: string; title: string; intro?: string }) {
-  return (
-    <div className="section-title-wrap">
-      <span className="eyebrow">{eyebrow}</span>
-      <h2>{title}</h2>
-      {intro ? <p className="section-intro">{intro}</p> : null}
-    </div>
-  )
-}
-
-function ProjectCard({
-  project,
-  primary = false,
-  onOpen
-}: {
-  project: Project
-  primary?: boolean
-  onOpen: (project: Project) => void
-}) {
-  return (
-    <article className={`project-card project-card--${project.accent} ${primary ? 'primary' : 'secondary'}`}>
-      <div className="project-card-top">
-        <div className="project-meta">
-          <span>{project.category}</span>
-        </div>
-        {project.metricHighlight ? <span className="metric-pill">{project.metricHighlight}</span> : null}
-      </div>
-      <h3>{project.title}</h3>
-      <dl className="project-facts">
-        <div>
-          <dt>Problema</dt>
-          <dd>{project.problem}</dd>
-        </div>
-        <div>
-          <dt>Enfoque analítico</dt>
-          <dd>{project.analyticalFocus}</dd>
-        </div>
-      </dl>
-      {project.stack ? (
-        <div className="tag-row project-tools">
-          {project.stack.map((tag: string) => (
-            <span key={tag} className="tag tag--tool">
-              {tag}
-            </span>
-          ))}
-        </div>
-      ) : null}
-      <div className="project-outcome">
-        <span className="project-outcome-label">Resultado</span>
-        <p>{project.outcome}</p>
-      </div>
-      <button type="button" className="ghost-link" onClick={() => onOpen(project)}>
-        Ver detalle
-      </button>
-    </article>
-  )
-}
-
-function ParadiseEcosystem() {
-  const p = PARADISE_ECOSYSTEM
-  return (
-    <div className="paradise-ecosystem" aria-labelledby="paradise-eco-title">
-      <div className="paradise-ecosystem-inner">
-        <div className="paradise-ecosystem-copy">
-          <span className="eyebrow paradise-ecosystem-eyebrow">Ecosistema</span>
-          <h3 id="paradise-eco-title" className="paradise-ecosystem-title">
-            Paradise
-          </h3>
-          <p className="paradise-ecosystem-dek">{p.subtitle}</p>
-          <div className="paradise-ecosystem-editorial">
-            <div className="paradise-eco-block">
-              <h4 className="paradise-eco-label">Qué es</h4>
-              <p>{p.whatIs}</p>
-            </div>
-            <div className="paradise-eco-block">
-              <h4 className="paradise-eco-label">Qué explora</h4>
-              <p>{p.explores}</p>
-            </div>
-            <div className="paradise-eco-block">
-              <h4 className="paradise-eco-label">Por qué está en este portfolio</h4>
-              <p>{p.portfolioWhy}</p>
-            </div>
-          </div>
-        </div>
-        <div className="paradise-ecosystem-modules-wrap">
-          <p className="paradise-modules-heading">Módulos destacados</p>
-          <ul className="paradise-modules" role="list">
-            {p.modules.map((m) => (
-              <li
-                key={m.id}
-                className={`paradise-module card subtle${m.featured ? ' paradise-module--featured' : ''}`}
-              >
-                <div className="paradise-module-head">
-                  <span className="paradise-module-name">{m.name}</span>
-                  {m.featured ? <span className="paradise-module-badge">Analítica / decisión</span> : null}
-                </div>
-                <span className="paradise-module-tag">{m.tag}</span>
-                <p className="paradise-module-desc">{m.description}</p>
-              </li>
-            ))}
-          </ul>
-        </div>
-      </div>
-    </div>
-  )
-}
-
-export default function App() {
-  const [activeSection, setActiveSection] = useState('inicio')
-  const [selectedProject, setSelectedProject] = useState<Project | null>(null)
-
-  useEffect(() => {
-    const ids = ['sobre-mi', 'proyectos', 'skills', 'experiencia', 'contacto']
-    const onScroll = () => {
-      for (const id of ids) {
-        const el = document.getElementById(id)
-        if (!el) continue
-        const rect = el.getBoundingClientRect()
-        if (rect.top <= 140 && rect.bottom >= 140) {
-          setActiveSection(id)
-          return
-        }
-      }
-      setActiveSection('inicio')
-    }
-    window.addEventListener('scroll', onScroll)
-    onScroll()
-    return () => window.removeEventListener('scroll', onScroll)
-  }, [])
-
-  useEffect(() => {
-    if (!selectedProject) return
-    const onKey = (e: KeyboardEvent) => {
-      if (e.key === 'Escape') setSelectedProject(null)
-    }
-    document.body.style.overflow = 'hidden'
-    window.addEventListener('keydown', onKey)
-    return () => {
-      document.body.style.overflow = ''
-      window.removeEventListener('keydown', onKey)
-    }
-  }, [selectedProject])
-
-  const navItems = useMemo(
-    () =>
-      [
-        ['inicio', 'Inicio'],
-        ['sobre-mi', 'Sobre mí'],
-        ['proyectos', 'Proyectos'],
-        ['skills', 'Stack'],
-        ['experiencia', 'Experiencia'],
-        ['contacto', 'Contacto']
-      ] as const,
-    []
-  )
-
-  const scrollTo = (id: string) => {
-    if (id === 'inicio') {
-      window.scrollTo({ top: 0, behavior: 'smooth' })
-      return
-    }
-    document.getElementById(id)?.scrollIntoView({ behavior: 'smooth', block: 'start' })
-  }
-
-  return (
-    <>
-      <style>{styles}</style>
-      <div className="page-shell">
-        <div className="bg-orb orb-a" aria-hidden />
-        <div className="bg-orb orb-b" aria-hidden />
-
-        <nav className="topbar">
-          <div className="container topbar-inner">
-            <div className="brand-block">
-              <span className="brand-mark" aria-hidden />
-              <div className="brand-text">
-                <strong>Agustín Delgado</strong>
-                <span>Data Analyst · BI · IA aplicada</span>
-              </div>
-            </div>
-            <div className="nav-links">
-              {navItems.map(([id, label]) => (
-                <button
-                  type="button"
-                  key={id}
-                  className={activeSection === id ? 'active' : ''}
-                  onClick={() => scrollTo(id)}
-                >
-                  {label}
-                </button>
-              ))}
-            </div>
-          </div>
-        </nav>
-
-        <header className="hero container hero--wide" id="inicio">
-          <div className="hero-grid">
-            <div className="hero-copy">
-              <p className="hero-name">Agustín Delgado</p>
-              <p className="hero-role">Data Analyst | BI | IA aplicada</p>
-              <p className="hero-lead">
-                Ayudo a operar y decidir con datos: tableros, KPIs y reporting; automatización donde reduce fricción; y IA
-                aplicada cuando mejora análisis o priorización sin sumar complejidad innecesaria.
-              </p>
-              <div className="hero-toolkit" aria-label="Stack principal">
-                <div className="hero-toolkit-title">Stack principal</div>
-                <div className="hero-toolkit-grid">
-                  {HERO_TOOLKIT.map((t) => (
-                    <span key={t} className="hero-toolkit-chip">
-                      {t}
-                    </span>
-                  ))}
-                </div>
-              </div>
-            </div>
-            <aside className="hero-analytics card subtle" aria-label="Resumen de impacto y foco analítico">
-              <div className="hero-analytics-head">
-                <span className="eyebrow">Impacto &amp; foco</span>
-                <p className="hero-analytics-dek">
-                  Señales de impacto con métricas, reporting y foco en decisión — sin simular un dashboard completo.
-                </p>
-              </div>
-              <div className="kpi-grid">
-                {HERO_KPIS.map((k) => (
-                  <div className="kpi-cell" key={k.label}>
-                    {k.spark ? <Sparkline values={k.spark} /> : null}
-                    <span className="kpi-value">{k.value}</span>
-                    <span className="kpi-label">{k.label}</span>
-                  </div>
-                ))}
-              </div>
-              <HeroMiniBars />
-            </aside>
-          </div>
-        </header>
-
-        <main>
-          <section className="section section--tight container section-divider about-section" id="sobre-mi">
-            <div className="about-section-inner">
-              <div className="about-grid">
-                <div className="about-column about-column--main">
-                  <SectionTitle
-                    eyebrow="Sobre mí"
-                    title="Analítica aplicada a operación real"
-                    intro="SQL, Power BI, Excel y Python aplicados a operación real en salud. ETL, KPIs y reporting para decisiones más claras."
-                  />
-                  <div className="text-block text-block--about">
-                  <p>
-                    Trabajo con datos de punta a punta: modelado y consultas en SQL, tableros en Power BI, limpieza y preparación
-                    de información, y scripts en Python para análisis y reporting repetible. El foco es que los números sirvan
-                    para decidir: indicadores claros, procesos más ordenados y menos tiempo perdido en tareas manuales.
-                  </p>
-                  <p>
-                    En el consultorio médico apliqué eso en un entorno real: pasar de registros dispersos a bases consultables,
-                    construir vistas operativas y financieras, y automatizar reportes que antes consumían horas. El sistema{' '}
-                    <strong>Mi Consultorio</strong> es parte de esa entrega y está en uso en la práctica diaria.
-                  </p>
-                  <p className="muted-note">
-                    Integro ML o entornos generativos como <strong>complemento</strong> cuando el caso lo justifica: el foco sigue
-                    en utilidad de negocio y en lo defendible, no en la complejidad técnica por moda.
-                  </p>
-                  </div>
-                </div>
-                <aside className="about-highlights">
-                  {ABOUT_HIGHLIGHTS.map((h) => (
-                    <div key={h.title} className="about-highlight card subtle">
-                      <h3>{h.title}</h3>
-                      <p>{h.text}</p>
-                    </div>
-                  ))}
-                </aside>
-              </div>
-            </div>
-          </section>
-
-          <section className="section container section-divider" id="proyectos">
-            <SectionTitle
-              eyebrow="Proyectos"
-              title="Casos de operación, analítica y producto"
-              intro="Casos concretos con datos y entregables arriba; más abajo, Paradise como exploración de producto modular. Al final, un complemento web."
-            />
-            <div className="project-grid primary-grid">
-              {PRIMARY_PROJECTS.map((project) => (
-                <ProjectCard key={project.title} project={project} primary onOpen={setSelectedProject} />
-              ))}
-            </div>
-
-            <ParadiseEcosystem />
-
-            <div className={`secondary-wrap${SECONDARY_PROJECTS.length === 1 ? ' secondary-wrap--single' : ''}`}>
-              <div className="section-subtitle">Complementario</div>
-              <div
-                className={`project-grid secondary-grid${SECONDARY_PROJECTS.length === 1 ? ' secondary-grid--single' : ''}`}
-              >
-                {SECONDARY_PROJECTS.map((project) => (
-                  <ProjectCard key={project.title} project={project} onOpen={setSelectedProject} />
-                ))}
-              </div>
-            </div>
-          </section>
-
-          <section className="section container section-divider" id="skills">
-            <SectionTitle
-              eyebrow="Stack"
-              title="Toolkit analítico"
-              intro="BI como núcleo; IA aplicada como capa complementaria. Herramientas y prácticas agrupadas por foco, sin niveles subjetivos."
-            />
-            <div className="skills-stack">
-              {SKILL_GROUPS.map((group) => (
-                <article
-                  key={group.title}
-                  className={`skill-panel card subtle${group.tone === 'quiet' ? ' skill-panel--quiet skill-panel--ia-accent' : ''}`}
-                >
-                  <h3>{group.title}</h3>
-                  <div className="skill-chip-row" role="list">
-                    {group.items.map((name) => (
-                      <span
-                        key={name}
-                        className={`skill-chip${group.tone === 'quiet' ? ' skill-chip--quiet' : ''}`}
-                        role="listitem"
-                      >
-                        {name}
-                      </span>
-                    ))}
-                  </div>
-                </article>
-              ))}
-            </div>
-          </section>
-
-          <section className="section container section-divider" id="experiencia">
-            <div className="experience-block">
-              <SectionTitle
-                eyebrow="Experiencia"
-                title="Impacto medible y sistemas en uso"
-                intro="El núcleo del perfil está en el consultorio: datos, reporting y automatización en uso real. La formación sostiene ese recorrido."
-              />
-              <div className="timeline-wrap">
-                {EXPERIENCE.map((item) => (
-                  <article
-                    key={item.title + item.period}
-                    className={`timeline-card card subtle${item.featured ? ' timeline-card--featured' : ''}`}
-                  >
-                    {item.featured ? <span className="featured-ribbon">Rol principal</span> : null}
-                    <span className="timeline-period">{item.period}</span>
-                    <h3>{item.title}</h3>
-                    <strong>{item.place}</strong>
-                    {item.bullets ? (
-                      <ul className="timeline-bullets">
-                        {item.bullets.map((b) => (
-                          <li key={b}>{b}</li>
-                        ))}
-                      </ul>
-                    ) : null}
-                    {item.description ? <p className="timeline-desc">{item.description}</p> : null}
-                  </article>
-                ))}
-              </div>
-            </div>
-          </section>
-
-          <section className="section container section-divider" id="contacto">
-            <div className="contact-card card subtle">
-              <div className="contact-card-inner">
-                <div>
-                  <span className="eyebrow">Contacto</span>
-                  <h2 className="contact-heading">Conversaciones profesionales</h2>
-                  <p className="contact-copy">
-                    Para roles de Data Analyst o BI Analyst. Escribime por correo, LinkedIn o revisá código en GitHub.
-                  </p>
-                  <p className="contact-loc muted-note">Argentina</p>
-                </div>
-                <div className="contact-actions">
-                  <a href="mailto:augusto.delgado00@hotmail.com" className="button button--quiet primary">
-                    Enviar mail
-                  </a>
-                  <a
-                    href="https://linkedin.com/in/agustin-delgado-data98615190"
-                    target="_blank"
-                    rel="noreferrer"
-                    className="button button--quiet secondary"
-                  >
-                    LinkedIn
-                  </a>
-                  <a href="https://github.com/Agus-Delgado" target="_blank" rel="noreferrer" className="button button--quiet secondary">
-                    GitHub
-                  </a>
-                </div>
-              </div>
-            </div>
-          </section>
-        </main>
-
-        <footer className="footer container">
-          <div className="footer-meta">
-            <span>© {new Date().getFullYear()} Agustín Delgado</span>
-            <span className="footer-loc">Data Analyst · BI · IA aplicada · Argentina</span>
-          </div>
-          <div className="footer-links">
-            <a href="mailto:augusto.delgado00@hotmail.com">augusto.delgado00@hotmail.com</a>
-            <span className="footer-sep" aria-hidden>
-              ·
-            </span>
-            <a href="https://linkedin.com/in/agustin-delgado-data98615190" target="_blank" rel="noreferrer">
-              LinkedIn
-            </a>
-            <span className="footer-sep" aria-hidden>
-              ·
-            </span>
-            <a href="https://github.com/Agus-Delgado" target="_blank" rel="noreferrer">
-              GitHub
-            </a>
-          </div>
-        </footer>
-
-        {selectedProject ? (
-          <div className="modal-backdrop" role="presentation" onClick={() => setSelectedProject(null)}>
-            <div className="modal card" role="dialog" aria-modal onClick={(e) => e.stopPropagation()}>
-              <button type="button" className="modal-close" onClick={() => setSelectedProject(null)} aria-label="Cerrar">
-                ×
-              </button>
-              <span className="eyebrow">Detalle</span>
-              <h3>{selectedProject.title}</h3>
-              <p>{selectedProject.summary}</p>
-              <dl className="modal-facts">
-                <div>
-                  <dt>Problema</dt>
-                  <dd>{selectedProject.problem}</dd>
-                </div>
-                <div>
-                  <dt>Enfoque analítico</dt>
-                  <dd>{selectedProject.analyticalFocus}</dd>
-                </div>
-                <div>
-                  <dt>Resultado</dt>
-                  <dd>{selectedProject.outcome}</dd>
-                </div>
-              </dl>
-              {selectedProject.stack ? (
-                <>
-                  <h4>Herramientas</h4>
-                  <div className="tag-row">
-                    {selectedProject.stack.map((tag: string) => (
-                      <span key={tag} className="tag">
-                        {tag}
-                      </span>
-                    ))}
-                  </div>
-                </>
-              ) : null}
-              {selectedProject.bullets ? (
-                <>
-                  <h4>Aspectos clave</h4>
-                  <ul className="modal-list">
-                    {selectedProject.bullets.map((item: string) => (
-                      <li key={item}>{item}</li>
-                    ))}
-                  </ul>
-                </>
-              ) : null}
-            </div>
-          </div>
-        ) : null}
-      </div>
-    </>
-  )
-}
-
-const styles = `:root {
-  --bg: #060d16;
-  --border: rgba(130, 155, 190, 0.14);
-  --text: #e8eef8;
-  --muted: #94a3b8;
-  --accent: #5ba3d9;
-  --accent-soft: rgba(91, 163, 217, 0.12);
-  --accent-cyan: #52b5c4;
-  --accent-cyan-soft: rgba(82, 181, 196, 0.11);
-  --accent-violet: #9b8ed4;
-  --accent-violet-soft: rgba(155, 142, 212, 0.11);
-  --shadow: 0 12px 40px rgba(0, 0, 0, 0.35);
-  --font: "DM Sans", ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
-}
 * { box-sizing: border-box; }
 html { scroll-behavior: smooth; }
 body {
   margin: 0;
-  font-family: var(--font);
-  background: var(--bg);
-  background-image:
-    radial-gradient(ellipse 80% 50% at 50% -20%, rgba(40, 70, 110, 0.28), transparent),
-    linear-gradient(180deg, #050a10 0%, #070f18 100%);
+  font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
   color: var(--text);
+  background:
+    radial-gradient(circle at 8% 12%, rgba(97, 216, 255, 0.10), transparent 24%),
+    radial-gradient(circle at 88% 10%, rgba(170, 143, 255, 0.14), transparent 24%),
+    radial-gradient(circle at 50% 60%, rgba(126, 168, 255, 0.08), transparent 34%),
+    linear-gradient(180deg, #06101d 0%, #050b14 100%);
 }
+
 a { color: inherit; text-decoration: none; }
-a:hover { text-decoration: underline; text-underline-offset: 3px; }
 button { font: inherit; }
-.page-shell { position: relative; min-height: 100vh; overflow-x: hidden; }
-.bg-orb {
-  position: fixed; border-radius: 999px; filter: blur(72px); pointer-events: none; opacity: 0.11;
+
+.page {
+  min-height: 100vh;
+  position: relative;
+  overflow-x: hidden;
 }
-.orb-a { width: 300px; height: 300px; background: #1a3a5c; top: 32px; left: -100px; }
-.orb-b { width: 240px; height: 240px; background: #152a45; right: -90px; top: 200px; }
-.container { width: min(1180px, calc(100% - 48px)); margin: 0 auto; }
-.hero--wide.container { width: min(1220px, calc(100% - 48px)); }
+
+.backdrop, .backdrop-2 {
+  position: fixed;
+  border-radius: 999px;
+  filter: blur(100px);
+  pointer-events: none;
+  opacity: 0.9;
+}
+
+.backdrop {
+  width: 460px;
+  height: 460px;
+  right: -120px;
+  top: -110px;
+  background: rgba(170, 143, 255, 0.12);
+}
+
+.backdrop-2 {
+  width: 420px;
+  height: 420px;
+  left: -120px;
+  bottom: 8%;
+  background: rgba(97, 216, 255, 0.10);
+}
+
+.shell {
+  width: min(1180px, calc(100% - 40px));
+  margin: 0 auto;
+  position: relative;
+  z-index: 1;
+}
+
 .topbar {
-  position: sticky; top: 0; z-index: 30;
-  backdrop-filter: blur(12px);
-  background: rgba(5, 10, 16, 0.88);
-  border-bottom: 1px solid var(--border);
-}
-.topbar-inner {
-  display: flex; align-items: center; justify-content: space-between; min-height: 68px; gap: 20px;
-}
-.brand-block {
-  display: flex; align-items: center; gap: 14px;
-  padding: 4px 0;
-}
-.brand-mark {
-  width: 11px; height: 38px;
-  border-radius: 4px;
-  background: linear-gradient(180deg, var(--accent) 0%, rgba(91, 163, 217, 0.32) 100%);
-  box-shadow: 0 0 22px rgba(91, 163, 217, 0.22);
-  flex-shrink: 0;
-}
-.brand-text { display: flex; flex-direction: column; gap: 4px; line-height: 1.2; }
-.brand-text strong {
-  font-size: 0.97rem;
-  letter-spacing: -0.03em;
-  font-weight: 650;
-}
-.brand-text span { color: #8fa3b8; font-size: 0.73rem; letter-spacing: 0.04em; font-weight: 500; }
-.nav-links { display: flex; gap: 3px; flex-wrap: wrap; justify-content: flex-end; }
-.nav-links button {
-  background: transparent; color: var(--muted); border: 1px solid transparent; border-radius: 999px;
-  padding: 8px 11px; cursor: pointer; transition: color 0.15s ease, border-color 0.15s ease, background 0.15s ease;
-  font-size: 0.82rem;
-  font-weight: 500;
-}
-.nav-links button.active, .nav-links button:hover {
-  color: var(--text); border-color: var(--border); background: rgba(255,255,255,0.035);
-}
-.hero { padding: 76px 0 72px; }
-.hero-grid {
-  display: grid;
-  grid-template-columns: minmax(0, 1.05fr) minmax(360px, 1fr);
-  gap: clamp(32px, 4.5vw, 56px);
-  align-items: start;
-}
-.hero-copy { align-self: start; max-width: 42rem; padding-top: 4px; }
-.hero-name {
-  margin: 0 0 12px;
-  font-size: clamp(1.15rem, 2.1vw, 1.38rem);
-  font-weight: 650;
-  letter-spacing: -0.025em;
-  color: var(--text);
-}
-.hero-role {
-  margin: 0 0 22px;
-  font-size: clamp(1.04rem, 1.9vw, 1.22rem);
-  font-weight: 650;
-  color: var(--accent);
-  letter-spacing: -0.018em;
-}
-.hero-lead {
-  margin: 0;
-  color: var(--muted);
-  font-size: 1.03rem;
-  line-height: 1.8;
-  max-width: 54ch;
-}
-.hero-analytics {
-  padding: 24px 24px 22px;
-  display: flex;
-  flex-direction: column;
-  gap: 20px;
-  border: 1px solid rgba(91, 163, 217, 0.16);
-  border-radius: 18px;
-  background: linear-gradient(152deg, rgba(11, 20, 32, 0.96) 0%, rgba(6, 12, 20, 0.78) 100%);
-  box-shadow: 0 16px 48px rgba(0, 0, 0, 0.28), inset 0 1px 0 rgba(255,255,255,0.04);
-  transition: border-color 0.25s ease, box-shadow 0.25s ease;
-}
-.hero-analytics:hover {
-  border-color: rgba(91, 163, 217, 0.22);
-  box-shadow: 0 20px 52px rgba(0, 0, 0, 0.32), inset 0 1px 0 rgba(255,255,255,0.05);
-}
-.hero-analytics-head { padding-right: 4px; border-bottom: 1px solid rgba(130, 155, 190, 0.1); padding-bottom: 14px; margin-bottom: 2px; }
-.hero-analytics-dek {
-  margin: 10px 0 0;
-  font-size: 0.84rem;
-  color: #7f90a3;
-  line-height: 1.58;
-  max-width: none;
-}
-.kpi-grid {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 14px 16px;
-}
-.kpi-cell {
-  padding: 14px 14px 12px;
-  border-radius: 13px;
-  border: 1px solid rgba(130, 155, 190, 0.11);
-  background: rgba(0, 0, 0, 0.22);
-  display: flex;
-  flex-direction: column;
-  gap: 7px;
-  min-height: 98px;
-  transition: border-color 0.2s ease, background 0.2s ease, transform 0.2s ease;
-}
-.kpi-cell:hover {
-  border-color: rgba(91, 163, 217, 0.22);
-  background: rgba(91, 163, 217, 0.04);
-  transform: translateY(-1px);
-}
-.sparkline {
-  width: 100%;
-  height: 26px;
-  color: rgba(91, 163, 217, 0.62);
-  opacity: 1;
-}
-.kpi-value {
-  font-size: 1.08rem;
-  font-weight: 700;
-  letter-spacing: -0.03em;
-  color: #e2eaf5;
-}
-.kpi-label {
-  font-size: 0.67rem;
-  color: var(--muted);
-  line-height: 1.38;
-  text-transform: uppercase;
-  letter-spacing: 0.065em;
-}
-.hero-mini-bars-wrap {
-  margin-top: 2px;
-  padding: 14px 14px 12px;
-  border-radius: 12px;
-  border: 1px solid rgba(130, 155, 190, 0.1);
-  background: rgba(0, 0, 0, 0.18);
-}
-.hero-mini-bars-head {
+  position: sticky;
+  top: 14px;
+  z-index: 20;
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: 12px;
-  margin-bottom: 12px;
+  gap: 18px;
+  padding: 14px 18px;
+  margin-top: 18px;
+  border-radius: 22px;
+  background: rgba(7, 16, 29, 0.7);
+  border: 1px solid rgba(160, 186, 234, 0.10);
+  backdrop-filter: blur(16px);
+  box-shadow: 0 18px 60px rgba(0,0,0,0.22);
 }
-.hero-mini-bars-label {
-  font-size: 0.64rem;
-  text-transform: uppercase;
-  letter-spacing: 0.09em;
-  color: #7a8b9e;
-  font-weight: 600;
-}
-.hero-mini-bars-axis {
-  flex: 1;
-  height: 1px;
-  background: linear-gradient(90deg, rgba(91, 163, 217, 0.25), transparent);
-  opacity: 0.8;
-}
-.hero-mini-bars-track {
-  display: flex;
-  align-items: flex-end;
-  gap: 6px;
-  height: 56px;
-  padding: 4px 4px 0;
-  border-bottom: 1px solid rgba(130, 155, 190, 0.14);
-}
-.hero-mini-bar {
-  flex: 1;
-  border-radius: 4px 4px 0 0;
-  background: linear-gradient(180deg, rgba(91, 163, 217, 0.5) 0%, rgba(91, 163, 217, 0.1) 100%);
-  min-height: 10px;
-  transition: opacity 0.2s ease, filter 0.2s ease, transform 0.2s ease;
-}
-.hero-mini-bar:hover { filter: brightness(1.08); transform: scaleY(1.04); transform-origin: bottom center; }
-.hero-mini-bar:nth-child(3n) { opacity: 0.88; }
 
-.hero-toolkit {
-  margin-top: 28px;
-  padding: 16px 16px 14px;
+.brand {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+.brand-mark {
+  width: 44px;
+  height: 44px;
   border-radius: 15px;
-  border: 1px solid rgba(130, 155, 190, 0.12);
-  background: rgba(255, 255, 255, 0.022);
-}
-.hero-toolkit-title {
-  font-size: 0.72rem;
-  text-transform: uppercase;
-  letter-spacing: 0.095em;
-  color: #8497ad;
-  font-weight: 700;
-  margin-bottom: 14px;
-}
-.hero-toolkit-grid {
   display: grid;
-  grid-template-columns: repeat(4, minmax(0, 1fr));
-  gap: 10px 11px;
+  place-items: center;
+  font-weight: 800;
+  font-size: 0.92rem;
+  color: #07101d;
+  background: linear-gradient(135deg, var(--cyan), #b6e8ff 38%, var(--violet));
+  box-shadow: 0 10px 28px rgba(97, 216, 255, 0.18);
 }
-.hero-toolkit-chip {
+
+.brand-copy strong {
+  display: block;
+  font-size: 0.96rem;
+  letter-spacing: -0.02em;
+}
+
+.brand-copy span {
+  color: var(--muted);
+  font-size: 0.9rem;
+}
+
+.nav {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.nav a {
+  padding: 10px 12px;
+  border-radius: 999px;
+  color: var(--muted);
+  transition: 180ms ease;
+}
+
+.nav a:hover {
+  color: var(--text);
+  background: rgba(255,255,255,0.04);
+}
+
+.hero {
+  display: grid;
+  grid-template-columns: minmax(0, 1.12fr) minmax(320px, 0.88fr);
+  gap: 22px;
+  padding: 26px 0 54px;
+}
+
+.panel {
+  background: linear-gradient(180deg, rgba(12, 24, 41, 0.9), rgba(8, 16, 29, 0.78));
+  border: 1px solid var(--line);
+  box-shadow: var(--shadow);
+  backdrop-filter: blur(18px);
+}
+
+.hero-main {
+  border-radius: 34px;
+  padding: 34px;
+  position: relative;
+  overflow: hidden;
+}
+
+.hero-main::before {
+  content: '';
+  position: absolute;
+  inset: auto auto -60px -60px;
+  width: 240px;
+  height: 240px;
+  border-radius: 999px;
+  background: radial-gradient(circle, rgba(97, 216, 255, 0.18), transparent 68%);
+}
+
+.hero-main::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(120deg, transparent 10%, rgba(255,255,255,0.04) 48%, transparent 86%);
+  opacity: 0.5;
+  pointer-events: none;
+}
+
+.kicker-row {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+  margin-bottom: 18px;
+}
+
+.kicker, .ghost-pill, .meta-pill, .chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 12px;
+  border-radius: 999px;
+  border: 1px solid rgba(170, 190, 240, 0.14);
+  background: rgba(255,255,255,0.035);
+  color: #dbe7ff;
+}
+
+.kicker::before {
+  content: '';
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--success);
+  box-shadow: 0 0 18px rgba(124, 242, 199, 0.55);
+}
+
+.ghost-pill {
+  color: var(--muted);
+}
+
+.hero-title {
+  margin: 0;
+  font-size: clamp(2.8rem, 6vw, 5.4rem);
+  line-height: 0.94;
+  letter-spacing: -0.07em;
+  max-width: 10.5ch;
+}
+
+.hero-title span {
+  background: linear-gradient(92deg, #ffffff 5%, #9fd4ff 40%, #b391ff 90%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+.hero-subcopy {
+  margin-top: 20px;
+  max-width: 62ch;
+  color: var(--soft);
+  font-size: 1.08rem;
+  line-height: 1.8;
+}
+
+.hero-links {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+  margin-top: 28px;
+}
+
+.button {
+  min-height: 50px;
+  padding: 0 18px;
+  border-radius: 14px;
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  min-height: 36px;
-  padding: 8px 9px;
-  border-radius: 11px;
-  border: 1px solid rgba(130, 155, 190, 0.16);
-  background: rgba(91, 163, 217, 0.055);
-  color: #b2c5e0;
-  font-size: 0.78rem;
-  font-weight: 500;
-  line-height: 1;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-}
-.button {
-  display: inline-flex; align-items: center; justify-content: center;
-  min-width: 124px;
-  padding: 10px 16px; border-radius: 10px; text-decoration: none; border: 1px solid var(--border);
-  transition: background 0.15s ease, border-color 0.15s ease;
-  font-weight: 600; font-size: 0.88rem;
-}
-.button--quiet.primary {
-  background: rgba(91, 163, 217, 0.18);
-  color: var(--text);
-  border-color: rgba(91, 163, 217, 0.35);
-}
-.button--quiet.primary:hover { background: rgba(91, 163, 217, 0.28); text-decoration: none; }
-.button--quiet.secondary {
-  background: rgba(255,255,255,0.03);
-  color: var(--text);
-}
-.button--quiet.secondary:hover { background: rgba(255,255,255,0.06); text-decoration: none; }
-.card {
-  border: 1px solid var(--border);
-  border-radius: 17px;
-  box-shadow: var(--shadow);
-  position: relative;
-  transition: border-color 0.22s ease, box-shadow 0.22s ease, transform 0.22s ease;
-}
-.subtle {
-  background: rgba(8, 14, 22, 0.62);
-}
-.section { padding: 72px 0 0; }
-.section--tight { padding-top: 56px; }
-.section-divider {
-  border-top: 1px solid rgba(130, 155, 190, 0.08);
-  padding-top: 72px;
-  margin-top: 8px;
-}
-.section-title-wrap { max-width: 700px; margin-bottom: 28px; }
-.section-title-wrap h2 {
-  margin: 12px 0 12px;
-  font-size: clamp(1.34rem, 2.45vw, 1.68rem);
-  line-height: 1.18;
-  letter-spacing: -0.03em;
+  gap: 8px;
   font-weight: 650;
+  border: 1px solid transparent;
+  transition: transform 180ms ease, border-color 180ms ease, background 180ms ease;
 }
-.section-intro {
-  color: #94a6bb;
-  line-height: 1.62;
-  margin: 0;
-  font-size: 0.93rem;
-  max-width: 58ch;
-  padding-left: 12px;
-  border-left: 2px solid rgba(91, 163, 217, 0.2);
+
+.button.primary {
+  background: linear-gradient(135deg, var(--cyan), #8dc7ff 55%, #cfbcff 100%);
+  color: #06101d;
 }
-.eyebrow {
-  display: inline-flex;
-  letter-spacing: 0.09em;
-  text-transform: uppercase;
-  font-size: 0.73rem;
-  color: #78b0db;
-  font-weight: 700;
-  opacity: 0.96;
+
+.button.secondary {
+  background: rgba(255,255,255,0.035);
+  border-color: rgba(170,190,240,0.14);
 }
-.about-section-inner { width: 100%; }
-.about-column--main .section-title-wrap {
-  margin-bottom: 22px;
-  max-width: none;
-}
-.about-column--main .section-intro {
-  max-width: 58ch;
-}
-.about-grid {
-  display: grid;
-  grid-template-columns: minmax(0, 1.12fr) minmax(268px, 380px);
-  gap: 28px 46px;
-  align-items: start;
-  align-content: start;
-}
-.about-column--main {
-  min-width: 0;
-}
-.text-block--about {
-  margin: 0;
-  padding: 0;
-}
-.about-highlights {
-  margin: 0;
-  padding: 0;
-  align-self: start;
+
+.button:hover { transform: translateY(-2px); }
+
+.word-grid {
   display: flex;
-  flex-direction: column;
-  gap: 12px;
-}
-.text-block--about p {
-  color: var(--muted);
-  line-height: 1.8;
-  margin: 0 0 16px;
-  font-size: 0.97rem;
-}
-.text-block--about strong { color: #c8d4e8; font-weight: 600; }
-.about-highlight {
-  padding: 16px 18px;
-  border: 1px solid rgba(130, 155, 190, 0.12);
-  border-radius: 14px;
-  transition: border-color 0.2s ease, background 0.2s ease;
-}
-.about-highlight:hover {
-  border-color: rgba(91, 163, 217, 0.18);
-  background: rgba(91, 163, 217, 0.04);
-}
-.about-highlight h3 {
-  margin: 0 0 8px;
-  font-size: 0.88rem;
-  font-weight: 650;
-  letter-spacing: -0.02em;
-  color: #c5d2e8;
-}
-.about-highlight p {
-  margin: 0;
-  font-size: 0.84rem;
-  line-height: 1.6;
-  color: #8b9cb0;
-}
-.muted-note {
-  font-size: 0.87rem !important;
-  color: #7c8a9e !important;
-  font-style: normal;
-}
-.project-grid { display: grid; gap: 18px; }
-.primary-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); }
-.secondary-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); }
-.paradise-ecosystem {
-  margin-top: 40px;
-  padding: 28px 28px 26px;
-  border-radius: 18px;
-  border: 1px solid color-mix(in srgb, var(--accent-violet) 20%, rgba(130, 155, 190, 0.12));
-  background: linear-gradient(145deg, rgba(16, 14, 32, 0.58) 0%, rgba(7, 12, 20, 0.82) 100%);
-  box-shadow: 0 0 0 1px color-mix(in srgb, var(--accent) 7%, transparent), 0 18px 52px rgba(0, 0, 0, 0.3);
-}
-.paradise-ecosystem-inner {
-  display: grid;
-  grid-template-columns: minmax(0, 1.08fr) minmax(280px, 0.95fr);
-  gap: clamp(24px, 4vw, 42px);
-  align-items: start;
-}
-.paradise-ecosystem-eyebrow { color: #9b8ed4 !important; }
-.paradise-ecosystem-title {
-  margin: 10px 0 8px;
-  font-size: clamp(1.15rem, 2vw, 1.4rem);
-  letter-spacing: -0.03em;
-  font-weight: 650;
-  line-height: 1.15;
-}
-.paradise-ecosystem-dek {
-  margin: 0 0 20px;
-  color: #94a6bb;
-  font-size: 0.91rem;
-  line-height: 1.58;
-  max-width: 54ch;
-}
-.paradise-ecosystem-editorial { display: flex; flex-direction: column; gap: 16px; }
-.paradise-eco-block p {
-  margin: 0;
-  font-size: 0.88rem;
-  line-height: 1.65;
-  color: #9fb0c4;
-}
-.paradise-eco-label {
-  margin: 0 0 6px;
-  font-size: 0.65rem;
-  text-transform: uppercase;
-  letter-spacing: 0.08em;
-  color: #6b7c90;
-  font-weight: 600;
-}
-.paradise-modules-heading {
-  margin: 0 0 14px;
-  font-size: 0.72rem;
-  text-transform: uppercase;
-  letter-spacing: 0.095em;
-  color: #8497ad;
-  font-weight: 700;
-}
-.paradise-modules {
-  list-style: none;
-  margin: 0;
-  padding: 0;
-  display: flex;
-  flex-direction: column;
+  flex-wrap: wrap;
   gap: 10px;
+  margin-top: 20px;
 }
-.paradise-module {
-  padding: 14px 16px;
+
+.word-chip {
+  padding: 10px 13px;
   border-radius: 14px;
-  border: 1px solid rgba(130, 155, 190, 0.12);
-  border-top: 2px solid rgba(130, 155, 190, 0.16);
-  background: rgba(6, 11, 18, 0.52);
-  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+  background: rgba(255,255,255,0.035);
+  border: 1px solid rgba(170,190,240,0.12);
+  color: #d8e5fb;
+  transition: 180ms ease;
 }
-.paradise-module:hover {
-  border-color: rgba(130, 155, 190, 0.16);
+
+.word-chip:hover {
+  transform: translateY(-2px);
+  border-color: rgba(97, 216, 255, 0.28);
+  box-shadow: 0 10px 28px rgba(97, 216, 255, 0.10);
 }
-.paradise-module--featured {
-  border-top-color: var(--accent-cyan);
-  border-color: color-mix(in srgb, var(--accent-cyan) 22%, rgba(130, 155, 190, 0.12));
-  background: linear-gradient(165deg, rgba(8, 22, 28, 0.88) 0%, rgba(6, 12, 20, 0.58) 100%);
-  box-shadow: 0 0 0 1px color-mix(in srgb, var(--accent-cyan) 14%, transparent);
+
+.hero-side {
+  display: grid;
+  gap: 18px;
 }
-.paradise-module-head {
+
+.info-card, .signal-card {
+  border-radius: 28px;
+  padding: 24px;
+  position: relative;
+  overflow: hidden;
+}
+
+.info-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 14px;
+  margin-top: 18px;
+}
+
+.stat {
+  padding: 16px;
+  border-radius: 18px;
+  background: rgba(255,255,255,0.035);
+  border: 1px solid rgba(170,190,240,0.10);
+}
+
+.stat strong {
+  display: block;
+  margin-bottom: 6px;
+  font-size: 1.15rem;
+}
+
+.stat span {
+  color: var(--muted);
+  line-height: 1.5;
+  font-size: 0.94rem;
+}
+
+.panel-kicker {
+  color: #98b7ee;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  font-size: 0.75rem;
+  font-weight: 700;
+}
+
+.panel-title {
+  margin: 10px 0 0;
+  font-size: 1.35rem;
+  letter-spacing: -0.04em;
+}
+
+.signal-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-top: 18px;
+}
+
+.meta-pill {
+  transition: 180ms ease;
+}
+
+.meta-pill:hover {
+  transform: translateY(-2px);
+  color: var(--text);
+}
+
+main {
+  padding-bottom: 44px;
+}
+
+section {
+  padding: 30px 0;
+}
+
+.section-head {
+  display: flex;
+  align-items: end;
+  justify-content: space-between;
+  gap: 18px;
+  margin-bottom: 22px;
+}
+
+.section-mark {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  color: #99b8eb;
+  font-size: 0.78rem;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  font-weight: 700;
+}
+
+.section-mark::before {
+  content: '';
+  width: 28px;
+  height: 1px;
+  background: linear-gradient(90deg, rgba(97, 216, 255, 0.8), rgba(170, 143, 255, 0.2));
+}
+
+.section-title {
+  margin: 10px 0 0;
+  font-size: clamp(2rem, 4vw, 3.6rem);
+  line-height: 0.98;
+  letter-spacing: -0.06em;
+}
+
+.section-copy {
+  max-width: 58ch;
+  color: var(--muted);
+  line-height: 1.75;
+}
+
+.feature-grid,
+.method-grid,
+.secondary-grid,
+.stack-grid,
+.contact-grid {
+  display: grid;
+  gap: 18px;
+}
+
+.feature-grid,
+.method-grid,
+.secondary-grid,
+.stack-grid {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+
+.contact-grid {
+  grid-template-columns: 1.05fr 0.95fr;
+}
+
+.interactive {
+  position: relative;
+  overflow: hidden;
+  transition: transform 180ms ease, border-color 180ms ease, box-shadow 180ms ease;
+}
+
+.interactive::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background:
+    radial-gradient(520px circle at var(--mx, 50%) var(--my, 50%), rgba(255,255,255,0.10), transparent 34%);
+  opacity: 0;
+  transition: opacity 180ms ease;
+  pointer-events: none;
+}
+
+.interactive:hover {
+  transform: translateY(-4px);
+  border-color: rgba(170, 190, 240, 0.20);
+  box-shadow: 0 26px 70px rgba(0,0,0,0.28);
+}
+
+.interactive:hover::before {
+  opacity: 1;
+}
+
+.project-card {
+  min-height: 100%;
+  padding: 24px;
+  border-radius: 28px;
+  background: linear-gradient(180deg, rgba(12, 22, 38, 0.92), rgba(8, 15, 28, 0.84));
+  border: 1px solid var(--line);
+}
+
+.project-card.cyan { box-shadow: inset 0 1px 0 rgba(97, 216, 255, 0.10); }
+.project-card.violet { box-shadow: inset 0 1px 0 rgba(170, 143, 255, 0.10); }
+.project-card.blue { box-shadow: inset 0 1px 0 rgba(126, 168, 255, 0.10); }
+
+.project-top {
   display: flex;
   align-items: center;
   justify-content: space-between;
   gap: 10px;
-  flex-wrap: wrap;
-  margin-bottom: 6px;
-}
-.paradise-module-name {
-  font-weight: 650;
-  font-size: 0.95rem;
-  letter-spacing: -0.02em;
-  color: #e2eaf5;
-}
-.paradise-module-badge {
-  font-size: 0.62rem;
-  font-weight: 700;
-  text-transform: uppercase;
-  letter-spacing: 0.07em;
-  color: var(--accent-cyan);
-  padding: 4px 8px;
-  border-radius: 8px;
-  border: 1px solid color-mix(in srgb, var(--accent-cyan) 35%, transparent);
-  background: rgba(82, 181, 196, 0.08);
-}
-.paradise-module-tag {
-  display: block;
-  font-size: 0.68rem;
-  color: #8b9cb0;
-  margin-bottom: 8px;
-  font-weight: 500;
-}
-.paradise-module-desc {
-  margin: 0;
-  font-size: 0.82rem;
-  line-height: 1.55;
-  color: #9fb0c4;
-}
-.secondary-grid--single {
-  grid-template-columns: minmax(0, 1fr);
-  max-width: min(560px, 100%);
-  margin-inline: auto;
-}
-.secondary-wrap--single {
-  margin-top: 48px;
-  padding-top: 28px;
-  border-top: 1px solid rgba(130, 155, 190, 0.1);
-}
-.secondary-wrap--single .section-subtitle {
-  text-align: center;
   margin-bottom: 18px;
 }
-.secondary-grid--single .project-card {
-  max-width: 100%;
-}
-.project-card {
-  --pc: var(--accent);
-  --pc-soft: var(--accent-soft);
-  padding: 24px 24px 22px;
-  display: flex;
-  flex-direction: column;
-  gap: 0;
-  border: 1px solid rgba(130, 155, 190, 0.12);
-  border-top: 3px solid var(--pc);
-  border-radius: 17px;
-  box-shadow: 0 10px 32px rgba(0, 0, 0, 0.22);
-}
-.project-card--blue { --pc: var(--accent); --pc-soft: var(--accent-soft); }
-.project-card--cyan { --pc: var(--accent-cyan); --pc-soft: var(--accent-cyan-soft); }
-.project-card--violet { --pc: var(--accent-violet); --pc-soft: var(--accent-violet-soft); }
-.project-card:hover {
-  border: 1px solid color-mix(in srgb, var(--pc) 18%, rgba(130, 155, 190, 0.12));
-  border-top: 3px solid var(--pc);
-  box-shadow: 0 14px 44px rgba(0, 0, 0, 0.32), 0 0 0 1px color-mix(in srgb, var(--pc) 12%, transparent);
-  transform: translateY(-2px);
-}
-.project-card.secondary:hover {
-  border-top-width: 2px;
-}
-.project-card.primary.project-card--blue {
-  background: linear-gradient(165deg, rgba(12, 20, 32, 0.95) 0%, rgba(7, 12, 20, 0.72) 100%);
-}
-.project-card.primary.project-card--cyan {
-  background: linear-gradient(165deg, rgba(10, 22, 28, 0.95) 0%, rgba(7, 14, 18, 0.72) 100%);
-}
-.project-card.primary.project-card--violet {
-  background: linear-gradient(165deg, rgba(14, 12, 26, 0.95) 0%, rgba(8, 10, 20, 0.72) 100%);
-}
-.project-card.secondary {
-  padding: 20px;
-  border-top-width: 2px;
-  box-shadow: 0 8px 28px rgba(0, 0, 0, 0.2);
-}
-.project-card.secondary.project-card--blue {
-  background: linear-gradient(165deg, rgba(8, 14, 22, 0.52) 0%, rgba(6, 12, 20, 0.42) 100%);
-}
-.project-card.secondary.project-card--cyan {
-  background: linear-gradient(165deg, rgba(6, 14, 20, 0.52) 0%, rgba(6, 12, 18, 0.42) 100%);
-}
-.project-card.secondary.project-card--violet {
-  background: linear-gradient(165deg, rgba(10, 10, 22, 0.48) 0%, rgba(6, 12, 20, 0.4) 100%);
-}
-.project-card-top {
-  display: flex;
-  align-items: flex-start;
-  justify-content: space-between;
-  gap: 10px;
-  margin-bottom: 12px;
-}
-.project-meta span {
-  display: inline-flex;
-  padding: 5px 10px;
-  border-radius: 999px;
-  font-size: 0.68rem;
-  color: var(--pc);
-  background: var(--pc-soft);
-  border: 1px solid color-mix(in srgb, var(--pc) 26%, transparent);
-  line-height: 1.3;
-}
-.metric-pill {
-  font-size: 0.65rem;
-  font-weight: 600;
-  text-transform: uppercase;
-  letter-spacing: 0.06em;
-  color: #a8bdd4;
-  padding: 5px 8px;
-  border-radius: 8px;
-  border: 1px solid rgba(130, 155, 190, 0.15);
-  background: rgba(255,255,255,0.02);
-  white-space: nowrap;
-}
-.project-card h3 {
-  margin: 0 0 14px;
-  font-size: 1.08rem;
-  letter-spacing: -0.025em;
-  font-weight: 650;
-  line-height: 1.2;
-}
-.project-facts {
-  margin: 0 0 14px;
-  display: flex;
-  flex-direction: column;
-  gap: 12px;
-}
-.project-facts div { margin: 0; }
-.project-facts dt {
-  font-size: 0.62rem;
-  text-transform: uppercase;
-  letter-spacing: 0.08em;
-  color: #6b7c90;
-  margin: 0 0 4px;
-  font-weight: 600;
-}
-.project-facts dd {
-  margin: 0;
-  font-size: 0.86rem;
-  line-height: 1.55;
-  color: #9fb0c4;
-}
-.project-tools { margin-top: 0; margin-bottom: 14px; }
-.tag-row { display: flex; flex-wrap: wrap; gap: 6px; }
-.tag {
-  display: inline-flex; padding: 5px 9px; border-radius: 8px; border: 1px solid var(--border); font-size: 0.72rem;
-  background: rgba(255,255,255,0.02);
-  color: var(--muted);
-}
-.project-card .tag--tool {
-  border-color: color-mix(in srgb, var(--pc) 24%, transparent);
-  background: color-mix(in srgb, var(--pc) 7%, transparent);
-  color: #aabaca;
-}
-.project-outcome {
-  padding: 12px 14px;
-  border-radius: 10px;
-  border: 1px solid color-mix(in srgb, var(--pc) 18%, rgba(130, 155, 190, 0.12));
-  background: color-mix(in srgb, var(--pc) 6%, rgba(0, 0, 0, 0.15));
-  margin-bottom: 12px;
-}
-.project-outcome-label {
-  display: block;
-  font-size: 0.62rem;
-  text-transform: uppercase;
-  letter-spacing: 0.08em;
-  color: var(--pc);
-  font-weight: 600;
-  margin-bottom: 6px;
-}
-.project-outcome p {
-  margin: 0;
-  font-size: 0.88rem;
-  line-height: 1.55;
-  color: #c5d4e6;
-}
-.project-card .ghost-link {
-  margin-top: auto;
-  padding: 0;
-  background: transparent;
-  border: 0;
-  color: var(--pc);
-  cursor: pointer;
-  font-weight: 600;
-  font-size: 0.86rem;
-  align-self: flex-start;
-}
-.project-card .ghost-link:hover { text-decoration: underline; }
-.secondary-wrap { margin-top: 44px; }
-.section-subtitle { color: var(--muted); margin-bottom: 14px; font-size: 0.87rem; font-weight: 500; }
-.skills-stack {
-  display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 18px;
-  max-width: 900px;
-}
-.skill-panel { padding: 22px 22px 18px; border-radius: 17px; }
-.skill-panel:hover { border-color: rgba(91, 163, 217, 0.14); }
-.skill-panel h3 {
-  margin: 0 0 16px;
-  font-size: 0.95rem;
-  font-weight: 650;
-  letter-spacing: -0.02em;
-}
-.skill-panel--quiet h3 {
-  color: #9aaaba;
-  font-weight: 600;
-}
-.skill-chip-row {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 8px 10px;
-  align-items: flex-start;
-}
-.skill-chip {
+
+.label-pill {
   display: inline-flex;
   align-items: center;
-  padding: 7px 11px;
-  border-radius: 10px;
-  border: 1px solid rgba(91, 163, 217, 0.22);
-  background: rgba(91, 163, 217, 0.07);
-  color: #b8c9e0;
-  font-size: 0.8rem;
-  font-weight: 500;
-  line-height: 1.25;
-  max-width: 100%;
-  word-break: break-word;
+  gap: 8px;
+  padding: 8px 12px;
+  border-radius: 999px;
+  background: rgba(255,255,255,0.04);
+  border: 1px solid rgba(170,190,240,0.10);
+  color: #dce8ff;
+  font-size: 0.84rem;
 }
-.skill-chip--quiet {
-  border-color: rgba(130, 155, 190, 0.14);
-  background: rgba(255, 255, 255, 0.03);
-  color: #8e9faf;
-  font-size: 0.78rem;
-  font-weight: 500;
-}
-.skill-panel--quiet {
-  border-color: rgba(130, 155, 190, 0.11);
-  background: rgba(6, 11, 18, 0.55);
-}
-.skill-panel--ia-accent {
-  border-color: color-mix(in srgb, var(--accent-cyan) 22%, rgba(130, 155, 190, 0.12));
-  box-shadow: 0 0 0 1px color-mix(in srgb, var(--accent-violet) 8%, transparent), 0 12px 36px rgba(0, 0, 0, 0.22);
-}
-.skill-panel--ia-accent:hover {
-  border-color: color-mix(in srgb, var(--accent-cyan) 28%, rgba(130, 155, 190, 0.14));
-  box-shadow: 0 0 0 1px color-mix(in srgb, var(--accent-violet) 12%, transparent), 0 14px 40px rgba(0, 0, 0, 0.26);
-}
-.skill-panel--quiet:hover {
-  border-color: rgba(130, 155, 190, 0.14);
-}
-.skill-panel--quiet.skill-panel--ia-accent:hover {
-  border-color: color-mix(in srgb, var(--accent-cyan) 30%, rgba(130, 155, 190, 0.15));
-}
-.experience-block { max-width: 860px; }
-.timeline-wrap { display: flex; flex-direction: column; gap: 16px; margin-top: 14px; }
-.timeline-card {
-  padding: 24px 24px 22px;
-  border-radius: 17px;
-}
-.timeline-card:hover {
-  border-color: rgba(130, 155, 190, 0.18);
-  box-shadow: 0 12px 36px rgba(0, 0, 0, 0.28);
-}
-.timeline-card--featured {
-  border-color: rgba(91, 163, 217, 0.22);
-  background: linear-gradient(160deg, rgba(14, 24, 38, 0.95) 0%, rgba(8, 14, 22, 0.75) 100%);
-  padding-top: 26px;
-}
-.featured-ribbon {
-  position: absolute;
-  top: 14px;
-  right: 16px;
-  font-size: 0.62rem;
-  font-weight: 700;
-  text-transform: uppercase;
-  letter-spacing: 0.1em;
-  color: var(--accent);
+
+.label-pill::before {
+  content: '';
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: currentColor;
   opacity: 0.9;
 }
-.timeline-period {
-  display: inline-flex; margin-bottom: 8px; color: var(--accent); font-size: 0.7rem; text-transform: uppercase; letter-spacing: 0.08em;
-  font-weight: 600;
+
+.project-title {
+  margin: 0;
+  font-size: clamp(1.35rem, 2.1vw, 1.95rem);
+  letter-spacing: -0.04em;
 }
-.timeline-card h3 {
-  margin: 0 0 6px;
-  font-size: 1.06rem;
-  letter-spacing: -0.02em;
-  font-weight: 650;
+
+.project-headline {
+  margin: 10px 0 14px;
+  color: #e7effe;
+  line-height: 1.55;
+  font-size: 1rem;
 }
-.timeline-card strong { display: block; color: #c5d2e8; margin-bottom: 12px; font-size: 0.87rem; font-weight: 500; }
-.timeline-bullets {
-  margin: 0 0 0 1.05rem;
-  padding: 0;
-  color: var(--muted);
-  line-height: 1.65;
-  font-size: 0.91rem;
+
+.project-summary {
+  color: var(--soft);
+  line-height: 1.74;
+  margin: 0;
 }
-.timeline-bullets li { margin-bottom: 8px; }
-.timeline-desc { color: var(--muted); font-size: 0.9rem; line-height: 1.7; margin: 0; }
-.contact-card { padding: 0; border: 1px solid rgba(91, 163, 217, 0.14); overflow: hidden; border-radius: 17px; }
-.contact-card:hover { border-color: rgba(91, 163, 217, 0.2); }
-.contact-card-inner {
+
+.subblock {
+  margin-top: 18px;
+  padding-top: 16px;
+  border-top: 1px solid rgba(170,190,240,0.08);
+}
+
+.subblock-title {
+  margin: 0 0 10px;
+  color: #dbe6fb;
+  font-size: 0.9rem;
+  font-weight: 700;
+}
+
+.tag-grid {
   display: flex;
-  justify-content: space-between;
-  gap: 28px;
   flex-wrap: wrap;
-  padding: 28px 30px 26px;
-  align-items: flex-start;
+  gap: 10px;
 }
-.contact-heading {
-  margin: 8px 0 10px;
-  font-size: clamp(1.18rem, 2.1vw, 1.42rem);
-  font-weight: 650;
+
+.chip {
+  font-size: 0.9rem;
+  color: #dce7fb;
+  transition: 180ms ease;
+}
+
+.chip:hover {
+  transform: translateY(-2px);
+  border-color: rgba(97, 216, 255, 0.26);
+}
+
+.method-card,
+.secondary-card,
+.stack-card,
+.contact-card,
+.legal-card {
+  padding: 22px;
+  border-radius: 24px;
+  background: linear-gradient(180deg, rgba(12, 22, 38, 0.88), rgba(8, 15, 28, 0.78));
+  border: 1px solid var(--line);
+}
+
+.method-index {
+  display: inline-flex;
+  font-weight: 800;
+  letter-spacing: 0.02em;
+  color: #b9d6ff;
+  margin-bottom: 16px;
+}
+
+.method-card h3,
+.secondary-card h3,
+.stack-card h3,
+.contact-card h3,
+.legal-card h3 {
+  margin: 0 0 10px;
+  font-size: 1.05rem;
   letter-spacing: -0.03em;
 }
-.contact-copy { color: var(--muted); max-width: 44ch; line-height: 1.7; margin: 0 0 8px; font-size: 0.94rem; }
-.contact-loc { margin: 0 !important; }
-.contact-actions { display: flex; flex-direction: column; gap: 10px; min-width: 160px; }
-.footer {
-  padding: 36px 0 48px;
-  display: flex;
-  flex-direction: column;
-  gap: 14px;
+
+.method-card p,
+.secondary-card p,
+.stack-card p,
+.contact-card p,
+.legal-card p,
+.legal-list li {
   color: var(--muted);
-  font-size: 0.85rem;
-  border-top: 1px solid var(--border);
-  margin-top: 28px;
+  line-height: 1.72;
+  margin: 0;
 }
-.footer-meta { display: flex; flex-wrap: wrap; gap: 12px; align-items: center; }
-.footer-loc { color: #6b7a8f; }
-.footer-links { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; }
-.footer-links a { color: var(--muted); }
-.footer-links a:hover { color: var(--text); }
-.footer-sep { color: #4a5568; user-select: none; }
-.modal-backdrop {
-  position: fixed; inset: 0; background: rgba(2, 6, 12, 0.78);
-  backdrop-filter: blur(4px);
-  display: grid; place-items: center; padding: 24px; z-index: 60;
+
+.secondary-type {
+  display: inline-flex;
+  margin-bottom: 14px;
+  color: #b9cff4;
+  font-size: 0.84rem;
+  padding: 7px 10px;
+  border-radius: 999px;
+  background: rgba(255,255,255,0.03);
+  border: 1px solid rgba(170,190,240,0.10);
 }
-.modal {
-  width: min(640px, 100%); background: rgba(10, 16, 24, 0.98); padding: 26px;
-  border-radius: 16px;
+
+.stack-card ul, .legal-list {
+  margin: 14px 0 0;
+  padding: 0;
+  list-style: none;
 }
-.modal-close {
-  position: absolute; top: 14px; right: 14px; width: 36px; height: 36px; border-radius: 999px; border: 1px solid var(--border);
-  background: rgba(255,255,255,0.03); color: var(--text); cursor: pointer; font-size: 1.25rem; line-height: 1;
+
+.stack-card ul {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
 }
-.modal h3 { margin: 8px 0 12px; font-size: 1.32rem; letter-spacing: -0.03em; }
-.modal h4 { margin: 16px 0 8px; font-size: 0.82rem; text-transform: uppercase; letter-spacing: 0.06em; color: var(--muted); font-weight: 600; }
-.modal p, .modal-list { color: var(--muted); line-height: 1.75; font-size: 0.94rem; }
-.modal-facts { margin: 16px 0; display: flex; flex-direction: column; gap: 12px; }
-.modal-facts dt {
-  font-size: 0.65rem; text-transform: uppercase; letter-spacing: 0.07em; color: #6b7c90; margin-bottom: 4px; font-weight: 600;
+
+.stack-card li {
+  padding: 9px 11px;
+  border-radius: 12px;
+  background: rgba(255,255,255,0.03);
+  border: 1px solid rgba(170,190,240,0.10);
+  color: #dce7fb;
+  font-size: 0.92rem;
 }
-.modal-facts dd { margin: 0; font-size: 0.9rem; color: #9fb0c4; line-height: 1.6; }
-.modal-list { padding-left: 18px; margin: 0; }
-@media (prefers-reduced-motion: no-preference) {
-  .hero-copy { animation: heroIn 0.68s cubic-bezier(0.22, 1, 0.36, 1) both; }
-  .hero-analytics { animation: heroIn 0.72s cubic-bezier(0.22, 1, 0.36, 1) 0.08s both; }
+
+.contact-links {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-top: 18px;
 }
-@keyframes heroIn {
-  from { opacity: 0; transform: translateY(14px); }
-  to { opacity: 1; transform: translateY(0); }
+
+.contact-link {
+  padding: 11px 14px;
+  border-radius: 14px;
+  background: rgba(255,255,255,0.035);
+  border: 1px solid rgba(170,190,240,0.12);
+  transition: 180ms ease;
 }
-@media (prefers-reduced-motion: reduce) {
-  .hero-copy, .hero-analytics { animation: none !important; }
-  .project-card, .timeline-card, .card, .kpi-cell, .hero-analytics, .about-highlight { transition: none !important; }
-  .project-card:hover, .timeline-card:hover, .kpi-cell:hover { transform: none !important; }
+
+.contact-link:hover {
+  transform: translateY(-2px);
+  border-color: rgba(97, 216, 255, 0.24);
 }
+
+.legal-layout {
+  display: grid;
+  grid-template-columns: 1.15fr 0.85fr;
+  gap: 18px;
+}
+
+.legal-list li + li { margin-top: 10px; }
+
+.footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 16px;
+  padding: 26px 0 34px;
+  color: var(--muted);
+  font-size: 0.92rem;
+}
+
 @media (max-width: 1080px) {
-  .hero-grid { grid-template-columns: 1fr; }
-  .hero-analytics { max-width: 100%; }
-  .hero-toolkit-grid { grid-template-columns: repeat(4, minmax(0, 1fr)); }
-  .about-grid { grid-template-columns: 1fr; }
-  .primary-grid, .secondary-grid { grid-template-columns: 1fr; }
-  .paradise-ecosystem-inner { grid-template-columns: 1fr; }
-  .skills-stack { grid-template-columns: 1fr; }
+  .hero,
+  .contact-grid,
+  .legal-layout {
+    grid-template-columns: 1fr;
+  }
+
+  .feature-grid,
+  .method-grid,
+  .secondary-grid,
+  .stack-grid {
+    grid-template-columns: 1fr 1fr;
+  }
 }
-@media (max-width: 720px) {
-  .container { width: min(100% - 28px, 1120px); }
-  .topbar-inner { padding: 8px 0; align-items: flex-start; flex-direction: column; }
-  .nav-links { justify-content: flex-start; }
-  .hero { padding: 48px 0 40px; }
-  .hero-analytics { max-width: none; }
-  .hero-toolkit { margin-top: 24px; padding: 14px 14px 12px; }
-  .hero-toolkit-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px 9px; }
-  .hero-toolkit-chip { min-height: 34px; font-size: 0.75rem; }
-  .kpi-grid { grid-template-columns: 1fr; }
-  .section-divider { padding-top: 56px; }
-  .project-card, .timeline-card, .skill-panel { padding: 18px; }
-  .skill-chip { padding: 6px 10px; font-size: 0.76rem; }
-  .skill-chip--quiet { font-size: 0.74rem; }
-  .nav-links button { padding: 7px 9px; font-size: 0.8rem; }
-  .contact-card-inner { padding: 22px 20px; }
+
+@media (max-width: 760px) {
+  .shell { width: min(100% - 24px, 1180px); }
+  .topbar { position: static; flex-direction: column; align-items: flex-start; }
+  .hero { grid-template-columns: 1fr; padding-top: 20px; }
+  .hero-main, .info-card, .signal-card, .project-card, .method-card, .secondary-card, .stack-card, .contact-card, .legal-card { padding: 20px; border-radius: 22px; }
+  .feature-grid,
+  .method-grid,
+  .secondary-grid,
+  .stack-grid,
+  .info-grid { grid-template-columns: 1fr; }
+  .section-head, .footer { flex-direction: column; align-items: flex-start; }
+  .hero-title { max-width: 100%; }
 }
 `
+
+function InteractiveCard({ className = '', children }: { className?: string; children: React.ReactNode }) {
+  const [style, setStyle] = useState<React.CSSProperties>({})
+
+  const handleMove = (event: React.MouseEvent<HTMLDivElement>) => {
+    const rect = event.currentTarget.getBoundingClientRect()
+    const x = ((event.clientX - rect.left) / rect.width) * 100
+    const y = ((event.clientY - rect.top) / rect.height) * 100
+    setStyle({ ['--mx' as string]: `${x}%`, ['--my' as string]: `${y}%` })
+  }
+
+  return (
+    <div className={`interactive ${className}`.trim()} style={style} onMouseMove={handleMove}>
+      {children}
+    </div>
+  )
+}
+
+function App() {
+  const keywordChips = useMemo(
+    () => ['Data Science', 'AI aplicada', 'Analytics', 'Product thinking', 'Automation', 'Healthcare ops', 'System design'],
+    [],
+  )
+
+  return (
+    <div className="page">
+      <style>{styles}</style>
+      <div className="backdrop" />
+      <div className="backdrop-2" />
+
+      <div className="shell">
+        <header className="topbar">
+          <div className="brand">
+            <div className="brand-mark">AD</div>
+            <div className="brand-copy">
+              <strong>Agustín Delgado</strong>
+              <span>Data Science · AI · Analytics · Product-minded systems</span>
+            </div>
+          </div>
+
+          <nav className="nav">
+            <a href="#work">Proyectos</a>
+            <a href="#method">Enfoque</a>
+            <a href="#stack">Stack</a>
+            <a href="#legal">Legal</a>
+            <a href="#contact">Contacto</a>
+          </nav>
+        </header>
+
+        <main>
+          <section className="hero">
+            <div className="hero-main panel">
+              <div className="kicker-row">
+                <span className="kicker">Portfolio único de Data Science + AI aplicada</span>
+                <span className="ghost-pill">Construido para mostrar sistema, criterio y ejecución</span>
+              </div>
+
+              <h1 className="hero-title">
+                Diseño <span>soluciones con datos, sistemas y AI</span> para problemas reales.
+              </h1>
+
+              <p className="hero-subcopy">
+                Estoy orientando mi perfil hacia Data Science e Inteligencia Artificial aplicada, pero sin caer en el truco universal de pegar tres buzzwords y esperar un milagro. Mi foco es construir una base confiable, convertir señales en decisiones y llevar esa lógica a productos, operaciones y demos defendibles.
+              </p>
+
+              <div className="hero-links">
+                <a className="button primary" href="#work">Explorar proyectos</a>
+                <a className="button secondary" href="#contact">Ver contacto</a>
+              </div>
+
+              <div className="word-grid">
+                {keywordChips.map((item) => (
+                  <span key={item} className="word-chip">{item}</span>
+                ))}
+              </div>
+            </div>
+
+            <div className="hero-side">
+              <div className="info-card panel">
+                <span className="panel-kicker">Posicionamiento</span>
+                <h2 className="panel-title">Perfil híbrido entre analytics, sistemas y AI aplicada.</h2>
+                <div className="info-grid">
+                  <div className="stat">
+                    <strong>3 proyectos ancla</strong>
+                    <span>Paradise, Mi Consultorio y Paradigm como núcleo del relato.</span>
+                  </div>
+                  <div className="stat">
+                    <strong>End-to-end</strong>
+                    <span>Problema, diseño, implementación y demo explicable.</span>
+                  </div>
+                  <div className="stat">
+                    <strong>Salud + producto</strong>
+                    <span>Experiencia en contexto operativo real y visión de sistema.</span>
+                  </div>
+                  <div className="stat">
+                    <strong>AI con criterio</strong>
+                    <span>Aplicada donde suma capacidad, no decoración de marketing.</span>
+                  </div>
+                </div>
+              </div>
+
+              <div className="signal-card panel">
+                <span className="panel-kicker">Señales clave</span>
+                <h2 className="panel-title">Lo que busco transmitir cuando alguien entra al portfolio.</h2>
+                <div className="signal-list">
+                  {['Business context', 'Reproducibility', 'Interactive demos', 'System thinking', 'Operational value', 'AI applied'].map((item) => (
+                    <span key={item} className="meta-pill">{item}</span>
+                  ))}
+                </div>
+              </div>
+            </div>
+          </section>
+
+          <section id="work">
+            <div className="section-head">
+              <div>
+                <span className="section-mark">Featured work</span>
+                <h2 className="section-title">Proyectos que sostienen el perfil</h2>
+              </div>
+              <p className="section-copy">
+                En vez de una colección de piezas sueltas, el portfolio se apoya en tres proyectos que explican una dirección profesional clara: producto, operación real y data science aplicada a decisión.
+              </p>
+            </div>
+
+            <div className="feature-grid">
+              {featuredProjects.map((project) => (
+                <InteractiveCard key={project.title} className={`project-card ${project.accent}`}>
+                  <div className="project-top">
+                    <span className="label-pill">{project.label}</span>
+                    <span className="ghost-pill">Proyecto ancla</span>
+                  </div>
+
+                  <h3 className="project-title">{project.title}</h3>
+                  <p className="project-headline">{project.headline}</p>
+                  <p className="project-summary">{project.summary}</p>
+
+                  <div className="subblock">
+                    <h4 className="subblock-title">Señales que comunica</h4>
+                    <div className="tag-grid">
+                      {project.signals.map((item) => (
+                        <span key={item} className="chip">{item}</span>
+                      ))}
+                    </div>
+                  </div>
+
+                  <div className="subblock">
+                    <h4 className="subblock-title">Stack / piezas clave</h4>
+                    <div className="tag-grid">
+                      {project.stack.map((item) => (
+                        <span key={item} className="chip">{item}</span>
+                      ))}
+                    </div>
+                  </div>
+                </InteractiveCard>
+              ))}
+            </div>
+          </section>
+
+          <section id="method">
+            <div className="section-head">
+              <div>
+                <span className="section-mark">How I build</span>
+                <h2 className="section-title">Cómo convierto una idea en una solución defendible</h2>
+              </div>
+              <p className="section-copy">
+                La lógica del portfolio es mostrar método además de resultado: entender contexto, ordenar la base, diseñar una salida útil y dejar una demo que se pueda explicar con claridad.
+              </p>
+            </div>
+
+            <div className="method-grid">
+              {methods.map((item) => (
+                <InteractiveCard key={item.index} className="method-card">
+                  <span className="method-index">{item.index}</span>
+                  <h3>{item.title}</h3>
+                  <p>{item.text}</p>
+                </InteractiveCard>
+              ))}
+            </div>
+          </section>
+
+          <section>
+            <div className="section-head">
+              <div>
+                <span className="section-mark">Additional projects</span>
+                <h2 className="section-title">Otros proyectos finalizados</h2>
+              </div>
+              <p className="section-copy">
+                Estas entregas acompañan el portfolio como respaldo práctico y muestran versatilidad en distintos tipos de implementación.
+              </p>
+            </div>
+
+            <div className="secondary-grid">
+              {secondaryProjects.map((project) => (
+                <InteractiveCard key={project.title} className="secondary-card">
+                  <span className="secondary-type">{project.type}</span>
+                  <h3>{project.title}</h3>
+                  <p>{project.description}</p>
+                </InteractiveCard>
+              ))}
+            </div>
+          </section>
+
+          <section id="stack">
+            <div className="section-head">
+              <div>
+                <span className="section-mark">Stack</span>
+                <h2 className="section-title">Tecnologías y áreas con las que trabajo</h2>
+              </div>
+              <p className="section-copy">
+                Más que listar herramientas, la idea es mostrar cómo se combinan para construir soluciones de analytics, automatización, producto y AI aplicada.
+              </p>
+            </div>
+
+            <div className="stack-grid">
+              {stackAreas.map((group) => (
+                <InteractiveCard key={group.title} className="stack-card">
+                  <h3>{group.title}</h3>
+                  <p>{group.description}</p>
+                  <ul>
+                    {group.items.map((item) => (
+                      <li key={item}>{item}</li>
+                    ))}
+                  </ul>
+                </InteractiveCard>
+              ))}
+            </div>
+          </section>
+
+          <section id="contact">
+            <div className="section-head">
+              <div>
+                <span className="section-mark">Contact</span>
+                <h2 className="section-title">Perfil, contacto y siguiente paso</h2>
+              </div>
+              <p className="section-copy">
+                Este portfolio busca funcionar como puerta de entrada a conversaciones sobre producto, analytics, data science y AI aplicada a entornos reales.
+              </p>
+            </div>
+
+            <div className="contact-grid">
+              <InteractiveCard className="contact-card">
+                <h3>Sobre mí</h3>
+                <p>
+                  Vengo del análisis de datos aplicado a operación real, especialmente en salud, y estoy empujando ese recorrido hacia una propuesta más sólida en Data Science e Inteligencia Artificial aplicada. Mi diferencial está en unir contexto de negocio, diseño de sistema y ejecución técnica sin perder claridad.
+                </p>
+              </InteractiveCard>
+
+              <InteractiveCard className="contact-card">
+                <h3>Canales</h3>
+                <p>
+                  Podés usar esta zona para llevar el portfolio a su versión pública final con enlaces directos a LinkedIn, GitHub y contacto profesional.
+                </p>
+                <div className="contact-links">
+                  {contactLinks.map((item) => (
+                    <a key={item.label} className="contact-link" href={item.href} target="_blank" rel="noreferrer">
+                      {item.label}
+                    </a>
+                  ))}
+                </div>
+              </InteractiveCard>
+            </div>
+          </section>
+
+          <section id="legal">
+            <div className="section-head">
+              <div>
+                <span className="section-mark">Legal</span>
+                <h2 className="section-title">Notas legales y alcance del portfolio</h2>
+              </div>
+              <p className="section-copy">
+                Un bloque simple, prolijo y habitual para aclarar contexto, propiedad y uso responsable de demos, marcas y datos presentados.
+              </p>
+            </div>
+
+            <div className="legal-layout">
+              <InteractiveCard className="legal-card">
+                <h3>Alcance</h3>
+                <ul className="legal-list">
+                  <li>Algunos proyectos corresponden a productos en evolución y pueden cambiar con nuevas iteraciones.</li>
+                  <li>Las demos, capturas o ejemplos pueden incluir datos sintéticos, de prueba o anonimizados.</li>
+                  <li>Este sitio tiene fines profesionales y de portfolio: no constituye oferta comercial formal ni documentación contractual.</li>
+                </ul>
+              </InteractiveCard>
+
+              <InteractiveCard className="legal-card">
+                <h3>Propiedad y referencias</h3>
+                <ul className="legal-list">
+                  <li>Las marcas, nombres de proyectos y materiales asociados pertenecen a sus respectivos contextos de uso.</li>
+                  <li>El contenido visual y textual del portfolio fue curado para mostrar capacidades, enfoque y experiencia profesional.</li>
+                  <li>Para colaboraciones, entrevistas o demos privadas, el contacto se canaliza por los medios indicados arriba.</li>
+                </ul>
+              </InteractiveCard>
+            </div>
+          </section>
+        </main>
+
+        <footer className="footer">
+          <span>Portfolio — Agustín Delgado</span>
+          <span>Data Science · AI · Analytics · Product-minded systems</span>
+        </footer>
+      </div>
+    </div>
+  )
+}
+
+export default App
