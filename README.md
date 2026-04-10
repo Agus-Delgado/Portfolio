@@ -1,54 +1,70 @@
-# Portfolio - Agustín Delgado
+# Portfolio — Agustín Delgado
 
-Portfolio web profesional de Agustín Delgado, orientado a **Data Analytics** y **Business Intelligence**.
+Portfolio web profesional orientado a **Data Science aplicada**, **Inteligencia Artificial**, **Machine Learning** y **sistemas con criterio de producto**.
 
-Este sitio presenta mi experiencia trabajando con datos en contextos reales, especialmente en el sector salud, junto con proyectos enfocados en dashboards, KPIs, reporting, automatización y mejora de procesos. El portfolio fue rediseñado para reflejar una narrativa clara de **Data Analyst / BI Analyst**, priorizando casos concretos, impacto operativo y toma de decisiones basada en datos.
+Este sitio presenta mi perfil profesional, experiencia en entornos reales y una selección de proyectos centrados en analítica aplicada, automatización, arquitectura de soluciones y desarrollo de productos de datos e IA. El portfolio fue rediseñado para transmitir una narrativa más clara de **Applied AI / ML / Data Systems**, con foco en casos concretos, operación real y soluciones defendibles en entrevista.
 
 ## 🎯 Objetivo del Portfolio
 
 Mostrar de forma clara y profesional:
 
-- experiencia práctica con datos en operación real,
-- proyectos con narrativa BI,
-- herramientas y stack analítico,
-- enfoque en métricas, reporting y automatización,
-- capacidad para transformar datos en información útil para el negocio.
+- experiencia construyendo soluciones de datos e IA aplicadas a negocio y operación,
+- proyectos con enfoque end-to-end,
+- capacidad para conectar modelos, APIs, datos e interfaz,
+- criterio de producto en el diseño de sistemas,
+- experiencia en contextos reales, especialmente en salud y entornos regulados.
 
 ## 💼 Perfil Profesional
 
-**Data Analyst | BI Analyst**
+**IA Aplicada · Machine Learning · Sistemas**
 
-Trabajo con SQL, Power BI, Excel y Python para analizar información, construir indicadores, automatizar procesos y mejorar la toma de decisiones.
+Trabajo en la intersección entre datos, producto y operación, diseñando soluciones que combinan:
 
-Mi experiencia en salud me permitió trabajar con:
+- analítica aplicada,
+- machine learning,
+- APIs y servicios,
+- capas de datos confiables,
+- interfaces orientadas a uso real.
 
-- métricas operativas y financieras,
-- reporting automatizado,
-- dashboards de seguimiento,
-- migración de información a entornos más consultables,
-- mejora continua de procesos a partir de datos.
+Mi experiencia en salud me permitió desarrollar una mirada fuerte sobre sistemas, trazabilidad, operación y decisiones en contextos donde la claridad y la confiabilidad no son opcionales.
 
 ## 📌 Proyectos Destacados
 
-- **Mi Consultorio**  
-  Sistema integral de gestión para consultorio médico, con foco en operación diaria, seguimiento, métricas, reporting y automatización de tareas administrativas.
+### Paradise
 
-- **SmartClinic No-Show Predictor**  
-  Proyecto analítico orientado a detectar riesgo de ausentismo en turnos médicos y visualizarlo en Power BI para facilitar acciones operativas.
+Ecosistema modular AI-first pensado como una plataforma adaptable, con enfoque SaaS, arquitectura por módulos y una visión orientada a producto, personalización y evolución continua.
 
-- **ModelArc**  
-  Caso centrado en lectura de desempeño mediante KPIs, comparativas y visualización orientada a análisis.
+### Mi Consultorio
+
+Sistema integral de gestión para consultorio médico, desarrollado para operación real, con foco en historias clínicas, turnos, recetas, caja, métricas y flujos administrativos en salud.
+
+### Paradigm
+
+Proyecto orientado a analítica aplicada y exploración inteligente de datos, pensado como puente entre análisis tradicional, automatización e incorporación progresiva de lógica de IA.
 
 ## 🛠️ Stack Principal
 
+- **Python**
+- **FastAPI**
+- **Machine Learning**
+- **LLMs**
+- **RAG**
+- **React**
+- **TypeScript / JavaScript**
+- **PostgreSQL**
 - **SQL**
 - **Power BI**
-- **Excel**
-- **Python**
-- **ETL / Data Cleaning**
-- **KPI Design**
-- **Reporting Automation**
-- **Data Modeling**
+- **Django**
+
+## 🧩 Enfoque
+
+Este portfolio no está pensado como una colección suelta de proyectos, sino como una muestra de cómo trabajo:
+
+- parto de un problema real,
+- diseño una solución técnicamente sólida,
+- conecto datos, lógica y experiencia de uso,
+- priorizo claridad, trazabilidad y aplicabilidad,
+- y busco que cada proyecto sea explicable, útil y defendible.
 
 ## 🚀 Inicio Rápido
 
@@ -82,12 +98,21 @@ vercel
 ## 📁 Estructura del Proyecto
 
 ```text
-portfolio-agustin/
+portfolio/
 ├── public/
 │   └── favicon.svg
 ├── src/
-│   ├── App.tsx / App.jsx   # Componente principal del portfolio
-│   └── main.jsx            # Punto de entrada
+│   ├── components/
+│   │   ├── Header.jsx
+│   │   ├── Hero.jsx
+│   │   ├── Projects.jsx
+│   │   ├── Approach.jsx
+│   │   ├── Stack.jsx
+│   │   ├── Contact.jsx
+│   │   └── Footer.jsx
+│   ├── App.jsx
+│   ├── main.jsx
+│   └── styles.css
 ├── index.html
 ├── package.json
 ├── vite.config.js
@@ -96,11 +121,13 @@ portfolio-agustin/
 
 ## ✏️ Personalización
 
-Podés modificar fácilmente:
+Podés adaptar fácilmente:
 
-- contenido: textos, experiencia, proyectos y stack
-- estilos: layout, jerarquía visual, spacing y componentes
-- links: contacto, LinkedIn, GitHub y enlaces externos
+- textos y propuesta profesional,
+- proyectos destacados y secundarios,
+- stack y tecnologías,
+- enlaces externos,
+- identidad visual, layout y microinteracciones.
 
 ## 🌐 Enlaces
 
