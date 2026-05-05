@@ -3,8 +3,8 @@ import React from 'react'
 const principles = [
   {
     index: '01',
-    title: 'Problema primero, herramienta después',
-    body: 'Parto del flujo de decisión y las restricciones reales. Los modelos y las APIs entran cuando hay un criterio claro de éxito.',
+    title: 'Diagnóstico',
+    body: 'Entiendo el problema antes de automatizar o construir.',
     accent: 'emerald',
     icon: (
       <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round">
@@ -15,8 +15,8 @@ const principles = [
   },
   {
     index: '02',
-    title: 'Datos trazables y reproducibles',
-    body: 'Pipelines, validaciones y versionado que sostienen métricas y despliegues. Sin eso, el modelo no escala.',
+    title: 'Datos y estructura',
+    body: 'Trabajo con limpieza, modelado, documentación y trazabilidad.',
     accent: 'sky',
     icon: (
       <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round">
@@ -28,8 +28,8 @@ const principles = [
   },
   {
     index: '03',
-    title: 'Salidas útiles en producción',
-    body: 'API, panel o integración: la salida tiene dueño en operación y se puede mantener con el equipo.',
+    title: 'Automatización e IA',
+    body: 'Busco reducir trabajo manual usando Python, SQL, workflows e inteligencia artificial.',
     accent: 'violet',
     icon: (
       <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round">
@@ -40,8 +40,8 @@ const principles = [
   },
   {
     index: '04',
-    title: 'Narrativa técnica clara',
-    body: 'Cada pieza se puede explicar con diagrama simple, contratos y trade-offs — útil para revisión con producto o ingeniería.',
+    title: 'Producto y entrega',
+    body: 'Construyo soluciones presentables, usables y pensadas para clientes o equipos reales.',
     accent: 'amber',
     icon: (
       <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round">
@@ -58,10 +58,10 @@ export default function Approach() {
         <div className="approach-left fade-in">
           <span className="section-label">Enfoque</span>
           <h2 className="display-lg">
-            Cómo <span className="grad-text-emerald">encajo</span> las piezas
+            Cómo <span className="grad-text-emerald">trabajo</span>
           </h2>
           <p className="approach-intro">
-            Menos lista de herramientas y más orden: problema, datos, interfaz de salida y criterio de release.
+            Un proceso simple y repetible para pasar de una necesidad real a una solución usable y defendible.
           </p>
           <a className="approach-cta" href="#contacto">
             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" aria-hidden>

@@ -9,6 +9,13 @@ const featuredProjects = [
     tagline: 'Línea de producto modular orientada a flujos con modelos.',
     description:
       'Arquitectura multi-tenant, superficie web cuidada y convenciones para evolucionar features sin fragmentar el sistema. Pensado como ecosistema SaaS, no como demo aislada.',
+    problem: 'Ordenar un ecosistema de módulos con IA, datos, interfaces y lógica de negocio sin caer en proyectos sueltos imposibles de mantener.',
+    role: 'Diseño de arquitectura, definición de módulos, contratos conceptuales, UX de producto y evolución iterativa del sistema.',
+    impact: 'Muestra criterio de producto, pensamiento sistémico y capacidad para convertir una idea amplia en una plataforma modular defendible.',
+    impactHighlight:
+      'Impacto: ecosistema AI-first modular con múltiples productos conectados bajo una arquitectura evolutiva.',
+    highlights: ['Arquitectura por módulos', 'Nimbus como capa de conexión', 'Paradise AI como interfaz central', 'Roadmap evolutivo SaaS'],
+    artifacts: ['Landing + manifesto', 'Módulos verticales', 'Contratos y convenciones', 'Iteración continua con Git'],
     accent: 'sky',
     accentColor: '#38b8f5',
     stack: ['React', 'TypeScript', 'System design', 'API contracts', 'Product iteration'],
@@ -27,6 +34,13 @@ const featuredProjects = [
     tagline: 'Sistema clínico en producción con usuarios reales.',
     description:
       'Agenda, historias clínicas, caja, roles y reporting. PostgreSQL en Render, automatización de emails, PWA y operación diaria en clínicas argentinas.',
+    problem: 'Digitalizar operación clínica diaria donde los errores de agenda, caja o historia clínica impactan directamente en usuarios reales.',
+    role: 'Desarrollo full-stack, modelado de datos, gestión de roles, automatizaciones, despliegue y mejoras continuas sobre feedback operativo.',
+    impact: 'Proyecto con uso real: prueba capacidad de construir software mantenible, no solo notebooks o prototipos lindos para la foto.',
+    impactHighlight:
+      'Impacto: solución web orientada a turnos, gestión profesional y presencia digital para servicios de salud.',
+    highlights: ['Usuarios reales', 'Historias clínicas y agenda', 'Caja y reporting', 'Automatización de emails'],
+    artifacts: ['PWA operativa', 'Base PostgreSQL', 'Roles y permisos', 'Deploy en Render'],
     accent: 'violet',
     accentColor: '#8b6fff',
     stack: ['Python', 'Django', 'PostgreSQL', 'PWA', 'REST', 'Email automation'],
@@ -45,6 +59,13 @@ const featuredProjects = [
     tagline: 'Marco para integrar modelos, APIs y releases con criterio único.',
     description:
       'Capa de convenciones y componentes que alinean datos, evaluación y experiencia cuando el producto incorpora IA. Prioriza trazabilidad, contratos claros y despliegues revisables.',
+    problem: 'Evitar que la IA quede como experimento aislado: integrar modelos, datos, APIs y reporting con una disciplina clara de release.',
+    role: 'Diseño del framework, generación de datos sintéticos, validaciones, documentación técnica y empaquetado del caso para portfolio internacional.',
+    impact: 'Comunica madurez técnica: evaluación, reproducibilidad y narrativa ejecutiva para explicar decisiones a negocio e ingeniería.',
+    impactHighlight:
+      'Impacto: proyecto internacional de análisis de datos con pipeline reproducible, documentación y enfoque de portfolio profesional.',
+    highlights: ['Dataset sintético', 'Validaciones reproducibles', 'Quality report', 'Tag de versión estable'],
+    artifacts: ['Scripts Python', 'Reportes Markdown', 'README de proyecto', 'Release/tag en Git'],
     accent: 'emerald',
     accentColor: '#00d4b0',
     stack: ['Python', 'FastAPI', 'LLMs', 'Evaluación', 'Observabilidad ligera'],
@@ -95,6 +116,7 @@ export default function Projects() {
   useEffect(() => {
     const d = dialogRef.current
     if (!d) return
+    document.body.classList.toggle('project-dialog-is-open', Boolean(openProject))
     if (openProject) {
       if (!d.open) d.showModal()
       requestAnimationFrame(() => {
@@ -103,6 +125,10 @@ export default function Projects() {
       })
     } else if (d.open) {
       d.close()
+    }
+
+    return () => {
+      document.body.classList.remove('project-dialog-is-open')
     }
   }, [openProject])
 
@@ -188,7 +214,7 @@ export default function Projects() {
 
       <dialog
         ref={dialogRef}
-        className="project-dialog"
+        className={`project-dialog project-dialog--${openProject?.accent ?? 'neutral'}`}
         aria-labelledby="project-dialog-title"
       >
         {openProject && (
@@ -202,17 +228,44 @@ export default function Projects() {
                 {openProject.title}
               </h3>
               <p className="project-dialog-tagline">{openProject.tagline}</p>
+              <p className="project-impact-callout">{openProject.impactHighlight}</p>
             </header>
 
             <div className="project-dialog-body">
               <p className="project-dialog-desc">{openProject.description}</p>
 
+              <div className="project-dialog-story-grid">
+                <div className="project-dialog-story-card">
+                  <div className="project-dialog-section-label">Problema</div>
+                  <p>{openProject.problem}</p>
+                </div>
+                <div className="project-dialog-story-card">
+                  <div className="project-dialog-section-label">Mi rol</div>
+                  <p>{openProject.role}</p>
+                </div>
+                <div className="project-dialog-story-card">
+                  <div className="project-dialog-section-label">Valor</div>
+                  <p>{openProject.impact}</p>
+                </div>
+              </div>
+
               <div className="project-dialog-section">
-                <div className="project-dialog-section-label">Señales</div>
-                <div className="project-signals">
-                  {openProject.signals.map((s) => (
-                    <span key={s} className={`signal-tag ${openProject.accent}`}>
-                      {s}
+                <div className="project-dialog-section-label">Qué demuestra</div>
+                <div className="project-dialog-list-grid">
+                  {openProject.highlights.map((item) => (
+                    <span key={item} className={`signal-tag ${openProject.accent}`}>
+                      {item}
+                    </span>
+                  ))}
+                </div>
+              </div>
+
+              <div className="project-dialog-section">
+                <div className="project-dialog-section-label">Artefactos / entregables</div>
+                <div className="project-dialog-list-grid">
+                  {openProject.artifacts.map((item) => (
+                    <span key={item} className="project-artifact-pill">
+                      {item}
                     </span>
                   ))}
                 </div>

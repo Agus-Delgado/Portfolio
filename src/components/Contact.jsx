@@ -88,7 +88,28 @@ export default function Contact() {
         </div>
 
         <div className="about-card card card--spotlight fade-in fade-in-delay-2">
-          <div className="about-title">Sobre mí</div>
+          <div className="profile-strip">
+            <img
+              src="/img/foto.jpg"
+              alt="Foto de perfil de Agustin Delki"
+              loading="lazy"
+              width="160"
+              height="160"
+              style={{
+                width: 'clamp(112px, 30vw, 160px)',
+                height: 'clamp(112px, 30vw, 160px)',
+                borderRadius: '999px',
+                objectFit: 'cover',
+                border: '2px solid rgba(34, 211, 238, 0.7)',
+                boxShadow: '0 0 32px rgba(34, 211, 238, 0.25)',
+              }}
+            />
+            <div>
+              <div className="about-title">Sobre mí</div>
+              <p className="profile-note">Perfil técnico con foco en datos, IA aplicada y producto.</p>
+            </div>
+          </div>
+
           <p className="about-text">
             Paso por operación y salud: problemas con usuarios reales, datos incompletos y releases que no pueden
             romperse. Hoy enfoco el stack en <span className="prose-em">IA aplicada</span>,{' '}

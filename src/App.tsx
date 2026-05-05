@@ -753,6 +753,34 @@ section {
   border-color: rgba(97, 216, 255, 0.24);
 }
 
+.about-layout {
+  display: grid;
+  grid-template-columns: minmax(140px, 180px) minmax(0, 1fr);
+  gap: 20px;
+  align-items: center;
+}
+
+.about-photo-card {
+  border-radius: 24px;
+  padding: 10px;
+  border: 1px solid rgba(97, 216, 255, 0.28);
+  background: linear-gradient(180deg, rgba(12, 24, 41, 0.7), rgba(8, 16, 29, 0.84));
+  box-shadow: 0 0 0 1px rgba(97, 216, 255, 0.1), 0 0 24px rgba(97, 216, 255, 0.2);
+}
+
+.about-photo {
+  width: 100%;
+  aspect-ratio: 1;
+  object-fit: cover;
+  border-radius: 18px;
+  border: 1px solid rgba(170, 190, 240, 0.16);
+  box-shadow: 0 14px 32px rgba(0, 0, 0, 0.34);
+}
+
+.about-body p {
+  margin: 0;
+}
+
 .legal-layout {
   display: grid;
   grid-template-columns: 1.15fr 0.85fr;
@@ -790,6 +818,8 @@ section {
   .shell { width: min(100% - 24px, 1180px); }
   .topbar { position: static; flex-direction: column; align-items: flex-start; }
   .hero { grid-template-columns: 1fr; padding-top: 20px; }
+  .about-layout { grid-template-columns: 1fr; }
+  .about-photo-card { max-width: 180px; }
   .hero-main, .info-card, .signal-card, .project-card, .method-card, .secondary-card, .stack-card, .contact-card, .legal-card { padding: 20px; border-radius: 22px; }
   .feature-grid,
   .method-grid,
@@ -1042,9 +1072,21 @@ function App() {
             <div className="contact-grid">
               <InteractiveCard className="contact-card">
                 <h3>Sobre mí</h3>
-                <p>
-                  Vengo del análisis de datos aplicado a operación real, especialmente en salud, y estoy empujando ese recorrido hacia una propuesta más sólida en Data Science e Inteligencia Artificial aplicada. Mi diferencial está en unir contexto de negocio, diseño de sistema y ejecución técnica sin perder claridad.
-                </p>
+                <div className="about-layout">
+                  <div className="about-photo-card">
+                    <img
+                      className="about-photo"
+                      src="/img/foto.jpg"
+                      alt="Foto de perfil de Agustin Delki"
+                      loading="lazy"
+                    />
+                  </div>
+                  <div className="about-body">
+                    <p>
+                      Vengo del análisis de datos aplicado a operación real, especialmente en salud, y estoy empujando ese recorrido hacia una propuesta más sólida en Data Science e Inteligencia Artificial aplicada. Mi diferencial está en unir contexto de negocio, diseño de sistema y ejecución técnica sin perder claridad.
+                    </p>
+                  </div>
+                </div>
               </InteractiveCard>
 
               <InteractiveCard className="contact-card">
