@@ -79,6 +79,7 @@ const featuredProjects = [
         <path d="M8 7h8M8 11h8M8 15h5" />
       </svg>
     ),
+    projectUrl: 'https://paradigm-web-swart.vercel.app/',
   },
 ]
 
