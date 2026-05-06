@@ -25,6 +25,7 @@ const featuredProjects = [
         <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5" />
       </svg>
     ),
+    projectUrl: 'https://paradise-web-alpha.vercel.app/',
   },
   {
     id: 'miconsultorio',
@@ -50,6 +51,7 @@ const featuredProjects = [
         <path d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
       </svg>
     ),
+    projectUrl: 'https://miconsultoriopaginaweb.vercel.app/',
   },
   {
     id: 'paradigm',
@@ -284,6 +286,16 @@ export default function Projects() {
             </div>
 
             <footer className="project-dialog-footer">
+              {openProject.projectUrl ? (
+                <a
+                  href={openProject.projectUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="btn project-dialog-external"
+                >
+                  Ver página del proyecto
+                </a>
+              ) : null}
               <button
                 type="button"
                 className="btn btn-ghost project-dialog-close"

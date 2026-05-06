@@ -1450,8 +1450,31 @@ body.has-custom-cursor.project-dialog-is-open a {
   border-top: 1px solid rgba(100, 180, 255, 0.12);
   flex-shrink: 0;
   display: flex;
+  align-items: center;
   justify-content: flex-end;
+  flex-wrap: wrap;
+  gap: 12px;
   background: linear-gradient(180deg, transparent, rgba(2, 6, 8, 0.28));
+}
+
+.project-dialog .project-dialog-external {
+  text-decoration: none;
+  min-width: 128px;
+  color: #020608;
+  font-weight: 700;
+  background: var(--dialog-accent);
+  border: 1px solid transparent;
+  box-shadow: 0 0 28px rgba(0, 0, 0, 0.35);
+}
+
+.project-dialog .project-dialog-external:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 10px 32px rgba(0, 0, 0, 0.45);
+}
+
+.project-dialog .project-dialog-external:focus-visible {
+  outline: 2px solid var(--dialog-accent);
+  outline-offset: 2px;
 }
 
 .project-dialog-close {
