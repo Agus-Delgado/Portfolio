@@ -2,56 +2,70 @@ import React from 'react'
 
 const stackGroups = [
   {
-    id: 'ai',
-    accent: 'emerald',
-    label: 'IA & ML aplicado',
-    description: 'Diseño de prompts, RAG, evaluación y despliegue cuando el modelo es parte del producto.',
+    id: 'data',
+    accent: 'sky',
+    label: 'Datos & BI',
+    description: 'SQL, modelado, limpieza y reporting cuando la decisión pasa por números claros y auditables.',
     items: [
-      { name: 'LLMs', note: 'GPT-4o · Gemini · DeepSeek' },
-      { name: 'RAG', note: 'retrieval + grounding' },
-      { name: 'LangChain', note: 'orquestación' },
-      { name: 'scikit-learn', note: 'ML clásico' },
-      { name: 'Vector DB', note: 'búsqueda semántica' },
-      { name: 'Evaluación', note: 'métricas de calidad' },
+      { name: 'SQL', note: 'PostgreSQL · consultas' },
+      { name: 'Power BI', note: 'tableros · KPIs' },
+      { name: 'Python', note: 'pandas · análisis' },
+      { name: 'Excel', note: 'carga · validación' },
+      { name: 'ETL', note: 'pipelines' },
+      { name: 'Reporting', note: 'data cleaning' },
     ],
   },
   {
     id: 'eng',
     accent: 'violet',
-    label: 'Ingeniería & producto',
-    description: 'Servicios, contratos y frontends que sostienen releases frecuentes y operación.',
+    label: 'Automatización & desarrollo',
+    description: 'Servicios, bases de datos y despliegue para sostener automatizaciones y herramientas internas.',
     items: [
-      { name: 'FastAPI', note: 'REST · async' },
+      { name: 'Python', note: 'scripts · APIs' },
       { name: 'Django', note: 'full-stack' },
-      { name: 'React', note: 'TypeScript · Vite' },
-      { name: 'Docker', note: 'empaquetado' },
+      { name: 'FastAPI', note: 'REST · async' },
+      { name: 'PostgreSQL', note: 'modelado' },
       { name: 'Git / GitHub', note: 'flujo de cambios' },
-      { name: 'Vercel · Render', note: 'deploy' },
+      { name: 'Vercel · Render', note: 'Cloudflare' },
     ],
   },
   {
-    id: 'data',
-    accent: 'sky',
-    label: 'Datos & analítica',
-    description: 'SQL, modelado y reporting cuando la decisión pasa por números auditables.',
+    id: 'ai',
+    accent: 'emerald',
+    label: 'IA aplicada',
+    description: 'IA generativa y ML ligero cuando aceleran análisis o reducen trabajo manual — sin reemplazar el criterio analítico.',
     items: [
-      { name: 'Python', note: 'pandas · numpy' },
-      { name: 'SQL', note: 'PostgreSQL · Supabase' },
-      { name: 'Power BI', note: 'tableros' },
-      { name: 'Tableau', note: 'visualización' },
-      { name: 'Modelado', note: 'KPIs' },
-      { name: 'ETL', note: 'pipelines' },
+      { name: 'Generative AI', note: 'GPT · Gemini' },
+      { name: 'Prompt engineering', note: 'workflows' },
+      { name: 'LLMs', note: 'casos acotados' },
+      { name: 'RAG', note: 'conceptos básicos' },
+      { name: 'scikit-learn', note: 'ML clásico' },
+      { name: 'AI-assisted flows', note: 'automatización' },
     ],
   },
 ]
 
-const certifications = [
-  'Data Science · IBM',
-  'Machine Learning · Coursera',
-  'Python for Data Science',
-  'SQL Advanced',
-  'Power BI · Microsoft',
-  'AI Fundamentals',
+const continuousLearning = [
+  {
+    title: 'IBM Generative AI Engineering Professional Certificate',
+    status: 'in_progress',
+    statusLabel: 'En curso',
+  },
+  {
+    title: 'English for Career Development — University of Pennsylvania',
+    status: 'in_progress',
+    statusLabel: 'En curso',
+  },
+  {
+    title: 'Data Analytics Program — Coderhouse',
+    status: 'completed',
+    statusLabel: 'Completado',
+  },
+  {
+    title: 'Formación seleccionada en analítica, BI, Python e IA aplicada',
+    status: 'coursework',
+    statusLabel: 'Formación',
+  },
 ]
 
 export default function Stack() {
@@ -90,16 +104,16 @@ export default function Stack() {
         ))}
       </div>
 
-      <div className="certs-row fade-in">
-        <span className="certs-label">Certificaciones</span>
-        <div className="certs-list">
-          {certifications.map((cert) => (
-            <span key={cert} className="pill">
-              <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" aria-hidden>
-                <polyline points="20 6 9 17 4 12" />
-              </svg>
-              {cert}
-            </span>
+      <div className="learning-row fade-in">
+        <span className="learning-label">Aprendizaje continuo</span>
+        <div className="learning-list">
+          {continuousLearning.map((item) => (
+            <div key={item.title} className="learning-item">
+              <span className="learning-title">{item.title}</span>
+              <span className={`learning-status learning-status--${item.status}`}>
+                {item.statusLabel}
+              </span>
+            </div>
           ))}
         </div>
       </div>

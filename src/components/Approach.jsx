@@ -3,8 +3,8 @@ import React from 'react'
 const principles = [
   {
     index: '01',
-    title: 'Diagnóstico',
-    body: 'Entiendo el problema antes de automatizar o construir.',
+    title: 'Problema real primero',
+    body: 'Entiendo el proceso, quién lo usa y qué decisión hay que mejorar antes de elegir herramientas o automatizar.',
     accent: 'emerald',
     icon: (
       <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round">
@@ -15,8 +15,8 @@ const principles = [
   },
   {
     index: '02',
-    title: 'Datos y estructura',
-    body: 'Trabajo con limpieza, modelado, documentación y trazabilidad.',
+    title: 'Datos y claridad',
+    body: 'Limpio, modelo y documento datos para que reportes, KPIs y tableros reflejen la operación con trazabilidad.',
     accent: 'sky',
     icon: (
       <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round">
@@ -28,8 +28,8 @@ const principles = [
   },
   {
     index: '03',
-    title: 'Automatización e IA',
-    body: 'Busco reducir trabajo manual usando Python, SQL, workflows e inteligencia artificial.',
+    title: 'Automatización e IA aplicada',
+    body: 'Uso Python, SQL y workflows —y IA cuando suma— para reducir trabajo manual y mejorar la lectura de datos.',
     accent: 'violet',
     icon: (
       <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round">
@@ -40,8 +40,8 @@ const principles = [
   },
   {
     index: '04',
-    title: 'Producto y entrega',
-    body: 'Construyo soluciones presentables, usables y pensadas para clientes o equipos reales.',
+    title: 'Entrega usable',
+    body: 'Construyo soluciones que equipos o clientes pueden usar, mantener y explicar — no demos desconectadas.',
     accent: 'amber',
     icon: (
       <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round">
@@ -61,7 +61,9 @@ export default function Approach() {
             Cómo <span className="grad-text-emerald">trabajo</span>
           </h2>
           <p className="approach-intro">
-            Un proceso simple y repetible para pasar de una necesidad real a una solución usable y defendible.
+            Mi experiencia en operación y salud me enseñó a trabajar con usuarios reales, datos
+            incompletos y restricciones del día a día. Hoy conecto analítica, BI y automatización con
+            IA aplicada solo donde aporta valor concreto.
           </p>
           <a className="approach-cta" href="#contacto">
             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" aria-hidden>

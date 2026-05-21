@@ -17,21 +17,23 @@ export default function Header() {
     return () => window.removeEventListener('scroll', onScroll)
   }, [])
 
+  const handleNavClick = () => setMenuOpen(false)
+
   return (
-    <div className="header-wrap">
+    <header className="header-wrap site-header" role="banner">
       <div className={`header ${scrolled ? 'scrolled' : ''}`}>
         <a className="brand" href="#">
           <div className="brand-logo brand-spotlight">AD</div>
           <div className="brand-text">
-            <div className="brand-name">Agustín Delgado</div>
-            <div className="brand-role">Applied AI · sistemas · producto</div>
+            <div className="brand-name safe-text-render">Agustín Delgado</div>
+            <div className="brand-role">Data Analyst · BI · Applied AI</div>
           </div>
         </a>
 
         <nav className="nav-rail" aria-label="Principal">
           <div className="nav">
             {navLinks.map((link) => (
-              <a key={link.href} href={link.href}>
+              <a key={link.href} href={link.href} onClick={handleNavClick}>
                 {link.label}
               </a>
             ))}
@@ -60,11 +62,11 @@ export default function Header() {
 
       <nav className={`mobile-nav ${menuOpen ? 'open' : ''}`} aria-label="Móvil">
         {navLinks.map((link) => (
-          <a key={link.href} href={link.href} onClick={() => setMenuOpen(false)}>
+          <a key={link.href} href={link.href} onClick={handleNavClick}>
             {link.label}
           </a>
         ))}
       </nav>
-    </div>
+    </header>
   )
 }

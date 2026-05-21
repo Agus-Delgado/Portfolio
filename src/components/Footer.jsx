@@ -5,6 +5,8 @@ const footerLinks = [
   { href: '#contacto', label: 'Contacto' },
   { href: 'https://www.linkedin.com/in/agustin-delgado-data98615190/', label: 'LinkedIn', external: true },
   { href: 'https://github.com/Agus-Delgado', label: 'GitHub', external: true },
+  { href: '/cv/Agustin_Delgado_CV_ES.pdf', label: 'CV (ES)', download: true },
+  { href: '/cv/Agustin_Delgado_CV_EN.pdf', label: 'CV (EN)', download: true },
   { href: 'mailto:augusto.delgado00@hotmail.com', label: 'Email' },
 ]
 
@@ -20,7 +22,7 @@ export default function Footer() {
           <div>
             <div className="footer-name">Agustín Delgado</div>
             <p className="footer-tagline">
-              IA aplicada, data science y sistemas — foco en producto y operación.
+              Data Analyst · BI — reporting, automatización e IA aplicada con foco en operación real.
             </p>
           </div>
         </div>
@@ -28,8 +30,9 @@ export default function Footer() {
         <nav className="footer-links" aria-label="Pie de página">
           {footerLinks.map((item) => (
             <a
-              key={item.href}
+              key={item.href + item.label}
               href={item.href}
+              {...(item.download ? { download: true } : {})}
               {...(item.external ? { target: '_blank', rel: 'noreferrer noopener' } : {})}
             >
               {item.label}

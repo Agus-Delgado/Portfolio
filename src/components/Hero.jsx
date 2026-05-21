@@ -1,21 +1,21 @@
 import React, { useState, useEffect } from 'react'
 
 const roles = [
-  'sistemas con IA aplicada',
-  'productos de datos',
-  'pipelines y APIs de ML',
+  'reportes y tableros accionables',
+  'automatización de procesos',
+  'análisis que reduce trabajo manual',
 ]
 
 const metrics = [
-  { value: '3+', label: 'Años en producción', sub: 'salud y operación' },
-  { value: 'Producción', label: 'Enfoque', sub: 'deploy y usuarios reales' },
-  { value: 'LLMs', label: 'Stack vivo', sub: 'RAG · APIs · evaluación' },
+  { value: '3+', label: 'Años en operación', sub: 'salud y procesos reales' },
+  { value: 'SQL · Python', label: 'Stack diario', sub: 'Power BI · Excel' },
+  { value: 'Producción', label: 'Enfoque', sub: 'usuarios y datos reales' },
   { value: 'Buenos Aires', label: 'Ubicación', sub: 'Argentina' },
 ]
 
-const focusTags = ['Contratos de API', 'Evaluación', 'Release seguro']
+const focusTags = ['Reporting', 'KPIs', 'Automatización', 'IA aplicada']
 
-const chips = ['Python', 'FastAPI', 'LLMs', 'RAG', 'React', 'TypeScript', 'PostgreSQL', 'HealthTech']
+const chips = ['SQL', 'Power BI', 'Python', 'Excel', 'Django', 'PostgreSQL', 'Automatización', 'HealthTech']
 
 export default function Hero() {
   const [roleIndex, setRoleIndex] = useState(0)
@@ -57,13 +57,17 @@ export default function Hero() {
               </div>
             </div>
 
-            <p className="hero-name">
-              <span className="hero-name-text">Agustín Delgado</span>
-              <span className="hero-name-line">ML Engineer · IA aplicada · sistemas</span>
+            <p className="hero-name safe-text-render">
+              <span className="hero-name-text safe-text-render">Agustín Delgado</span>
+              <span className="hero-name-line">
+                Data Analyst · Business Intelligence · Applied AI
+              </span>
             </p>
 
             <h1 className="hero-headline">
-              <span className="hero-headline-lead">Diseño y construyo</span>
+              <span className="hero-headline-lead">
+                Transformo datos y procesos en
+              </span>
               <span className="typewriter-wrap">
                 <span className="typewriter-line">
                   <span className="typewriter-text">{displayedRole}</span>
@@ -71,14 +75,15 @@ export default function Hero() {
                 </span>
               </span>
               <span className="hero-headline-lead hero-headline-trail">
-                para decisiones y operación reales.
+                para decisiones más claras en el día a día.
               </span>
             </h1>
 
             <p className="hero-subtitle">
-              Trabajo en <em>data science aplicada e IA</em> con criterio de producto: modelos y
-              pipelines conectados a APIs, interfaces y contexto de negocio — principalmente en{' '}
-              <em>salud y entornos regulados</em>.
+              Analizo datos, construyo reportes y automatizo tareas repetitivas con{' '}
+              <em>SQL, Python y Power BI</em>. La IA aplicada entra cuando acelera el análisis o
+              reduce trabajo manual — con experiencia en <em>salud y operación real</em>, donde los
+              datos son imperfectos y las decisiones importan.
             </p>
 
             <div className="hero-actions">
@@ -93,9 +98,6 @@ export default function Hero() {
                   />
                 </svg>
                 Ver proyectos
-              </a>
-              <a className="btn btn-ghost" href="#contacto">
-                Contacto
               </a>
               <a
                 className="btn btn-ghost"
@@ -137,11 +139,12 @@ export default function Hero() {
           <div className="hero-panel hero-panel--focus card card--spotlight fade-in fade-in-delay-2">
             <div className="hero-panel-title">Enfoque</div>
             <p className="hero-panel-body">
-              IA aplicada con trazabilidad: contratos claros, evaluación de modelos y releases que
-              respeten operación y usuarios reales.
+              Parto de problemas reales: entender el proceso, limpiar y modelar datos, y entregar
+              reportes o automatizaciones que el equipo pueda usar y mantener.
             </p>
             <p className="hero-panel-kicker">
-              Criterio de producto: lo que se despliega se puede explicar, medir y mantener.
+              La IA aplicada suma cuando reduce trabajo manual o mejora la lectura de datos — no
+              como reemplazo del análisis.
             </p>
             <div className="hero-focus-tags" aria-label="Señales de enfoque">
               {focusTags.map((t) => (

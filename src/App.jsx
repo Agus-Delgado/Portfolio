@@ -144,19 +144,17 @@ function App() {
       <div className="orb orb-3" />
 
       <div className="content-layer">
-        <div className="shell">
+        <div className="shell shell--site">
           <Header />
-          <Hero />
-        </div>
-
-        <div className="divider" />
-
-        <div className="shell">
-          <Projects />
-          <Approach />
-          <Stack />
-          <Contact />
-          <Footer />
+          <main className="site-main">
+            <Hero />
+            <div className="divider" />
+            <Projects />
+            <Approach />
+            <Stack />
+            <Contact />
+            <Footer />
+          </main>
         </div>
       </div>
     </div>

@@ -2,76 +2,31 @@ import React, { useState, useRef, useEffect } from 'react'
 
 const featuredProjects = [
   {
-    id: 'paradise',
-    rank: '01 — Featured',
-    label: 'SaaS · AI product',
-    title: 'Paradise',
-    tagline: 'Línea de producto modular orientada a flujos con modelos.',
-    description:
-      'Arquitectura multi-tenant, superficie web cuidada y convenciones para evolucionar features sin fragmentar el sistema. Pensado como ecosistema SaaS, no como demo aislada.',
-    problem: 'Ordenar un ecosistema de módulos con IA, datos, interfaces y lógica de negocio sin caer en proyectos sueltos imposibles de mantener.',
-    role: 'Diseño de arquitectura, definición de módulos, contratos conceptuales, UX de producto y evolución iterativa del sistema.',
-    impact: 'Muestra criterio de producto, pensamiento sistémico y capacidad para convertir una idea amplia en una plataforma modular defendible.',
-    impactHighlight:
-      'Impacto: ecosistema AI-first modular con múltiples productos conectados bajo una arquitectura evolutiva.',
-    highlights: ['Arquitectura por módulos', 'Nimbus como capa de conexión', 'Paradise AI como interfaz central', 'Roadmap evolutivo SaaS'],
-    artifacts: ['Landing + manifesto', 'Módulos verticales', 'Contratos y convenciones', 'Iteración continua con Git'],
-    accent: 'sky',
-    accentColor: '#38b8f5',
-    stack: ['React', 'TypeScript', 'System design', 'API contracts', 'Product iteration'],
-    signals: ['Product-led', 'Multi-tenant', 'Interfaces', 'Evolución continua'],
-    icon: (
-      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round">
-        <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5" />
-      </svg>
-    ),
-    projectUrl: 'https://paradise-web-alpha.vercel.app/',
-  },
-  {
-    id: 'miconsultorio',
-    rank: '02 — Featured',
-    label: 'SaaS · HealthOps',
-    title: 'Mi Consultorio',
-    tagline: 'Sistema clínico en producción con usuarios reales.',
-    description:
-      'Agenda, historias clínicas, caja, roles y reporting. PostgreSQL en Render, automatización de emails, PWA y operación diaria en clínicas argentinas.',
-    problem: 'Digitalizar operación clínica diaria donde los errores de agenda, caja o historia clínica impactan directamente en usuarios reales.',
-    role: 'Desarrollo full-stack, modelado de datos, gestión de roles, automatizaciones, despliegue y mejoras continuas sobre feedback operativo.',
-    impact: 'Proyecto con uso real: prueba capacidad de construir software mantenible, no solo notebooks o prototipos lindos para la foto.',
-    impactHighlight:
-      'Impacto: solución web orientada a turnos, gestión profesional y presencia digital para servicios de salud.',
-    highlights: ['Usuarios reales', 'Historias clínicas y agenda', 'Caja y reporting', 'Automatización de emails'],
-    artifacts: ['PWA operativa', 'Base PostgreSQL', 'Roles y permisos', 'Deploy en Render'],
-    accent: 'violet',
-    accentColor: '#8b6fff',
-    stack: ['Python', 'Django', 'PostgreSQL', 'PWA', 'REST', 'Email automation'],
-    signals: ['Producción', 'Usuarios reales', 'Health ops', 'Automatización'],
-    icon: (
-      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round">
-        <path d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
-      </svg>
-    ),
-    projectUrl: 'https://miconsultoriopaginaweb.vercel.app/',
-  },
-  {
     id: 'paradigm',
-    rank: '03 — Featured',
-    label: 'Framework · IA en producto',
+    rank: '01 — Featured',
+    label: 'Data & Analytics · Portfolio',
     title: 'Paradigm',
-    tagline: 'Marco para integrar modelos, APIs y releases con criterio único.',
+    tagline: 'De archivos Excel a exploración, insights y reportes listos para decidir.',
     description:
-      'Capa de convenciones y componentes que alinean datos, evaluación y experiencia cuando el producto incorpora IA. Prioriza trazabilidad, contratos claros y despliegues revisables.',
-    problem: 'Evitar que la IA quede como experimento aislado: integrar modelos, datos, APIs y reporting con una disciplina clara de release.',
-    role: 'Diseño del framework, generación de datos sintéticos, validaciones, documentación técnica y empaquetado del caso para portfolio internacional.',
-    impact: 'Comunica madurez técnica: evaluación, reproducibilidad y narrativa ejecutiva para explicar decisiones a negocio e ingeniería.',
+      'Producto de análisis orientado a subir archivos (Excel/CSV), explorar datos, obtener insights automatizados y armar reportes defendibles — pensado como muestra profesional de analítica aplicada.',
+    problem:
+      'Muchos equipos trabajan con planillas dispersas y poco tiempo para explorar patrones, limpiar datos y traducir hallazgos en decisiones claras.',
+    role: 'Diseño y desarrollo end-to-end: carga de archivos, limpieza y exploración, lógica de insights, interfaz usable y documentación del caso para portfolio.',
+    impact:
+      'Demuestra capacidad de análisis estructurado, storytelling con datos y entrega de un producto analítico que un reclutador o cliente puede probar.',
     impactHighlight:
-      'Impacto: proyecto internacional de análisis de datos con pipeline reproducible, documentación y enfoque de portfolio profesional.',
-    highlights: ['Dataset sintético', 'Validaciones reproducibles', 'Quality report', 'Tag de versión estable'],
-    artifacts: ['Scripts Python', 'Reportes Markdown', 'README de proyecto', 'Release/tag en Git'],
+      'Impacto: análisis de datos, exploración asistida y reporting en un producto portfolio-ready.',
+    highlights: [
+      'Carga Excel/CSV',
+      'Exploración de datos',
+      'Insights automatizados',
+      'Reporting accionable',
+    ],
+    artifacts: ['Flujo de upload', 'Exploración interactiva', 'Reportes exportables', 'README de proyecto'],
     accent: 'emerald',
     accentColor: '#00d4b0',
-    stack: ['Python', 'FastAPI', 'LLMs', 'Evaluación', 'Observabilidad ligera'],
-    signals: ['Ingeniería de producto', 'API-first', 'Release discipline', 'Sistemas'],
+    stack: ['Python', 'Pandas', 'SQL', 'Excel/CSV', 'FastAPI', 'Reporting'],
+    signals: ['Analítica', 'Exploración', 'Automatización', 'Portfolio'],
     icon: (
       <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round">
         <path d="M4 19.5A2.5 2.5 0 016.5 17H20" />
@@ -81,26 +36,88 @@ const featuredProjects = [
     ),
     projectUrl: 'https://paradigm-web-swart.vercel.app/',
   },
+  {
+    id: 'miconsultorio',
+    rank: '02 — Featured',
+    label: 'HealthOps · Operación real',
+    title: 'Mi Consultorio',
+    tagline: 'Gestión clínica en producción: usuarios reales, flujos diarios y visibilidad operativa.',
+    description:
+      'Sistema interno para consultorios: agenda, historias clínicas, caja, roles y reporting operativo. PostgreSQL en Render, automatización de emails y uso diario en clínicas argentinas.',
+    problem:
+      'La operación clínica depende de procesos manuales donde errores en agenda, caja o historias impactan directamente a pacientes y al equipo.',
+    role: 'Desarrollo full-stack, modelado de datos, permisos, automatizaciones, despliegue y mejoras continuas según feedback de usuarios reales.',
+    impact:
+      'Valida experiencia con datos imperfectos, restricciones operativas y software mantenible — no solo análisis en notebook.',
+    impactHighlight:
+      'Impacto: operación clínica digitalizada con reporting y visibilidad de procesos reales.',
+    highlights: [
+      'Usuarios reales',
+      'Agenda e historias clínicas',
+      'Caja y reporting',
+      'Automatización operativa',
+    ],
+    artifacts: ['PWA operativa', 'Base PostgreSQL', 'Roles y permisos', 'Deploy en Render'],
+    accent: 'violet',
+    accentColor: '#8b6fff',
+    stack: ['Python', 'Django', 'PostgreSQL', 'PWA', 'REST', 'Reporting'],
+    signals: ['Producción', 'Salud', 'Operación', 'Mantenible'],
+    icon: (
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round">
+        <path d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
+      </svg>
+    ),
+    projectUrl: 'https://miconsultoriopaginaweb.vercel.app/',
+  },
+  {
+    id: 'paradise',
+    rank: '03 — Featured',
+    label: 'Product vision · Applied AI',
+    title: 'Paradise',
+    tagline: 'Ecosistema modular con visión de producto e IA aplicada — evolución a largo plazo.',
+    description:
+      'Línea de producto modular que organiza datos, interfaces y capacidades de IA bajo una arquitectura evolutiva. Muestra pensamiento de producto y dirección técnica sin presentarse como SaaS AI-first en producción masiva.',
+    problem:
+      'Ideas amplias de producto con IA suelen fragmentarse en demos sueltas difíciles de mantener y explicar a equipos o inversores.',
+    role: 'Diseño de arquitectura por módulos, definición de límites, UX de producto y roadmap de evolución iterativa.',
+    impact:
+      'Comunica visión de producto, modularidad y criterio para escalar ideas — con IA aplicada como capa, no como identidad única del perfil.',
+    impactHighlight:
+      'Impacto: ecosistema modular con visión de IA aplicada integrada de forma progresiva.',
+    highlights: [
+      'Arquitectura modular',
+      'Visión de producto',
+      'IA aplicada progresiva',
+      'Evolución iterativa',
+    ],
+    artifacts: ['Landing y narrativa', 'Módulos verticales', 'Convenciones de sistema', 'Iteración con Git'],
+    accent: 'sky',
+    accentColor: '#38b8f5',
+    stack: ['React', 'TypeScript', 'System design', 'APIs REST', 'Product iteration'],
+    signals: ['Modular', 'Product-led', 'Visión', 'Evolución'],
+    icon: (
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round">
+        <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5" />
+      </svg>
+    ),
+    projectUrl: 'https://paradise-web-alpha.vercel.app/',
+  },
 ]
 
 const secondaryProjects = [
   {
     title: 'MediAudit RCM',
-    type: 'AI · HealthTech · SaaS',
-    description: 'Auditoría médica con Gemini: validación de códigos, reportes y API REST (FastAPI, Supabase, Vercel).',
+    type: 'HealthTech · Automatización',
+    description:
+      'Auditoría médica asistida: validación de códigos, reportes y API REST para reducir trabajo manual en procesos administrativos.',
     accent: 'emerald',
   },
   {
     title: 'MediLens AI',
-    type: 'LLMs · RAG',
-    description: 'RAG sobre documentación clínica con indexación semántica, chunking y trazabilidad de fuentes.',
+    type: 'Applied AI · Documentación',
+    description:
+      'Consulta asistida sobre documentación clínica con trazabilidad de fuentes — IA aplicada a un flujo operativo concreto.',
     accent: 'sky',
-  },
-  {
-    title: 'SmartClinic No-Show',
-    type: 'ML · forecasting',
-    description: 'Predicción de ausentismo: features, entrenamiento y lectura operativa del modelo.',
-    accent: 'emerald',
   },
   {
     title: 'Plataforma geriátrica',
@@ -160,11 +177,12 @@ export default function Projects() {
       <div className="projects-header section-head fade-in">
         <span className="section-label">Proyectos</span>
         <h2 className="display-lg">
-          Tres líneas de trabajo <span className="grad-text-emerald">en foco</span>
+          Análisis, operación y <span className="grad-text-emerald">visión de producto</span>
         </h2>
         <p className="prose-muted lead-tight">
-          Producto SaaS, operación clínica y marco de ingeniería para IA — cada pieza con usuarios,
-          restricciones reales y entregables defendibles.
+          Paradigm muestra analítica y reporting; Mi Consultorio valida operación real en salud;
+          Paradise refleja visión modular con IA aplicada — cada pieza con un problema concreto
+          detrás.
         </p>
       </div>
 
@@ -180,7 +198,7 @@ export default function Projects() {
               <span className="project-label-pill">{project.label}</span>
             </div>
 
-            <div className="project-title">{project.title}</div>
+            <div className="project-title safe-text-render">{project.title}</div>
             <div className="project-tagline">{project.tagline}</div>
             <p className="project-desc">{project.description}</p>
 
@@ -227,7 +245,7 @@ export default function Projects() {
                 <span className={`project-dialog-icon project-icon ${openProject.accent}`}>{openProject.icon}</span>
                 <span className="project-label-pill">{openProject.label}</span>
               </div>
-              <h3 id="project-dialog-title" className="project-dialog-title">
+              <h3 id="project-dialog-title" className="project-dialog-title safe-text-render">
                 {openProject.title}
               </h3>
               <p className="project-dialog-tagline">{openProject.tagline}</p>
@@ -316,7 +334,7 @@ export default function Projects() {
           {secondaryProjects.map((project, i) => (
             <div
               key={project.title}
-              className={`secondary-card card card--spotlight card--muted fade-in fade-in-delay-${(i % 4) + 1}`}
+              className={`secondary-card card card--spotlight card--muted fade-in fade-in-delay-${(i % 3) + 1}`}
             >
               <div className="secondary-type">{project.type}</div>
               <div className="secondary-title">{project.title}</div>
