@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react'
+import { HALO_BRIEF_URL, isHaloBriefLive } from '../constants/links.js'
 
 const cvDownloads = [
   {
@@ -66,6 +67,7 @@ const personalCards = [
 
 export default function Contact() {
   const [selectedCard, setSelectedCard] = useState(null)
+  const haloLive = isHaloBriefLive()
 
   useEffect(() => {
     if (!selectedCard) return undefined
@@ -122,6 +124,36 @@ export default function Contact() {
               </a>
             ))}
           </div>
+
+          <aside className="halo-cta-card" aria-labelledby="halo-cta-title">
+            <h3 id="halo-cta-title" className="halo-cta-title">
+              Diagnóstico digital para negocios
+            </h3>
+            <p className="halo-cta-text">
+              Si tenés un comercio, emprendimiento o servicio profesional, podés completar un
+              diagnóstico breve para detectar qué solución digital te conviene como primer paso:
+              página, catálogo, turnos, menú o automatización.
+            </p>
+            <div className="halo-cta-actions">
+              {haloLive ? (
+                <a
+                  href={HALO_BRIEF_URL}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="btn"
+                >
+                  Iniciar diagnóstico
+                </a>
+              ) : (
+                <>
+                  <span className="btn btn-ghost halo-cta-btn--pending" aria-disabled="true">
+                    Iniciar diagnóstico
+                  </span>
+                  <span className="halo-cta-note">Disponible próximamente</span>
+                </>
+              )}
+            </div>
+          </aside>
 
           <div className="cv-downloads">
             {cvDownloads.map((cv) => (

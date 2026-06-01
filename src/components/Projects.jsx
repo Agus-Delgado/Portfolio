@@ -1,4 +1,5 @@
 import React, { useState, useRef, useEffect } from 'react'
+import { HALO_BRIEF_URL, isHaloBriefLive } from '../constants/links.js'
 
 const featuredProjects = [
   {
@@ -102,6 +103,41 @@ const featuredProjects = [
     ),
     projectUrl: 'https://paradise-web-alpha.vercel.app/',
   },
+  {
+    id: 'halo-brief',
+    rank: '04 — Featured',
+    label: 'Commerce · Applied AI · Lead intake',
+    title: 'Paradise Halo Brief',
+    tagline: 'Diagnóstico digital para comercios: de necesidades desordenadas a un brief accionable.',
+    description:
+      'Herramienta pensada para comercios, emprendedores y profesionales que necesitan ordenar su presencia digital. La persona responde preguntas guiadas y el sistema genera una orientación inicial, una solución recomendada y un brief comercial para avanzar.',
+    problem:
+      'Muchos negocios chicos no saben si necesitan una web, un catálogo, turnos, menú digital o automatización. Eso vuelve las conversaciones iniciales largas, desordenadas y difíciles de cotizar.',
+    role: 'Diseño y desarrollo del flujo de diagnóstico, motor de recomendación, panel local de leads, exportaciones, notas, etiquetas, filtros y modo demo público.',
+    impact:
+      'Convierte una consulta informal en un brief claro, permitiendo detectar necesidades reales y preparar una propuesta más concreta para el negocio.',
+    impactHighlight:
+      'Impacto: captación comercial, diagnóstico digital y generación de briefs accionables para negocios reales.',
+    highlights: [
+      'Diagnóstico conversacional',
+      'Recomendación de solución',
+      'Panel local de leads',
+      'Export TXT/JSON/CSV',
+    ],
+    artifacts: ['Landing pública', 'Formulario por pasos', 'Brief interno', 'Mini CRM local'],
+    accent: 'emerald',
+    accentColor: '#00d4b0',
+    stack: ['React', 'TypeScript', 'Vite', 'LocalStorage', 'Product UX', 'Lead intake'],
+    signals: ['Comercio local', 'Diagnóstico', 'Automatización', 'Portfolio'],
+    icon: (
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round">
+        <path d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2" />
+        <rect x="9" y="3" width="6" height="4" rx="1" />
+        <path d="M9 12h6M9 16h4" />
+      </svg>
+    ),
+    projectUrl: HALO_BRIEF_URL,
+  },
 ]
 
 const secondaryProjects = [
@@ -181,8 +217,8 @@ export default function Projects() {
         </h2>
         <p className="prose-muted lead-tight">
           Paradigm muestra analítica y reporting; Mi Consultorio valida operación real en salud;
-          Paradise refleja visión modular con IA aplicada — cada pieza con un problema concreto
-          detrás.
+          Paradise y Halo Brief muestran visión de producto, IA aplicada y herramientas digitales
+          orientadas a problemas concretos.
         </p>
       </div>
 
@@ -305,7 +341,20 @@ export default function Projects() {
             </div>
 
             <footer className="project-dialog-footer">
-              {openProject.projectUrl ? (
+              {openProject.id === 'halo-brief' ? (
+                isHaloBriefLive(openProject.projectUrl) ? (
+                  <a
+                    href={openProject.projectUrl}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="btn project-dialog-external"
+                  >
+                    Ver página del proyecto
+                  </a>
+                ) : (
+                  <span className="halo-cta-note project-dialog-pending">Disponible próximamente</span>
+                )
+              ) : openProject.projectUrl ? (
                 <a
                   href={openProject.projectUrl}
                   target="_blank"
