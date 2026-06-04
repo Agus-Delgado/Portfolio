@@ -31,7 +31,7 @@
   --fs-body: 0.9375rem;
   --lh-body: 1.68;
   --fs-hero-name: clamp(1.2rem, 2.1vw, 1.45rem);
-  --fs-hero-display: clamp(1.85rem, 3.6vw, 2.65rem);
+  --fs-hero-display: clamp(1.25rem, 2.2vw, 1.65rem);
   --fs-section: clamp(1.65rem, 3.2vw, 2.85rem);
   --fs-card-title: 1.2rem;
   --fs-card-title-sm: 1.02rem;
@@ -828,28 +828,46 @@ body.has-custom-cursor.project-dialog-is-open a {
 }
 
 .typewriter-wrap {
+  position: relative;
   display: block;
-  max-width: 100%;
-  min-height: clamp(3.1rem, 7vw, 4.35rem);
+  max-width: 760px;
+  font-size: var(--fs-hero-display);
+  min-height: calc(2 * 1.35 * 1em);
   overflow-wrap: break-word;
   word-break: normal;
 }
 
-.typewriter-line {
+.typewriter-sizer {
+  visibility: hidden;
   display: block;
+  font-family: var(--font-display);
+  font-size: inherit;
+  font-weight: 800;
+  line-height: 1.35;
+  letter-spacing: -0.028em;
+  overflow-wrap: break-word;
+  word-break: normal;
+  pointer-events: none;
+  user-select: none;
+}
+
+.typewriter-line {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
   max-width: 100%;
-  padding-bottom: 0.08em;
   overflow-wrap: break-word;
   word-break: normal;
 }
 
 .typewriter-text {
   font-family: var(--font-display);
-  font-size: var(--fs-hero-display);
+  font-size: inherit;
   font-weight: 800;
-  line-height: 1;
+  line-height: 1.35;
   letter-spacing: -0.028em;
-  max-width: 100%;
   overflow-wrap: break-word;
   word-break: normal;
   background: linear-gradient(118deg, #fff 0%, #b8f0e6 35%, var(--sky) 68%, #d2c4ff 100%);
@@ -1027,29 +1045,14 @@ body.has-custom-cursor.project-dialog-is-open a {
   }
 }
 
-@media (max-width: 1280px) {
-  :root {
-    --fs-hero-display: clamp(1.75rem, 3.4vw, 2.45rem);
-  }
-  .typewriter-wrap {
-    min-height: clamp(2.9rem, 6.5vw, 4rem);
-  }
-}
-
-@media (max-width: 1000px) {
-  .typewriter-wrap {
-    min-height: clamp(2.75rem, 8vw, 3.85rem);
-  }
-}
-
 @media (max-width: 640px) {
   .hero-section { padding: 20px 0 72px; }
   .hero-side { grid-template-columns: 1fr; }
   :root {
-    --fs-hero-display: clamp(1.55rem, 6.2vw, 2.15rem);
+    --fs-hero-display: clamp(1.05rem, 4vw, 1.4rem);
   }
   .typewriter-wrap {
-    min-height: clamp(2.5rem, 14vw, 3.5rem);
+    min-height: calc(3 * 1.35 * 1em);
   }
   .hero-headline-lead,
   .hero-headline-trail {

@@ -6,6 +6,10 @@ const roles = [
   'análisis que reduce trabajo manual',
 ]
 
+const longestRole = roles.reduce((a, b) => (a.length >= b.length ? a : b), roles[0])
+
+const ROTATE_MS = 4000
+
 const metrics = [
   { value: '3+', label: 'Años en operación', sub: 'salud y procesos reales' },
   { value: 'SQL · Python', label: 'Stack diario', sub: 'Power BI · Excel' },
@@ -21,8 +25,41 @@ export default function Hero() {
   const [roleIndex, setRoleIndex] = useState(0)
   const [displayedRole, setDisplayedRole] = useState('')
   const [isDeleting, setIsDeleting] = useState(false)
+  const [reducedMotion, setReducedMotion] = useState(
+    () =>
+      typeof window !== 'undefined' &&
+      window.matchMedia('(prefers-reduced-motion: reduce)').matches,
+  )
 
   useEffect(() => {
+    const mq = window.matchMedia('(prefers-reduced-motion: reduce)')
+    const update = () => setReducedMotion(mq.matches)
+    update()
+    mq.addEventListener('change', update)
+    return () => mq.removeEventListener('change', update)
+  }, [])
+
+  useEffect(() => {
+    if (!reducedMotion) return
+
+    setDisplayedRole(roles[roleIndex])
+    setIsDeleting(false)
+
+    const id = setInterval(() => {
+      setRoleIndex((prev) => (prev + 1) % roles.length)
+    }, ROTATE_MS)
+
+    return () => clearInterval(id)
+  }, [reducedMotion])
+
+  useEffect(() => {
+    if (!reducedMotion) return
+    setDisplayedRole(roles[roleIndex])
+  }, [roleIndex, reducedMotion])
+
+  useEffect(() => {
+    if (reducedMotion) return
+
     const currentRole = roles[roleIndex]
     let timeout
 
@@ -42,7 +79,7 @@ export default function Hero() {
     }
 
     return () => clearTimeout(timeout)
-  }, [displayedRole, isDeleting, roleIndex])
+  }, [displayedRole, isDeleting, roleIndex, reducedMotion])
 
   return (
     <section className="hero-section">
@@ -68,10 +105,13 @@ export default function Hero() {
               <span className="hero-headline-lead">
                 Transformo datos y procesos en
               </span>
-              <span className="typewriter-wrap">
+              <span className="typewriter-wrap" aria-live="polite">
+                <span className="typewriter-sizer" aria-hidden>
+                  {longestRole}
+                </span>
                 <span className="typewriter-line">
                   <span className="typewriter-text">{displayedRole}</span>
-                  <span className="hero-cursor" aria-hidden />
+                  {!reducedMotion && <span className="hero-cursor" aria-hidden />}
                 </span>
               </span>
               <span className="hero-headline-lead hero-headline-trail">
