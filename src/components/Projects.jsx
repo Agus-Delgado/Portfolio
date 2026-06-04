@@ -106,29 +106,35 @@ const featuredProjects = [
   {
     id: 'halo-brief',
     rank: '04 — Featured',
-    label: 'Commerce · Applied AI · Lead intake',
-    title: 'Paradise Halo Brief',
-    tagline: 'Diagnóstico digital para comercios: de necesidades desordenadas a un brief accionable.',
+    label: 'Commerce · Product UX · Automatización responsable',
+    title: 'Paradise Halo',
+    tagline: 'Orientación digital inicial para comercios y emprendimientos.',
     description:
-      'Herramienta pensada para comercios, emprendedores y profesionales que necesitan ordenar su presencia digital. La persona responde preguntas guiadas y el sistema genera una orientación inicial, una solución recomendada y un brief comercial para avanzar.',
+      'App web experimental para ordenar necesidades digitales de comercios, emprendimientos y proyectos. La persona responde un recorrido guiado y obtiene una primera orientación con posibles próximos pasos, sin reemplazar la evaluación de una persona o servicio especializado.',
     problem:
-      'Muchos negocios chicos no saben si necesitan una web, un catálogo, turnos, menú digital o automatización. Eso vuelve las conversaciones iniciales largas, desordenadas y difíciles de cotizar.',
-    role: 'Diseño y desarrollo del flujo de diagnóstico, motor de recomendación, panel local de leads, exportaciones, notas, etiquetas, filtros y modo demo público.',
+      'Muchas conversaciones iniciales sobre presencia digital empiezan de forma desordenada: no siempre está claro si conviene una landing, un catálogo, turnos, menú digital, WhatsApp mejor organizado u otra solución simple.',
+    role:
+      'Diseño y desarrollo del flujo guiado, modelo de respuestas, generación del brief inicial, experiencia pública, panel privado local de seguimiento, exportaciones y criterios de alcance responsable.',
     impact:
-      'Convierte una consulta informal en un brief claro, permitiendo detectar necesidades reales y preparar una propuesta más concreta para el negocio.',
+      'Ayuda a transformar una consulta inicial en información más clara para conversar, priorizar y evaluar próximos pasos con mejor contexto humano.',
     impactHighlight:
-      'Impacto: captación comercial, diagnóstico digital y generación de briefs accionables para negocios reales.',
+      'Impacto: orientación inicial, automatización responsable y organización de consultas digitales para negocios pequeños.',
     highlights: [
-      'Diagnóstico conversacional',
-      'Recomendación de solución',
-      'Panel local de leads',
-      'Export TXT/JSON/CSV',
+      'Recorrido guiado',
+      'Orientación inicial',
+      'Brief descargable',
+      'Panel privado local',
     ],
-    artifacts: ['Landing pública', 'Formulario por pasos', 'Brief interno', 'Mini CRM local'],
+    artifacts: [
+      'Landing pública',
+      'Diagnóstico por pasos',
+      'Brief inicial',
+      'Panel privado de seguimiento',
+    ],
     accent: 'emerald',
     accentColor: '#00d4b0',
-    stack: ['React', 'TypeScript', 'Vite', 'LocalStorage', 'Product UX', 'Lead intake'],
-    signals: ['Comercio local', 'Diagnóstico', 'Automatización', 'Portfolio'],
+    stack: ['React', 'TypeScript', 'Vite', 'LocalStorage', 'Product UX', 'Automatización'],
+    signals: ['Comercio local', 'Orientación', 'Producto digital', 'Portfolio'],
     icon: (
       <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round">
         <path d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2" />
