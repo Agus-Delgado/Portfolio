@@ -5,29 +5,30 @@ const featuredProjects = [
   {
     id: 'paradigm',
     rank: '01 — Featured',
-    label: 'Data & Analytics · Portfolio',
+    label: 'Data & Analytics · Healthcare Ops',
     title: 'Paradigm',
-    tagline: 'De archivos Excel a exploración, insights y reportes listos para decidir.',
+    tagline:
+      'Flujo analítico reproducible: de datos crudos a KPIs validados y reporting para decidir en salud.',
     description:
-      'Producto de análisis orientado a subir archivos (Excel/CSV), explorar datos, obtener insights automatizados y armar reportes defendibles — pensado como muestra profesional de analítica aplicada.',
+      'Caso end-to-end de analítica en operación ambulatoria: generación y limpieza de datos, controles de calidad, mart SQL, validación de KPIs, exploración y exports para BI — cubriendo turnos, facturación, cancelaciones, inasistencias y eficiencia operativa.',
     problem:
-      'Muchos equipos trabajan con planillas dispersas y poco tiempo para explorar patrones, limpiar datos y traducir hallazgos en decisiones claras.',
-    role: 'Diseño y desarrollo end-to-end: carga de archivos, limpieza y exploración, lógica de insights, interfaz usable y documentación del caso para portfolio.',
+      'En operaciones de salud, los datos viven en planillas y procesos manuales; sin un workflow reproducible, los KPIs no son confiables ni llegan a tiempo a quien decide.',
+    role: 'Diseño del flujo completo: generación/síntesis de datos, ETL y mart SQL, definición y validación de KPIs, exploración, exports para Power BI/Tableau e insights automatizados con trazabilidad.',
     impact:
-      'Demuestra capacidad de análisis estructurado, storytelling con datos y entrega de un producto analítico que un reclutador o cliente puede probar.',
+      'Demuestra cómo estructurar analítica operativa en salud: pipeline reproducible, métricas defendibles y reporting orientado a decisiones — no solo exploración ad hoc.',
     impactHighlight:
-      'Impacto: análisis de datos, exploración asistida y reporting en un producto portfolio-ready.',
+      'Impacto: workflow analítico reproducible que convierte datos operativos en decision-support reporting.',
     highlights: [
-      'Carga Excel/CSV',
-      'Exploración de datos',
-      'Insights automatizados',
-      'Reporting accionable',
+      'Flujo end-to-end reproducible',
+      'Mart SQL y validación de KPIs',
+      'Healthcare operations',
+      'Decision-support reporting',
     ],
-    artifacts: ['Flujo de upload', 'Exploración interactiva', 'Reportes exportables', 'README de proyecto'],
+    artifacts: ['Pipeline ETL documentado', 'Mart SQL', 'Exports BI', 'Caso de estudio no-show'],
     accent: 'emerald',
     accentColor: '#00d4b0',
-    stack: ['Python', 'Pandas', 'SQL', 'Excel/CSV', 'FastAPI', 'Reporting'],
-    signals: ['Analítica', 'Exploración', 'Automatización', 'Portfolio'],
+    stack: ['Python', 'SQL', 'Power BI', 'Tableau', 'scikit-learn', 'Databricks', 'Git'],
+    signals: ['Analítica reproducible', 'KPIs', 'Healthcare ops', 'BI'],
     icon: (
       <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round">
         <path d="M4 19.5A2.5 2.5 0 016.5 17H20" />
@@ -42,27 +43,29 @@ const featuredProjects = [
     rank: '02 — Featured',
     label: 'HealthOps · Operación real',
     title: 'Mi Consultorio',
-    tagline: 'Gestión clínica en producción: usuarios reales, flujos diarios y visibilidad operativa.',
+    tagline:
+      'En producción en clínicas reales: visibilidad operativa diaria, menos trabajo manual y base transaccional para reporting.',
     description:
-      'Sistema interno para consultorios: agenda, historias clínicas, caja, roles y reporting operativo. PostgreSQL en Render, automatización de emails y uso diario en clínicas argentinas.',
+      'Sistema de gestión en uso real para turnos, historias clínicas, caja y roles. Genera la capa transaccional que centraliza actividad operativa y habilita análisis de desempeño, seguimiento administrativo y reportes de negocio — con PostgreSQL en Render y automatizaciones de email.',
     problem:
-      'La operación clínica depende de procesos manuales donde errores en agenda, caja o historias impactan directamente a pacientes y al equipo.',
-    role: 'Desarrollo full-stack, modelado de datos, permisos, automatizaciones, despliegue y mejoras continuas según feedback de usuarios reales.',
+      'Sin un sistema unificado, la operación clínica pierde trazabilidad: agenda, caja e historias se desincronizan y el reporting depende de trabajo manual repetitivo.',
+    role: 'Desarrollo full-stack y modelado de datos orientado a operación: permisos, flujos clínicos/administrativos, automatizaciones, despliegue y mejoras iterativas con feedback de clínicas en producción.',
     impact:
-      'Valida experiencia con datos imperfectos, restricciones operativas y software mantenible — no solo análisis en notebook.',
+      'Valida experiencia traduciendo necesidades operativas en datos estructurados, visibilidad diaria y menos carga manual — el puente entre operación de salud y analítica/BI.',
     impactHighlight:
-      'Impacto: operación clínica digitalizada con reporting y visibilidad de procesos reales.',
+      'Impacto: plataforma en producción que reduce seguimiento manual y habilita reporting de performance sobre datos transaccionales reales.',
     highlights: [
-      'Usuarios reales',
-      'Agenda e historias clínicas',
-      'Caja y reporting',
-      'Automatización operativa',
+      'En producción',
+      'Clínicas reales',
+      'Capa transaccional para BI',
+      'Visibilidad operativa diaria',
+      'Automatización de seguimiento',
     ],
     artifacts: ['PWA operativa', 'Base PostgreSQL', 'Roles y permisos', 'Deploy en Render'],
     accent: 'violet',
     accentColor: '#8b6fff',
     stack: ['Python', 'Django', 'PostgreSQL', 'PWA', 'REST', 'Reporting'],
-    signals: ['Producción', 'Salud', 'Operación', 'Mantenible'],
+    signals: ['Producción', 'Healthcare ops', 'Reporting', 'Automatización'],
     icon: (
       <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round">
         <path d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
@@ -73,29 +76,30 @@ const featuredProjects = [
   {
     id: 'paradise',
     rank: '03 — Featured',
-    label: 'Product vision · Applied AI',
+    label: 'Modular Analytics · Applied AI',
     title: 'Paradise',
-    tagline: 'Ecosistema modular con visión de producto e IA aplicada — evolución a largo plazo.',
+    tagline:
+      'Arquitectura modular de analítica + IA aplicada para monitoreo de KPIs, comparación de tendencias y alertas operativas.',
     description:
-      'Línea de producto modular que organiza datos, interfaces y capacidades de IA bajo una arquitectura evolutiva. Muestra pensamiento de producto y dirección técnica sin presentarse como SaaS AI-first en producción masiva.',
+      'Ecosistema modular donde cada bloque resuelve una necesidad analítica concreta: monitoreo de KPIs, comparación de tendencias, alertas e interpretación operativa de métricas. La IA aplicada entra como capa de lectura y priorización — dentro de una arquitectura evolutiva, no como promesa de producto terminado.',
     problem:
-      'Ideas amplias de producto con IA suelen fragmentarse en demos sueltas difíciles de mantener y explicar a equipos o inversores.',
-    role: 'Diseño de arquitectura por módulos, definición de límites, UX de producto y roadmap de evolución iterativa.',
+      'Equipos operativos necesitan monitoreo y alertas sobre KPIs, pero muchas soluciones mezclan analítica, UI e IA en demos aisladas difíciles de escalar o mantener.',
+    role: 'Diseño de módulos analíticos (KPI monitoring, trend comparison, alerting), límites entre capas de datos/UI/IA y evolución iterativa del sistema.',
     impact:
-      'Comunica visión de producto, modularidad y criterio para escalar ideas — con IA aplicada como capa, no como identidad única del perfil.',
+      'Comunica criterio de arquitectura analítica modular y aplicación progresiva de IA — alineado a un perfil DA/BI que piensa en sistemas evolutivos, no en pitch de SaaS.',
     impactHighlight:
-      'Impacto: ecosistema modular con visión de IA aplicada integrada de forma progresiva.',
+      'Impacto: diseño de módulos analíticos reutilizables para monitoreo, tendencias y alertas operativas.',
     highlights: [
-      'Arquitectura modular',
-      'Visión de producto',
-      'IA aplicada progresiva',
-      'Evolución iterativa',
+      'Monitoreo de KPIs',
+      'Comparación de tendencias',
+      'Alertas operativas',
+      'Arquitectura modular evolutiva',
     ],
-    artifacts: ['Landing y narrativa', 'Módulos verticales', 'Convenciones de sistema', 'Iteración con Git'],
+    artifacts: ['Módulos KPI/trends/alerts', 'Convenciones de capas', 'Prototipos analíticos', 'Iteración con Git'],
     accent: 'sky',
     accentColor: '#38b8f5',
-    stack: ['React', 'TypeScript', 'System design', 'APIs REST', 'Product iteration'],
-    signals: ['Modular', 'Product-led', 'Visión', 'Evolución'],
+    stack: ['TypeScript', 'React', 'Python', 'SQL', 'Cloudflare', 'Git'],
+    signals: ['Analítica modular', 'KPIs', 'IA aplicada', 'Arquitectura'],
     icon: (
       <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round">
         <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5" />
@@ -219,12 +223,14 @@ export default function Projects() {
       <div className="projects-header section-head fade-in">
         <span className="section-label">Proyectos</span>
         <h2 className="display-lg">
-          Análisis, operación y <span className="grad-text-emerald">visión de producto</span>
+          Analítica operativa, <span className="grad-text-emerald">producción real</span> y
+          arquitectura evolutiva
         </h2>
         <p className="prose-muted lead-tight">
-          Paradigm muestra analítica y reporting; Mi Consultorio valida operación real en salud;
-          Paradise y Halo Brief muestran visión de producto, IA aplicada y herramientas digitales
-          orientadas a problemas concretos.
+          Paradigm demuestra un flujo analítico reproducible en salud; Mi Consultorio valida
+          operación con usuarios reales y reporting; Paradise muestra módulos de analítica e IA
+          aplicada para KPIs y alertas; Halo Brief aplica criterio de producto a un problema
+          concreto de comercios.
         </p>
       </div>
 

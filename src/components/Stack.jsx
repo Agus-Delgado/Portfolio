@@ -48,8 +48,8 @@ const stackGroups = [
 const continuousLearning = [
   {
     title: 'IBM Generative AI Engineering Professional Certificate',
-    status: 'in_progress',
-    statusLabel: 'En curso',
+    status: 'completed',
+    statusLabel: 'Completado',
   },
   {
     title: 'English for Career Development — University of Pennsylvania',
@@ -105,7 +105,9 @@ export default function Stack() {
       </div>
 
       <div className="learning-row fade-in">
-        <span className="learning-label">Aprendizaje continuo</span>
+        <div className="learning-header">
+          <h3 className="learning-label">Aprendizaje continuo</h3>
+        </div>
         <div className="learning-list">
           {continuousLearning.map((item) => (
             <div key={item.title} className="learning-item">

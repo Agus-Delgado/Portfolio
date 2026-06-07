@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from 'react'
 
 const roles = [
-  'reportes y tableros accionables',
-  'automatización de procesos',
-  'análisis que reduce trabajo manual',
+  'KPIs y dashboards que la operación realmente usa',
+  'automatización que reduce trabajo manual en salud',
+  'análisis que genera visibilidad y decisiones claras',
 ]
 
 const longestRole = roles.reduce((a, b) => (a.length >= b.length ? a : b), roles[0])
@@ -13,7 +13,7 @@ const ROTATE_MS = 4000
 const metrics = [
   { value: '3+', label: 'Años en operación', sub: 'salud y procesos reales' },
   { value: 'SQL · Python', label: 'Stack diario', sub: 'Power BI · Excel' },
-  { value: 'Producción', label: 'Enfoque', sub: 'usuarios y datos reales' },
+  { value: 'BI · KPIs', label: 'Especialidad', sub: 'reporting y automatización' },
   { value: 'Buenos Aires', label: 'Ubicación', sub: 'Argentina' },
 ]
 
@@ -103,7 +103,7 @@ export default function Hero() {
 
             <h1 className="hero-headline">
               <span className="hero-headline-lead">
-                Transformo datos y procesos en
+                Convierto datos de operación en
               </span>
               <span className="typewriter-wrap" aria-live="polite">
                 <span className="typewriter-sizer" aria-hidden>
@@ -115,15 +115,16 @@ export default function Hero() {
                 </span>
               </span>
               <span className="hero-headline-lead hero-headline-trail">
-                para decisiones más claras en el día a día.
+                visibilidad accionable y decisiones claras, con trazabilidad real en salud.
               </span>
             </h1>
 
             <p className="hero-subtitle">
-              Analizo datos, construyo reportes y automatizo tareas repetitivas con{' '}
-              <em>SQL, Python y Power BI</em>. La IA aplicada entra cuando acelera el análisis o
-              reduce trabajo manual — con experiencia en <em>salud y operación real</em>, donde los
-              datos son imperfectos y las decisiones importan.
+              Diseño KPIs, tableros y pipelines de reporting con{' '}
+              <em>SQL, Python y Power BI</em>, convirtiendo datos imperfectos de operaciones reales
+              — especialmente <em>salud</em> — en visibilidad accionable. Uso{' '}
+              <em>IA aplicada</em> cuando acelera el análisis o automatiza seguimiento recurrente,
+              no como reemplazo del criterio analítico.
             </p>
 
             <div className="hero-actions">
