@@ -30,10 +30,6 @@ Mi experiencia en salud me permitió desarrollar una mirada fuerte sobre sistema
 
 ## 📌 Proyectos Destacados
 
-### Paradise
-
-Ecosistema modular AI-first pensado como una plataforma adaptable, con enfoque SaaS, arquitectura por módulos y una visión orientada a producto, personalización y evolución continua.
-
 ### Mi Consultorio
 
 Sistema integral de gestión para consultorio médico, desarrollado para operación real, con foco en historias clínicas, turnos, recetas, caja, métricas y flujos administrativos en salud.

@@ -25,16 +25,6 @@ type ContactLink = {
 
 const featuredProjects: FeaturedProject[] = [
   {
-    title: 'Paradise',
-    label: 'AI product ecosystem',
-    headline: 'Arquitectura SaaS modular con enfoque AI-first, diseño adaptable y visión de plataforma.',
-    summary:
-      'Paradise está planteado como un ecosistema de módulos desacoplados, capas compartidas, experiencia configurable por vertical y evolución continua. El valor del proyecto no está solo en la interfaz: está en la lógica de producto, la escalabilidad conceptual y la capacidad de conectar operación, datos e inteligencia dentro de un mismo sistema.',
-    signals: ['System design', 'Multi-tenant thinking', 'UX adaptable', 'Producto modular'],
-    stack: ['React', 'TypeScript', 'Arquitectura modular', 'Design system', 'Cloud-first vision'],
-    accent: 'violet',
-  },
-  {
     title: 'Mi Consultorio',
     label: 'Healthcare operations',
     headline: 'Sistema real para agenda, historias clínicas, caja, reporting y soporte operativo en salud.',
@@ -914,7 +904,7 @@ function App() {
                 <div className="info-grid">
                   <div className="stat">
                     <strong>3 proyectos ancla</strong>
-                    <span>Paradise, Mi Consultorio y Paradigm como núcleo del relato.</span>
+                    <span>Paradigm, Mi Consultorio y Paradise Halo como núcleo del relato.</span>
                   </div>
                   <div className="stat">
                     <strong>End-to-end</strong>

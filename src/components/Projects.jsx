@@ -74,42 +74,8 @@ const featuredProjects = [
     projectUrl: 'https://miconsultoriopaginaweb.vercel.app/',
   },
   {
-    id: 'paradise',
-    rank: '03 — Featured',
-    label: 'Modular Analytics · Applied AI',
-    title: 'Paradise',
-    tagline:
-      'Arquitectura modular de analítica + IA aplicada para monitoreo de KPIs, comparación de tendencias y alertas operativas.',
-    description:
-      'Ecosistema modular donde cada bloque resuelve una necesidad analítica concreta: monitoreo de KPIs, comparación de tendencias, alertas e interpretación operativa de métricas. La IA aplicada entra como capa de lectura y priorización — dentro de una arquitectura evolutiva, no como promesa de producto terminado.',
-    problem:
-      'Equipos operativos necesitan monitoreo y alertas sobre KPIs, pero muchas soluciones mezclan analítica, UI e IA en demos aisladas difíciles de escalar o mantener.',
-    role: 'Diseño de módulos analíticos (KPI monitoring, trend comparison, alerting), límites entre capas de datos/UI/IA y evolución iterativa del sistema.',
-    impact:
-      'Comunica criterio de arquitectura analítica modular y aplicación progresiva de IA — alineado a un perfil DA/BI que piensa en sistemas evolutivos, no en pitch de SaaS.',
-    impactHighlight:
-      'Impacto: diseño de módulos analíticos reutilizables para monitoreo, tendencias y alertas operativas.',
-    highlights: [
-      'Monitoreo de KPIs',
-      'Comparación de tendencias',
-      'Alertas operativas',
-      'Arquitectura modular evolutiva',
-    ],
-    artifacts: ['Módulos KPI/trends/alerts', 'Convenciones de capas', 'Prototipos analíticos', 'Iteración con Git'],
-    accent: 'sky',
-    accentColor: '#38b8f5',
-    stack: ['TypeScript', 'React', 'Python', 'SQL', 'Cloudflare', 'Git'],
-    signals: ['Analítica modular', 'KPIs', 'IA aplicada', 'Arquitectura'],
-    icon: (
-      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round">
-        <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5" />
-      </svg>
-    ),
-    projectUrl: 'https://paradise-web-alpha.vercel.app/',
-  },
-  {
     id: 'halo-brief',
-    rank: '04 — Featured',
+    rank: '03 — Featured',
     label: 'Commerce · Product UX · Automatización responsable',
     title: 'Paradise Halo',
     tagline: 'Orientación digital inicial para comercios y emprendimientos.',
@@ -228,9 +194,8 @@ export default function Projects() {
         </h2>
         <p className="prose-muted lead-tight">
           Paradigm demuestra un flujo analítico reproducible en salud; Mi Consultorio valida
-          operación con usuarios reales y reporting; Paradise muestra módulos de analítica e IA
-          aplicada para KPIs y alertas; Halo Brief aplica criterio de producto a un problema
-          concreto de comercios.
+          operación con usuarios reales y reporting; Paradise Halo aplica criterio de producto a un
+          problema concreto de comercios.
         </p>
       </div>
 
