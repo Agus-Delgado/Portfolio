@@ -206,12 +206,13 @@ export default function Projects() {
             className={`project-card card card--spotlight card--featured fade-in fade-in-delay-${i + 1}`}
           >
             <div className="project-card-rank">{project.rank}</div>
-            <div className="project-top">
-              <div className={`project-icon ${project.accent}`}>{project.icon}</div>
+            <div className="project-label-wrap">
               <span className="project-label-pill">{project.label}</span>
             </div>
-
-            <div className="project-title safe-text-render">{project.title}</div>
+            <div className="project-card-head">
+              <div className={`project-icon ${project.accent}`}>{project.icon}</div>
+              <div className="project-title safe-text-render">{project.title}</div>
+            </div>
             <div className="project-tagline">{project.tagline}</div>
             <p className="project-desc">{project.description}</p>
 

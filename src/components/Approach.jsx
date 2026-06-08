@@ -57,8 +57,8 @@ export default function Approach() {
       <div className="approach-layout">
         <div className="approach-left fade-in">
           <span className="section-label">Enfoque</span>
-          <h2 className="display-lg">
-            Cómo <span className="grad-text-emerald">trabajo</span>
+          <h2 className="display-lg approach-heading">
+            Cómo&nbsp;<span className="grad-text-emerald">trabajo</span>
           </h2>
           <p className="approach-intro">
             Mi experiencia en operación y salud me enseñó a trabajar con usuarios reales, datos
