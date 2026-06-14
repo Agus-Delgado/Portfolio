@@ -46,6 +46,8 @@
   --sky-dim: rgba(56, 184, 245, 0.10);
   --amber: #f5a623;
   --amber-dim: rgba(245, 166, 35, 0.10);
+  --orange: #f59e0b;
+  --orange-dim: rgba(245, 158, 11, 0.10);
   --violet: #8b6fff;
   --violet-dim: rgba(139, 111, 255, 0.10);
   --rose: #ff6b9d;
@@ -1283,6 +1285,12 @@ body.has-custom-cursor.project-dialog-is-open a {
   color: var(--violet);
 }
 
+.project-icon.orange {
+  background: rgba(245, 158, 11, 0.1);
+  border-color: rgba(245, 158, 11, 0.22);
+  color: var(--orange);
+}
+
 .project-label-pill {
   font-family: var(--font-mono);
   font-size: 0.62rem;
@@ -1381,6 +1389,12 @@ body.has-custom-cursor.project-dialog-is-open a {
   border-color: rgba(139, 111, 255, 0.22);
   background: rgba(139, 111, 255, 0.06);
   color: var(--violet);
+}
+
+.signal-tag.orange {
+  border-color: rgba(245, 158, 11, 0.22);
+  background: rgba(245, 158, 11, 0.06);
+  color: var(--orange);
 }
 
 .stack-tag {
@@ -1505,6 +1519,11 @@ body.has-custom-cursor.project-dialog-is-open a {
 .project-dialog--emerald {
   --dialog-accent: var(--emerald);
   --dialog-accent-soft: rgba(0, 212, 176, 0.12);
+}
+
+.project-dialog--orange {
+  --dialog-accent: var(--orange);
+  --dialog-accent-soft: rgba(245, 158, 11, 0.12);
 }
 
 .project-dialog::backdrop {

@@ -76,35 +76,37 @@ const featuredProjects = [
   {
     id: 'halo-brief',
     rank: '03 — Featured',
-    label: 'Commerce · Product UX · Automatización responsable',
+    label: 'Product Studio · Apps Premium · Descubrimiento',
     title: 'Paradise Halo',
-    tagline: 'Orientación digital inicial para comercios y emprendimientos.',
+    tagline: 'Brief premium para descubrir y calificar proyectos de apps a medida.',
     description:
-      'App web experimental para ordenar necesidades digitales de comercios, emprendimientos y proyectos. La persona responde un recorrido guiado y obtiene una primera orientación con posibles próximos pasos, sin reemplazar la evaluación de una persona o servicio especializado.',
+      'Plataforma de descubrimiento para clientes que buscan una app premium a medida — web, mobile, SaaS o herramientas internas. El brief estructurado captura visión, alcance y criterios de éxito; yo evalúo el potencial y preparo contexto rico para una propuesta técnica seria.',
     problem:
-      'Muchas conversaciones iniciales sobre presencia digital empiezan de forma desordenada: no siempre está claro si conviene una landing, un catálogo, turnos, menú digital, WhatsApp mejor organizado u otra solución simple.',
+      'Muchas ideas de aplicaciones se pierden en conversaciones desorganizadas o en diagnósticos genéricos. Necesitamos un proceso claro que filtre leads serios y entregue contexto rico para propuestas técnicas reales.',
     role:
-      'Diseño y desarrollo del flujo guiado, modelo de respuestas, generación del brief inicial, experiencia pública, panel privado local de seguimiento, exportaciones y criterios de alcance responsable.',
+      'Diseño completo del flujo, sistema de preguntas orientado a producto, UI/UX premium, generación interna de brief, panel de leads y lógica de calificación.',
     impact:
-      'Ayuda a transformar una consulta inicial en información más clara para conversar, priorizar y evaluar próximos pasos con mejor contexto humano.',
+      'Convierte consultas iniciales en leads de alta calidad con información rica, permitiendo propuestas personalizadas rápidas y profesionales.',
     impactHighlight:
-      'Impacto: orientación inicial, automatización responsable y organización de consultas digitales para negocios pequeños.',
+      'Filtro inteligente + brief técnico premium para desarrollo de apps a medida.',
     highlights: [
-      'Recorrido guiado',
-      'Orientación inicial',
-      'Brief descargable',
-      'Panel privado local',
+      'Descubrimiento guiado para apps premium',
+      'Brief estructurado con criterios de éxito',
+      'UI/UX futurista y posicionamiento luxury',
+      'Calificación inteligente de leads',
+      'Puerta de entrada al ecosistema Paradise',
     ],
     artifacts: [
-      'Landing pública',
-      'Diagnóstico por pasos',
-      'Brief inicial',
-      'Panel privado de seguimiento',
+      'Landing inmersiva',
+      'Formulario guiado (6 pasos)',
+      'Thank You + lead capture',
+      'Panel interno de leads',
+      'Diseño cyber-luxury',
     ],
-    accent: 'emerald',
-    accentColor: '#00d4b0',
-    stack: ['React', 'TypeScript', 'Vite', 'LocalStorage', 'Product UX', 'Automatización'],
-    signals: ['Comercio local', 'Orientación', 'Producto digital', 'Portfolio'],
+    accent: 'orange',
+    accentColor: '#f59e0b',
+    stack: ['React 19', 'TypeScript', 'Vite', 'Glassmorphism', 'Custom CSS', 'LocalStorage'],
+    signals: ['Apps premium', 'Producto digital', 'Calificación de leads', 'UX de lujo'],
     icon: (
       <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round">
         <path d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2" />
@@ -113,6 +115,51 @@ const featuredProjects = [
       </svg>
     ),
     projectUrl: HALO_BRIEF_URL,
+  },
+  {
+    id: 'spe-solution',
+    rank: '04 — Featured',
+    label: 'Client App · Medical Software · In Development',
+    title: 'SPE Solution',
+    tagline: 'Gestión completa para consultorio psiquiátrico.',
+    description:
+      'Aplicación web privada solicitada por cliente real para la gestión operativa de un consultorio psiquiátrico. Incluye autenticación segura, pacientes, evoluciones clínicas, medicación, documentos PDF, agenda de turnos, respaldos y más. Actualmente en desarrollo activo.',
+    problem:
+      'Necesidad de una herramienta privada, segura y eficiente para un profesional de la salud mental que gestione todo su flujo operativo sin depender de múltiples plataformas.',
+    role:
+      'Diseño completo del sistema, arquitectura backend (Cloudflare Workers + D1 + R2), frontend React, migraciones, QA y documentación técnica/operativa.',
+    impact:
+      'Producto en desarrollo activo con cliente real. Ya implementados: autenticación, pacientes, evoluciones, medicación, documentos y agenda.',
+    impactHighlight:
+      'App solicitada por cliente en desarrollo activo',
+    highlights: [
+      'Gestión completa de pacientes',
+      'Evoluciones clínicas + medicación',
+      'Documentos PDF en R2',
+      'Agenda de turnos',
+      'Respaldos automáticos',
+    ],
+    artifacts: [
+      'Backend Cloudflare Workers',
+      'Frontend React 19',
+      'Base de datos D1',
+      'Almacenamiento R2',
+      'Documentación completa',
+    ],
+    accent: 'emerald',
+    accentColor: '#10b981',
+    stack: ['React 19', 'TypeScript', 'Cloudflare Workers', 'Hono', 'D1', 'R2', 'Tailwind'],
+    signals: ['App cliente', 'Salud mental', 'Software médico', 'En desarrollo'],
+    icon: (
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round">
+        <path d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2" />
+        <rect x="9" y="3" width="6" height="4" rx="1" />
+        <path d="M12 11v4" />
+        <path d="M10 13h4" />
+      </svg>
+    ),
+    hasLiveDemo: false,
+    projectUrl: null,
   },
 ]
 
@@ -194,8 +241,8 @@ export default function Projects() {
         </h2>
         <p className="prose-muted lead-tight">
           Paradigm demuestra un flujo analítico reproducible en salud; Mi Consultorio valida
-          operación con usuarios reales y reporting; Paradise Halo aplica criterio de producto a un
-          problema concreto de comercios.
+          operación con usuarios reales; Paradise Halo califica apps premium a medida; SPE Solution
+          es software médico privado en desarrollo activo para un cliente real.
         </p>
       </div>
 
@@ -332,7 +379,7 @@ export default function Projects() {
                 ) : (
                   <span className="halo-cta-note project-dialog-pending">Disponible próximamente</span>
                 )
-              ) : openProject.projectUrl ? (
+              ) : openProject.hasLiveDemo !== false && openProject.projectUrl ? (
                 <a
                   href={openProject.projectUrl}
                   target="_blank"
